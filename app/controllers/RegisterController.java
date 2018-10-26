@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.User;
 import models.UserData;
+import play.Logger;
 import play.api.mvc.BodyParser;
 import play.mvc.*;
 
@@ -20,20 +21,23 @@ public class RegisterController extends Controller {
 
         JsonNode json= request().body().asJson();
 
+
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         UserData newUserData = mapper.readValue(json.toString(), UserData.class);
 
-        User newUser = mapper.readValue(json.toString(), User.class);
+        User newUser = mapper.convertValue(json, User.class);
+
+        newUser.setUser_type("regular_user");
 
         newUser.setUser_data(newUserData);
 
         newUserData.setUser(newUser);
 
-        newUser.save();
-
         newUserData.save();
+
+        newUser.save();
 
         return ok();
 

@@ -21,6 +21,19 @@ public class Country extends Model {
         this.country_name = country_name;
     }
 
+
+    public String getCountry_name() {
+        return country_name;
+    }
+
+    public void setCountry_name(String country_name) {
+        this.country_name = country_name;
+    }
+
+    public static Finder<Long, Country> getFinder() {
+        return finder;
+    }
+
     public static final Finder<Long, Country> finder = new Finder<>(Country.class);
 
 

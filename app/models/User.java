@@ -17,9 +17,9 @@ public class User extends Model {
     public Long id;
 
 
-    public User(@Constraints.Required @Constraints.Email String email, @Constraints.Required byte[] shaPassword, @Constraints.Required boolean user_type) {
+    public User(@Constraints.Required @Constraints.Email String email, @Constraints.Required String password, @Constraints.Required String user_type) {
         this.email = email;
-        this.shaPassword = shaPassword;
+        this.password = password;
         this.user_type = user_type;
     }
 
@@ -28,13 +28,19 @@ public class User extends Model {
     @Constraints.Email
     private String email;
 
-    @Column(name = "sha_password", nullable = false)
+    @Column(name = "password", nullable = false)
     @Constraints.Required
-    private byte[] shaPassword;
+    private String password;
 
     @Column(nullable = false)
     @Constraints.Required
-    private boolean user_type;
+    private String user_type;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private UserData user_data;
+
+    public static final Finder<Long, User> finder= new Finder<>(User.class);
+
 
     public UserData getUser_data() {
         return user_data;
@@ -44,21 +50,32 @@ public class User extends Model {
         this.user_data = user_data;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    private UserData user_data;
-
-    public static final Finder<Long, User> finder= new Finder<>(User.class);
-
-
-    public static byte[] getSha512(String value) {
-        try {
-            return MessageDigest.getInstance("SHA-512").digest(value.getBytes("UTF-8"));
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+    public String getEmail() {
+        return email;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public static Finder<Long, User> getFinder() {
+        return finder;
+    }
+
+    public String getUser_type() {
+        return user_type;
+    }
+
+    public void setUser_type(String user_type) {
+        this.user_type = user_type;
+    }
+
 }

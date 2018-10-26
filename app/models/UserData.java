@@ -6,7 +6,6 @@ import io.ebean.Model;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 
 @Entity
 @Table(name = "user_data")
@@ -15,25 +14,31 @@ public class UserData extends Model {
     @Id
     public Long id;
 
-    public UserData(@Constraints.Required String first_name, @Constraints.Required String last_name, @Constraints.Required @Constraints.MinLength(9) String phone, Location location) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public UserData(@Constraints.Required String firstName, @Constraints.Required String lastName, @Constraints.Required @Constraints.MinLength(9) String phonevb) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.phone = phone;
-        this.location = location;
+        //this.location = location;
     }
 
-    @Column (nullable = false)
+    @Column (name="firstName",nullable = false)
     @Constraints.Required
-    private String first_name;
+    private String firstName;
 
-    @Column (nullable = false)
+    @Column (name="last_name", nullable = false)
     @Constraints.Required
-    private String last_name;
+    private String lastName;
 
     @Column (nullable = false)
     @Constraints.Required
     @Constraints.MinLength(9)
     private String phone;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private User user;
+
+    //@ManyToOne(optional = false)
+    //Location location;
 
 
     public User getUser() {
@@ -44,13 +49,42 @@ public class UserData extends Model {
         this.user = user;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private User user;
 
-    @ManyToOne(optional = false)
-    Location location;
+    public String getFirstName() {
+        return firstName;
+    }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    //public Location getLocation() {
+    //    return location;
+    //}
+
+    //public void setLocation(Location location) {
+    //    this.location = location;
+    //}
 
     public static final Finder<Long, UserData> finder = new Finder<>(UserData.class);
 
+    public static Finder<Long, UserData> getFinder() {
+        return finder;
+    }
 }

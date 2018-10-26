@@ -25,6 +25,26 @@ public class Location extends Model {
     @ManyToOne(optional = false)
     Country country;
 
+    public String getCity_name() {
+        return city_name;
+    }
+
+    public static Finder<Long, Location> getFinder() {
+        return finder;
+    }
+
+    public void setCity_name(String city_name) {
+        this.city_name = city_name;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
     public static final Finder<Long, Location> finder = new Finder<>(Location.class);
 
 }
