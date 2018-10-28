@@ -3,9 +3,9 @@ package models;
 
 import io.ebean.Finder;
 import io.ebean.Model;
-import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "user_data")
@@ -14,31 +14,27 @@ public class UserData extends Model {
     @Id
     public Long id;
 
-    public UserData(@Constraints.Required String firstName, @Constraints.Required String lastName, @Constraints.Required @Constraints.MinLength(9) String phonevb) {
+    public UserData( String firstName, String lastName, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        //this.location = location;
     }
 
     @Column (name="firstName",nullable = false)
-    @Constraints.Required
     private String firstName;
 
     @Column (name="last_name", nullable = false)
-    @Constraints.Required
     private String lastName;
 
     @Column (nullable = false)
-    @Constraints.Required
-    @Constraints.MinLength(9)
+    @Size(min=6)
     private String phone;
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
-    //@ManyToOne(optional = false)
-    //Location location;
+    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    Location location;
 
 
     public User getUser() {
@@ -74,13 +70,14 @@ public class UserData extends Model {
         this.phone = phone;
     }
 
-    //public Location getLocation() {
-    //    return location;
-    //}
 
-    //public void setLocation(Location location) {
-    //    this.location = location;
-    //}
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     public static final Finder<Long, UserData> finder = new Finder<>(UserData.class);
 

@@ -5,6 +5,7 @@ import io.ebean.Model;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "locations")
@@ -13,28 +14,28 @@ public class Location extends Model {
     @Id
     public Long id;
 
-    public Location(@Constraints.MaxLength(30) String city_name, Country country) {
-        this.city_name = city_name;
+    public Location(String city, Country country) {
+        this.city = city;
         this.country = country;
     }
 
-    @Column(nullable = false)
-    @Constraints.MaxLength(30)
-    private String city_name;
+    @Column(nullable = false, unique = true)
+    @Size(max = 30)
+    private String city;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL,optional = false)
     Country country;
 
-    public String getCity_name() {
-        return city_name;
+    public String getCity() {
+        return city;
     }
 
     public static Finder<Long, Location> getFinder() {
         return finder;
     }
 
-    public void setCity_name(String city_name) {
-        this.city_name = city_name;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Country getCountry() {

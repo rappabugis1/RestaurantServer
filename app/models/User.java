@@ -2,6 +2,7 @@ package models;
 
 import io.ebean.Finder;
 import io.ebean.Model;
+import org.hibernate.validator.constraints.Email;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
@@ -17,23 +18,20 @@ public class User extends Model {
     public Long id;
 
 
-    public User(@Constraints.Required @Constraints.Email String email, @Constraints.Required String password, @Constraints.Required String user_type) {
+    public User(String email, String password,  String user_type) {
         this.email = email;
         this.password = password;
         this.user_type = user_type;
     }
 
-    @Column (nullable = false)
-    @Constraints.Required
-    @Constraints.Email
+    @Column (nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column(name = "password", nullable = false)
-    @Constraints.Required
     private String password;
 
     @Column(nullable = false)
-    @Constraints.Required
     private String user_type;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")

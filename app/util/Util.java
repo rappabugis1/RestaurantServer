@@ -16,7 +16,7 @@ public class Util {
             result.put("body", (String) response);
         }
         else {
-            result.put("body", (JsonNode) response);
+            result.set("body", result);
         }
 
         return result;
