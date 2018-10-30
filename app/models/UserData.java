@@ -5,6 +5,7 @@ import io.ebean.Finder;
 import io.ebean.Model;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 @Entity

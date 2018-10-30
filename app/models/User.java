@@ -2,16 +2,12 @@ package models;
 
 import io.ebean.Finder;
 import io.ebean.Model;
-import org.hibernate.validator.constraints.Email;
-import play.data.validation.Constraints;
-
 import javax.persistence.*;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import javax.persistence.Table;
+import java.util.List;
 
 @Entity
-@Table (name = "users")
+@Table(name = "users")
 public class User extends Model {
 
     @Id
@@ -25,11 +21,13 @@ public class User extends Model {
     }
 
     @Column (nullable = false, unique = true)
-    @Email
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
+
+    @Column (nullable = false)
+    private String salt;
 
     @Column(nullable = false)
     private String user_type;
@@ -37,8 +35,26 @@ public class User extends Model {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserData user_data;
 
+    @OneToMany (mappedBy = "user")
+    List<Review> reviews;
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     public static final Finder<Long, User> finder= new Finder<>(User.class);
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 
     public UserData getUser_data() {
         return user_data;

@@ -2,7 +2,8 @@ package daos.implementations;
 
 import daos.interfaces.UserDao;
 import models.User;
-import models.UserData;
+import util.PasswordUtil;
+
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -46,13 +47,24 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User findUserByPassEmail (String email, String password){
-        return User.finder.query()
-                .where()
-                .eq("email", email)
-                .eq("password", password)
-                .findOne();
+    public User verifyProvidedInfo(String email, String password){
+        User tempUser = getUserbyEmail(email);
+
+        if(tempUser!=null){
+            String securedPassword = tempUser.getPassword();
+            String salt = tempUser.getSalt();
+
+            if( PasswordUtil.verifyUserPassword(password, securedPassword, salt)){
+                return tempUser;
+            } else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
     }
+
 
 
 

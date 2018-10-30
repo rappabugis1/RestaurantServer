@@ -2,9 +2,9 @@ package models;
 
 import io.ebean.Finder;
 import io.ebean.Model;
-import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 @Entity

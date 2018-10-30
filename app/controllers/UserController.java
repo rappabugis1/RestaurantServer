@@ -1,9 +1,12 @@
 package controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.typesafe.config.Config;
 import daos.implementations.CountryDaoImpl;
 import daos.implementations.LocationDaoImpl;
 import daos.implementations.UserDaoImpl;
@@ -15,11 +18,20 @@ import models.Location;
 import models.User;
 import models.UserData;
 import play.mvc.*;
+import util.PasswordUtil;
 
+import javax.inject.Inject;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 
 public class UserController extends Controller {
+
+    @Inject
+    private Config config;
 
     CountryDao countryDao= new CountryDaoImpl();
     UserDao userDao= new UserDaoImpl();
@@ -51,6 +63,10 @@ public class UserController extends Controller {
             newUser.setUser_data(newUserData);
 
             newUserData.setUser(newUser);
+
+            //Password encrytpion
+            PasswordSeting(newUser);
+
             try {
                 newUser.save();
             } catch (Exception e){
@@ -79,10 +95,15 @@ public class UserController extends Controller {
     public Result loginUser()
             throws IOException{
         JsonNode json= request().body().asJson();
+
+        if(json==null){
+            return badRequest("Invalid JSON!");
+        }
+
         ObjectMapper mapper = new ObjectMapper();
 
         User newUser = mapper.convertValue(json, User.class);
-        User temp=userDao.findUserByPassEmail(newUser.getEmail(),newUser.getPassword());
+        User temp=userDao.verifyProvidedInfo(newUser.getEmail(),newUser.getPassword());
 
         if(temp!=null){
             ObjectNode node = mapper.createObjectNode();
@@ -97,10 +118,31 @@ public class UserController extends Controller {
                     .put("lastName", temp.getUser_data().getLastName());
 
             JsonNode jsonNode =  new ObjectMapper().readTree(node.toString());
-            return ok(jsonNode.toString());
+            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id)) ;
         }
         else {
             return badRequest("Entered data is not valid!");
         }
     }
+
+    private static void PasswordSeting(User user ){
+        String salt = PasswordUtil.getSalt(30);
+        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
+
+        user.setPassword(securedPassword);
+        user.setSalt(salt);
+    }
+
+
+    private String getSignedToken(Long userId) {
+        String secret = config.getString("play.http.secret.key");
+
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return JWT.create()
+                .withIssuer("server")
+                .withClaim("user_id", userId)
+                .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(10).toInstant()))
+                .sign(algorithm);
+    }
+
 }

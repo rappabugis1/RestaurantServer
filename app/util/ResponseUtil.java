@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.libs.Json;
 
-public class Util {
+public class ResponseUtil {
 
     public static ObjectNode createResponse (Object response, boolean ok) {
 

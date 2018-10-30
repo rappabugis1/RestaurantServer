@@ -16,8 +16,7 @@ public interface UserDao {
     User getUserbyId(Long id);
     User getUserbyEmail(String email);
     Boolean checkEmailExists (String email);
-    User findUserByPassEmail (String email, String password);
-
+    User verifyProvidedInfo(String email, String password);
 
     //Update methods
 
