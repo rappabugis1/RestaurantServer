@@ -48,4 +48,7 @@ public class Location extends Model {
 
     public static final Finder<Long, Location> finder = new Finder<>(Location.class);
 
+    public Location(Long id) {
+
+    }
 }

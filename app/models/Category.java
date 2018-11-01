@@ -12,25 +12,34 @@ import java.util.List;
 public class Category extends Model {
 
     @Id
-    Long id;
+    public Long id;
 
     @Column(nullable = false, unique = true)
-    private String foodType;
+    private String name;
 
     @ManyToMany(mappedBy = "categories")
     List<Restaurant> restaurants ;
 
     public static final Finder<Long, Category> finder = new Finder<>(Category.class);
 
-    public String getFoodType() {
-        return foodType;
+    public String getName() {
+        return name;
     }
 
-    public void setFoodType(String foodType) {
-        this.foodType = foodType;
+    public Category(int id) {
+
+    }
+    public Category(){
+
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public static Finder<Long, Category> getFinder() {
         return finder;
     }
+
+
 }

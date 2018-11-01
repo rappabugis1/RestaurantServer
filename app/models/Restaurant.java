@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -132,6 +133,17 @@ public class Restaurant extends Model {
 
     @OneToMany (mappedBy = "restaurant")
     List<Review> reviews;
+
+    @OneToMany (mappedBy = "restaurant")
+    List<Menu> menus;
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<Menu> menus) {
+        this.menus = menus;
+    }
 
     public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
 

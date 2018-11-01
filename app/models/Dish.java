@@ -60,8 +60,9 @@ public class Dish extends Model {
         this.menu = menu;
     }
 
-    public DishType getType() {
-        return type;
+    public String  getType() {
+
+        return type.getType();
     }
 
     public void setType(DishType type) {

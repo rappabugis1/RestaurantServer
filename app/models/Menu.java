@@ -5,6 +5,7 @@ import io.ebean.Model;
 
 import javax.persistence.*;
 import javax.persistence.Table;
+import java.util.List;
 
 
 @Entity
@@ -20,6 +21,17 @@ public class Menu extends Model {
 
     @ManyToOne(cascade = CascadeType.ALL,optional = false)
     Restaurant restaurant;
+
+    @OneToMany (mappedBy = "menu")
+    List<Dish> dishes;
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
 
     public static final Finder<Long, Menu> finder = new Finder<>(Menu.class);
 

@@ -28,6 +28,7 @@ public class CountryDaoImpl implements CountryDao {
                 .eq("country", name)
                 .findOne();
     }
+
     @Override
     public Boolean checkIfExists (String name) {
         return Country.getFinder().query()

@@ -21,6 +21,11 @@ public class LocationDaoImpl implements LocationDao {
     //Read methods
 
     @Override
+    public Location getById(Long id){
+        return Location.getFinder().byId(id);
+    }
+
+    @Override
     public Location getLocationByName (String name){
         return Location.getFinder().query()
                 .where()

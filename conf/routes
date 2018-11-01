@@ -11,3 +11,15 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 POST /app/register                      controllers.UserController.registerUser
 
 POST /app/login                      controllers.UserController.loginUser
+
+POST /app/admin/addCategory       controllers.CategoriesAdmin.addCategory
+
+POST /app/admin/addRestaurant   controllers.RestaurantController.addRestaurant
+
+POST /app/getRestaurantDetails  controllers.RestaurantController.getRestaurantDetails
+
+POST /app/insertComment   controllers.RestaurantController.insertComment
+
+GET /app/getRestaurantLocations controllers.RestaurantController.getRestaurantLocations
+
+GET /app/getAllCategories  controllers.RestaurantController.getAllCategories

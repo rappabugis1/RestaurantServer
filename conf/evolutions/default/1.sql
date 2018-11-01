@@ -5,8 +5,8 @@
 
 create table categories (
   id                            bigserial not null,
-  food_type                     varchar(255) not null,
-  constraint uq_categories_food_type unique (food_type),
+  name                          varchar(255) not null,
+  constraint uq_categories_name unique (name),
   constraint pk_categories primary key (id)
 );
 
