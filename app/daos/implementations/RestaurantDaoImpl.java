@@ -1,5 +1,7 @@
 package daos.implementations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,6 +9,8 @@ import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
 import models.Restaurant;
+import org.omg.CORBA.Object;
+import play.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,8 +53,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
     public String locationsRestaurant () throws IOException {
 
         final String sql =
-                "SELECT r.location_id, l.city, COUNT(r.location_id) as num\n" +
-                "FROM restaurants r, locations  l \n" +
+                "SELECT r.location_id as id, l.city as \"LOCATION\", COUNT(r.location_id) as num\n" +
+                "FROM restaurants r, locations  l  TABLESAMPLE SYSTEM_ROWS(20)\n" +
                 "WHERE r.location_id=l.id\n" +
                 "GROUP BY r.location_id,l.city";
 
@@ -58,23 +62,31 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayNode nodeParent = mapper.createArrayNode();
+        return mapper.writeValueAsString(sqlRows);
 
-        for (SqlRow row: sqlRows) {
-            ObjectNode nodeChild = mapper.createObjectNode();
+    }
 
-            nodeChild
-                    .put("id", row.getLong("location_id"))
-                    .put("location", row.getString("city"))
-                    .put("number", row.getInteger("num"));
+    @Override
+    public String getRandomRestaurants() throws JsonProcessingException {
+         final String sql =
+                "SELECT  r.id, r.restaurant_name as \"restaurantName\",count(reviews.id) as votes, coalesce(round(avg(reviews.mark),0),0) as mark ,r.description, r.price_range as \"priceRange\", r.latitude, r.longitude, r.image_file_name as \"imageFileName\", r.cover_file_name as \"coverFileName\", r.location_id, string_agg(categories.name, '|') as \"foodType\"  \n" +
+                        "FROM restaurants r TABLESAMPLE SYSTEM_ROWS(6)\n" +
+                        "join restaurant_categories on r.id= restaurant_categories.restaurant_id\n" +
+                        "join categories on categories.id=restaurant_categories.category_id \n" +
+                        "left join  reviews on reviews.restaurant_id= r.id\n" +
+                        "group by r.id\n";
 
-            nodeParent.add(nodeChild);
-        }
 
-        return (new ObjectMapper().readTree(nodeParent.toString())).toString();
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql).findList();
 
+
+        ObjectMapper mapper = new ObjectMapper();
+
+
+        return mapper.writeValueAsString(sqlRows);
     }
     //Update methods
 
     //Delete methods
+
 }

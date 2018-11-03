@@ -17,6 +17,7 @@ import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
+import play.Logger;
 import play.mvc.*;
 import util.PasswordUtil;
 
@@ -41,6 +42,7 @@ public class UserController extends Controller {
             throws  IOException {
 
         JsonNode json= request().body().asJson();
+
 
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -67,10 +69,11 @@ public class UserController extends Controller {
             //Password encrytpion
             PasswordSeting(newUser);
 
+
             try {
                 newUser.save();
             } catch (Exception e){
-                return badRequest("Invalid JSON");
+                return badRequest("Invalid JSON" + e.getMessage());
             }
             ObjectNode node = mapper.createObjectNode();
 
@@ -118,7 +121,7 @@ public class UserController extends Controller {
                     .put("lastName", temp.getUser_data().getLastName());
 
             JsonNode jsonNode =  new ObjectMapper().readTree(node.toString());
-            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id)) ;
+            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type())) ;
         }
         else {
             return badRequest("Entered data is not valid!");
@@ -134,13 +137,14 @@ public class UserController extends Controller {
     }
 
 
-    private String getSignedToken(Long userId) {
+    private String getSignedToken(Long userId, String usertype) {
         String secret = config.getString("play.http.secret.key");
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.create()
                 .withIssuer("server")
                 .withClaim("user_id", userId)
+                .withClaim("user_type", usertype)
                 .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(10).toInstant()))
                 .sign(algorithm);
     }

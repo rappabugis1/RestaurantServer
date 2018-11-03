@@ -1,5 +1,6 @@
 package daos.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import models.Restaurant;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public interface RestaurantDao {
     Restaurant getRestaurantbyId(Long id);
     Restaurant getRestaurantByName (String name);
     String locationsRestaurant () throws IOException;
+    String getRandomRestaurants() throws JsonProcessingException;
     //Update methods
 
     //Delete methods

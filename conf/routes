@@ -23,3 +23,5 @@ POST /app/insertComment   controllers.RestaurantController.insertComment
 GET /app/getRestaurantLocations controllers.RestaurantController.getRestaurantLocations
 
 GET /app/getAllCategories  controllers.RestaurantController.getAllCategories
+
+GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaurants

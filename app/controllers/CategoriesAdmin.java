@@ -23,7 +23,7 @@ public class CategoriesAdmin extends Controller {
         if(json==null || json.get("name")==null)
             return badRequest();
 
-        Category newCategory = catDao.createCategory(json.get("name").toString());
+        Category newCategory = catDao.createCategory(json.get("name").asText());
 
         if(newCategory==null)
             return badRequest();

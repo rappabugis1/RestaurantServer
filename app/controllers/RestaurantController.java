@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -165,6 +166,14 @@ public class RestaurantController extends Controller {
         }
         catch (Exception e) {
             return  badRequest("Something went wrong : " +e.getMessage());
+        }
+    }
+
+    public Result getRandomRestaurants(){
+        try {
+            return ok(restDao.getRandomRestaurants());
+        } catch (JsonProcessingException e) {
+            return badRequest(e.getMessage());
         }
     }
 
