@@ -17,7 +17,7 @@ public interface RestaurantDao {
     Restaurant getRestaurantbyId(Long id);
     Restaurant getRestaurantByName (String name);
     String locationsRestaurant () throws IOException;
-    String getRandomRestaurants() throws JsonProcessingException;
+    String getRandomRestaurants() throws IOException;
     //Update methods
 
     //Delete methods

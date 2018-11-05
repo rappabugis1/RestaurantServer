@@ -13,6 +13,7 @@ import daos.interfaces.CategoryDao;
 import daos.interfaces.LocationDao;
 import daos.interfaces.RestaurantDao;
 import models.*;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -53,7 +54,6 @@ public class RestaurantController extends Controller {
             }
 
             restDao.createRestaurant(newRestaurant);
-
 
             return ok(getJsonRest(newRestaurant));
 
@@ -135,17 +135,31 @@ public class RestaurantController extends Controller {
 
         try {
 
-            Review newReview = new Review();
+            Review newReview = Review.getFinder()
+                    .query()
+                    .where()
+                    .eq("user_id", json.get("idUser").asLong())
+                    .eq("restaurant_id" ,json.get("idRestaurant").asLong())
+                    .findOne();
 
-            newReview.setMark(json.get("mark").asInt());
-            newReview.setComment(json.get("comment").toString());
-            newReview.setInsertTime(new Timestamp(System.currentTimeMillis()).toString());
-            newReview.setUser(User.finder.byId(json.get("idUser").asLong()));
-            newReview.setRestaurant(Restaurant.finder.byId(json.get("idRestaurant").asLong()));
 
+
+            if(newReview==null) {
+                newReview= new Review();
+                newReview.setMark(json.get("mark").asInt());
+                newReview.setComment(json.get("comment").toString());
+                newReview.setInsertTime(new Timestamp(System.currentTimeMillis()).toString());
+                newReview.setUser(User.finder.byId(json.get("idUser").asLong()));
+                newReview.setRestaurant(Restaurant.finder.byId(json.get("idRestaurant").asLong()));
+                newReview.save();
+
+            }
+            else{
+                newReview.setComment(json.get("comment").toString());
+                newReview.setMark(json.get("mark").asInt());
+                newReview.update();
+            }
             //TODO REVIEW DAO
-
-            newReview.save();
 
             return ok();
 
@@ -172,7 +186,7 @@ public class RestaurantController extends Controller {
     public Result getRandomRestaurants(){
         try {
             return ok(restDao.getRandomRestaurants());
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
