@@ -46,7 +46,6 @@ create table menus (
   id                            bigserial not null,
   type                          varchar(255) not null,
   restaurant_id                 bigint not null,
-  constraint uq_menus_type unique (type),
   constraint pk_menus primary key (id)
 );
 

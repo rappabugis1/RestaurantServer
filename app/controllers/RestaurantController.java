@@ -86,8 +86,8 @@ public class RestaurantController extends Controller {
     public Result getRestaurantMenu() {
 
         JsonNode json = request().body().asJson();
-        Long id = Long.valueOf(json.get("idRestaurant").toString());
-        String menu_type = json.get("type").toString();
+        Long id = json.get("idRestaurant").asLong();
+        String menu_type = json.get("type").asText();
 
         Restaurant restaurant = restDao.getRestaurantbyId(id);
 
@@ -104,7 +104,7 @@ public class RestaurantController extends Controller {
         }
 
         if (returnMenu == null)
-            return badRequest();
+            return badRequest("Menu does not exist!");
 
         try {
             return ok(getJsonMenu(returnMenu, id));

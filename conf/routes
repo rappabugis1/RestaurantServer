@@ -25,3 +25,5 @@ GET /app/getRestaurantLocations controllers.RestaurantController.getRestaurantLo
 GET /app/getAllCategories  controllers.RestaurantController.getAllCategories
 
 GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaurants
+
+POST /app/getRestaurantMenu controllers.RestaurantController.getRestaurantMenu
