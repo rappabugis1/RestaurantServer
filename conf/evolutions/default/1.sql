@@ -61,7 +61,7 @@ create table reservations (
 create table restaurants (
   id                            bigserial not null,
   restaurant_name               varchar(255) not null,
-  description                   varchar(255) not null,
+  description                   varchar(2000) not null,
   price_range                   integer not null,
   latitude                      float not null,
   longitude                     float not null,
@@ -80,7 +80,7 @@ create table restaurant_categories (
 create table reviews (
   id                            bigserial not null,
   mark                          integer not null,
-  comment                       varchar(255) not null,
+  comment                       varchar(500) not null,
   insert_time                   varchar(255) not null,
   user_id                       bigint not null,
   restaurant_id                 bigint not null,

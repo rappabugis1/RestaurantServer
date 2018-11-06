@@ -94,7 +94,7 @@ public class Restaurant extends Model {
         return finder;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String description;
 
     @Column(nullable = false, name = "price_range")

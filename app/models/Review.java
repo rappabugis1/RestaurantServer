@@ -16,7 +16,7 @@ public class Review extends Model {
     @Column(nullable = false)
     private int mark;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String comment;
 
     @Column(nullable = false, name = "insert_time")
