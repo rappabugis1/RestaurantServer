@@ -17,13 +17,10 @@ import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
-import play.Logger;
 import play.mvc.*;
 import util.PasswordUtil;
-
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;

@@ -27,3 +27,5 @@ GET /app/getAllCategories  controllers.RestaurantController.getAllCategories
 GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaurants
 
 POST /app/getRestaurantMenu controllers.RestaurantController.getRestaurantMenu
+
+POST /app/makeReservation controllers.ReservationController.makeReservation

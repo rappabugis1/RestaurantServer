@@ -53,8 +53,11 @@ create table reservations (
   id                            bigserial not null,
   persons                       integer not null,
   reservation_date_time         varchar(255) not null,
-  user_id                       bigint,
-  restaurant_id                 bigint,
+  request                       varchar(255),
+  temp                          boolean,
+  time_created                  timestamptz not null,
+  user_id                       bigint not null,
+  restaurant_id                 bigint not null,
   constraint pk_reservations primary key (id)
 );
 
