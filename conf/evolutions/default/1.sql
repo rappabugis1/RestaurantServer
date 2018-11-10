@@ -52,12 +52,14 @@ create table menus (
 create table reservations (
   id                            bigserial not null,
   persons                       integer not null,
-  reservation_date_time         varchar(255) not null,
+  reservation_date_time         timestamptz not null,
+  reservation_end_date_time     timestamptz not null,
   request                       varchar(255),
   temp                          boolean,
   time_created                  timestamptz not null,
   user_id                       bigint not null,
   restaurant_id                 bigint not null,
+  table_id                      bigint not null,
   constraint pk_reservations primary key (id)
 );
 
@@ -136,6 +138,9 @@ create index ix_reservations_user_id on reservations (user_id);
 alter table reservations add constraint fk_reservations_restaurant_id foreign key (restaurant_id) references restaurants (id) on delete restrict on update restrict;
 create index ix_reservations_restaurant_id on reservations (restaurant_id);
 
+alter table reservations add constraint fk_reservations_table_id foreign key (table_id) references tables (id) on delete restrict on update restrict;
+create index ix_reservations_table_id on reservations (table_id);
+
 alter table restaurants add constraint fk_restaurants_location_id foreign key (location_id) references locations (id) on delete restrict on update restrict;
 create index ix_restaurants_location_id on restaurants (location_id);
 
@@ -179,6 +184,9 @@ drop index if exists ix_reservations_user_id;
 
 alter table if exists reservations drop constraint if exists fk_reservations_restaurant_id;
 drop index if exists ix_reservations_restaurant_id;
+
+alter table if exists reservations drop constraint if exists fk_reservations_table_id;
+drop index if exists ix_reservations_table_id;
 
 alter table if exists restaurants drop constraint if exists fk_restaurants_location_id;
 drop index if exists ix_restaurants_location_id;

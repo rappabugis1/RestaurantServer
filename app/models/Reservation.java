@@ -1,8 +1,7 @@
 package models;
 
+import io.ebean.Finder;
 import io.ebean.Model;
-import io.ebean.config.JsonConfig;
-
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -17,13 +16,59 @@ public class Reservation extends Model {
     private int persons;
 
     @Column(nullable = false, name = "reservation_date_time")
-    private String reservationDateTime;
+    private Timestamp reservationDateTime;
+
+    @Column(nullable = false, name = "reservation_end_date_time")
+    private Timestamp reservationEndDateTime;
 
     @Column
     private String request;
 
     @Column
     private Boolean temp;
+
+    @Column(nullable = false, name="time_created")
+    private Timestamp timeCreated;
+
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    private User user;
+
+    @ManyToOne (cascade = CascadeType.ALL, optional = false)
+    private Restaurant restaurant;
+
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    private models.Table table;
+
+    public static final Finder<Long,Reservation> finder = new Finder<>(Reservation.class);
+
+    public Reservation(int persons, Timestamp reservationDateTime, String request, Boolean temp, Timestamp endTime, Timestamp timeCreated) {
+        this.persons = persons;
+        this.reservationDateTime = reservationDateTime;
+        this.request = request;
+        this.temp = temp;
+        this.reservationEndDateTime = endTime;
+        this.timeCreated = timeCreated;
+    }
+
+    public static Finder<Long, Reservation> getFinder() {
+        return finder;
+    }
+
+    public models.Table getTable() {
+        return table;
+    }
+
+    public void setTable(models.Table table) {
+        this.table = table;
+    }
+
+    public Timestamp getReservationEndDateTime() {
+        return reservationEndDateTime;
+    }
+
+    public void setReservationEndDateTime(Timestamp reservationEndDateTime) {
+        this.reservationEndDateTime = reservationEndDateTime;
+    }
 
     public Boolean getTemp() {
         return temp;
@@ -41,14 +86,6 @@ public class Reservation extends Model {
         this.timeCreated = timeCreated;
     }
 
-    @Column(nullable = false, name="time_created")
-    private Timestamp timeCreated;
-
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    private User user;
-
-    @ManyToOne (cascade = CascadeType.ALL, optional = false)
-    private Restaurant restaurant;
 
     public int getPersons() {
         return persons;
@@ -58,11 +95,11 @@ public class Reservation extends Model {
         this.persons = persons;
     }
 
-    public String getReservationDateTime() {
+    public Timestamp getReservationDateTime() {
         return reservationDateTime;
     }
 
-    public void setReservationDateTime(String reservationDateTime) {
+    public void setReservationDateTime(Timestamp reservationDateTime) {
         this.reservationDateTime = reservationDateTime;
     }
 
