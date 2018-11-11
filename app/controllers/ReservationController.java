@@ -28,39 +28,34 @@ public class ReservationController extends Controller {
 
     //Post actions
 
-    public Result makeReservation(){
+
+    public Result checkReservationAvailability(){
         JsonNode json = request().body().asJson();
-
-
 
         if (json == null)
             return badRequest("Invalid Json is null");
 
         //Getting required data
         try{
+            Timestamp reservationDateTime=getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
 
+            Long idRestaurant = json.get("idRestaurant").asLong();
 
-            Reservation tempReservation= getReservationFromRequest(json);
+            int persons = json.get("persons").asInt();
 
-            Table tempTable= resDao.CheckIfReservationAvailable(tempReservation);
-            if (tempTable!=null){
-                tempReservation.setTable(tempTable);
+            //Hardcoded value for length of stay, right now not a requirement in frontend but this is how it should work, default stay is 2 hours
+            int lengthOfStay= json.get("lengthOfStay").asInt();
 
-                tempReservation.save();
-            }
-            else
-                return badRequest("tugi");
+            //Get reservation end
+            Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
 
             //check if available
+
+            resDao.CheckIfReservationAvailable(persons, idRestaurant, reservationDateTime, reservationEnd);
 
         } catch (Exception e){
             return badRequest(e.getMessage());
         }
-         return ok();
-    }
-
-
-    public Result checkReservationAvailability(){
         return ok();
     }
 
@@ -78,13 +73,7 @@ public class ReservationController extends Controller {
         Long idUser = jwt.getClaim("user_id").asLong();
 
         //Parse date fron json to timestamp
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        Date parsedDate = dateFormat.parse(json.get("reservationDate").asText()+" "+json.get("reservationHour").asText());
-
-        if(parsedDate.before(new Date()))
-            throw new ParseException("Date is expired", 1);
-
-        Timestamp reservationDateTime = new Timestamp(parsedDate.getTime());
+        Timestamp reservationDateTime = getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
 
         Long idRestaurant = json.get("idRestaurant").asLong();
 
@@ -104,6 +93,15 @@ public class ReservationController extends Controller {
         return  returnReservation;
     }
 
+    private Timestamp getStampFromDate(String reservationDate, String reservationHour) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date parsedDate = dateFormat.parse(reservationDate+" "+reservationHour);
+
+        if(parsedDate.before(new Date()))
+            throw new ParseException("Date is expired", 1);
+
+        return new Timestamp(parsedDate.getTime());
+    }
 
 
 }

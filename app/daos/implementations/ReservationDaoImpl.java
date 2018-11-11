@@ -18,14 +18,14 @@ public class ReservationDaoImpl implements ReservationDao {
 
     //Read
     @Override
-    public Table CheckIfReservationAvailable(Reservation reservation) throws Exception{
+    public Table CheckIfReservationAvailable(int persons, Long restaurant_id, Timestamp reservationDateTime, Timestamp reservationEndDateTime) throws Exception{
 
         //Get tables that are in restaurant
         List<Table> tableIds = Table.getFinder().query()
                 .where()
-                .eq("restaurant_id", reservation.getRestaurant().id)
+                .eq("restaurant_id", restaurant_id)
                 .and()
-                .ge("sitting_places",reservation.getPersons())
+                .ge("sitting_places",persons)
                 .findList();
 
         if(tableIds.isEmpty())
@@ -36,11 +36,11 @@ public class ReservationDaoImpl implements ReservationDao {
 
     try{
         for (Table table: tableIds) {
-            Reservation reservationColision = FindReservationColisions(reservation.getRestaurant().id, table.id, reservation.getReservationDateTime(),reservation.getReservationEndDateTime());
+            Reservation reservationColision = FindReservationColisions(restaurant_id, table.id, reservationDateTime, reservationEndDateTime);
 
             //If there is no collisionn add the reservation time to available times, that means the wanted time is free
             if(reservationColision==null){
-                availableTimes.add(reservation.getReservationDateTime());
+                availableTimes.add(reservationDateTime);
                 freeTables++;
 
                 return table;
@@ -50,17 +50,17 @@ public class ReservationDaoImpl implements ReservationDao {
                 //If not, begin recursive algorithms to find the left and right best times available
                 //Find the left and right best time, add them to the array
 
-                Long lengthOfReservation = reservation.getReservationEndDateTime().getTime()-reservation.getReservationDateTime().getTime();
+                Long lengthOfReservation = reservationEndDateTime.getTime()-reservationDateTime.getTime();
 
                 Timestamp leftBest= FindNextAvailableTimeLeft(
-                        reservation.getRestaurant().id,
+                        restaurant_id,
                         table.id,
                         new Timestamp(reservationColision.getReservationDateTime().getTime()-lengthOfReservation),
                         reservationColision.getReservationDateTime()
                 );
 
                 Timestamp rightBest = FindNextAvailableTimeRight(
-                        reservation.getRestaurant().id,
+                        restaurant_id,
                         table.id,
                         reservationColision.getReservationEndDateTime(),
                         new Timestamp(reservationColision.getReservationEndDateTime().getTime()+lengthOfReservation)

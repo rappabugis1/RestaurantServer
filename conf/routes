@@ -28,4 +28,4 @@ GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaura
 
 POST /app/getRestaurantMenu controllers.RestaurantController.getRestaurantMenu
 
-POST /app/makeReservation controllers.ReservationController.makeReservation
+POST /app/checkReservationAvailability controllers.ReservationController.checkReservationAvailability
