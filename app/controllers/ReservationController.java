@@ -4,6 +4,8 @@ package controllers;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.implementations.ReservationDaoImpl;
 import daos.implementations.RestaurantDaoImpl;
 import daos.implementations.UserDaoImpl;
@@ -14,11 +16,12 @@ import models.Reservation;
 import models.Table;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 public class ReservationController extends Controller {
 
@@ -28,15 +31,15 @@ public class ReservationController extends Controller {
 
     //Post actions
 
-
     public Result checkReservationAvailability(){
         JsonNode json = request().body().asJson();
 
         if (json == null)
             return badRequest("Invalid Json is null");
-
-        //Getting required data
         try{
+
+            //-------------Getting required data
+
             Timestamp reservationDateTime=getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
 
             Long idRestaurant = json.get("idRestaurant").asLong();
@@ -51,12 +54,78 @@ public class ReservationController extends Controller {
 
             //check if available
 
-            resDao.CheckIfReservationAvailable(persons, idRestaurant, reservationDateTime, reservationEnd);
+            //Get tables that are in restaurant
+            List<Table> tableIds = resDao.getTablesOfRestaurantWithPersons(persons, idRestaurant);
+
+            if(tableIds.isEmpty())
+                throw new Exception("No available tables for that amount of people");
+
+            Set<Timestamp> setTimes = new HashSet<>();
+            int freeTables =0;
+
+
+            //-------------Starting algorithm
+
+
+            try{
+                for (Table table: tableIds) {
+                    Reservation reservationColision = FindReservationColisions(idRestaurant, table.id, reservationDateTime, reservationEnd);
+
+                    //If there is no collisionn add the reservation time to available times, that means the wanted time is free
+                    if(reservationColision==null){
+                        setTimes.add(reservationDateTime);
+                        freeTables++;
+                    }
+                    else{
+
+                        //If not, begin recursive algorithms to find the left and right best times available
+                        Long lengthOfReservation = reservationEnd.getTime()-reservationDateTime.getTime();
+
+                        Timestamp leftBest= FindNextAvailableTimeLeft(
+                                idRestaurant,
+                                table.id,
+                                new Timestamp(reservationColision.getReservationDateTime().getTime()-lengthOfReservation),
+                                reservationColision.getReservationDateTime()
+                        );
+
+                        Timestamp rightBest = FindNextAvailableTimeRight(
+                                idRestaurant,
+                                table.id,
+                                reservationColision.getReservationEndDateTime(),
+                                new Timestamp(reservationColision.getReservationEndDateTime().getTime()+lengthOfReservation)
+                        );
+
+                        //Find the left and right best time, add them to the array
+                        setTimes.add(leftBest);
+                        setTimes.add(rightBest);
+                        freeTables++;
+                    }
+                }
+
+                //TODO reduce number of available times, right now its 2 per table
+
+                ArrayList<String> convertedTime = new ArrayList<>();
+
+                for ( Timestamp stamp: setTimes ) {
+                    convertedTime.add(getTimeStringFromStamp(stamp));
+                }
+
+                ObjectNode nodeValue = (new ObjectMapper()).createObjectNode();
+                nodeValue.put("bestTime", convertedTime.toString());
+                nodeValue.put("tablesLeft", freeTables);
+                nodeValue.put("idRestaurant", idRestaurant);
+                nodeValue.put("restaurantName", restDao.getRestaurantbyId(idRestaurant).getRestaurantName());
+                nodeValue.put("restaurantImageFileName", restDao.getRestaurantbyId(idRestaurant).getImageFileName());
+
+                return ok((new ObjectMapper()).writeValueAsString(nodeValue));
+
+            } catch (Exception e){
+                return badRequest(e.getMessage());
+            }
 
         } catch (Exception e){
             return badRequest(e.getMessage());
         }
-        return ok();
     }
 
 
@@ -93,6 +162,11 @@ public class ReservationController extends Controller {
         return  returnReservation;
     }
 
+    private String getTimeStringFromStamp(Timestamp stamp){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(stamp);
+    }
+
     private Timestamp getStampFromDate(String reservationDate, String reservationHour) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date parsedDate = dateFormat.parse(reservationDate+" "+reservationHour);
@@ -102,6 +176,50 @@ public class ReservationController extends Controller {
 
         return new Timestamp(parsedDate.getTime());
     }
+
+    //-------------------RECURSIVE
+    //For each table reservations that evaluate true to the expression: (endOfReservation > userReservationStartTime) and ( startOfReservation < endTimeOfUserReservation)
+    //If there is none , the table is free for that time and the reservation is available
+    private Reservation FindReservationColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+
+        try{
+            List<Reservation> collisions= resDao.findColisions(resaurant_id, table_id, start, end);
+
+            return collisions.get(0);
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    //Recursive algorithm to find the nearest available time of a table
+    //Left side takes start as (beginning of collision - the length of the reservation), end is the beginning of collision
+    private Timestamp FindNextAvailableTimeLeft(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+        Reservation colision = FindReservationColisions(resaurant_id, table_id, start, end);
+
+        if(colision==null)
+            return start;
+        else{
+            //Calculates new start time
+            Timestamp startNewLeft = new Timestamp( colision.getReservationDateTime().getTime()-(end.getTime()-start.getTime()));
+            return FindNextAvailableTimeLeft(resaurant_id,table_id, startNewLeft, colision.getReservationDateTime());
+        }
+    }
+
+    //Right side takes start as the end time of the collision, and the end as the (end of collision + length of reservation)
+    private Timestamp FindNextAvailableTimeRight(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+        Reservation colision = FindReservationColisions(resaurant_id, table_id, start, end);
+
+        if(colision==null)
+            return start;
+        else{
+            //Calculates new start time
+            Timestamp endNewRight = new Timestamp(colision.getReservationEndDateTime().getTime()+(end.getTime()-start.getTime()));
+            return FindNextAvailableTimeRight(resaurant_id,table_id,colision.getReservationEndDateTime(), endNewRight);
+
+        }
+    }
+
 
 
 }
