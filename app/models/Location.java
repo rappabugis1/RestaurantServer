@@ -23,7 +23,7 @@ public class Location extends Model {
     @Size(max = 30)
     private String city;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(optional = false)
     Country country;
 
     public String getCity() {

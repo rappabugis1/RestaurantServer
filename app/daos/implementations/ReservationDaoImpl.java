@@ -18,6 +18,11 @@ public class ReservationDaoImpl implements ReservationDao {
     //Read
 
     @Override
+    public Reservation getReservationById(Long id){
+        return Reservation.getFinder().byId(id);
+    }
+
+    @Override
 
     public List<Table> getTablesOfRestaurantWithPersons(int persons, Long restaurant_id){
         return Table.getFinder().query()
@@ -41,7 +46,31 @@ public class ReservationDaoImpl implements ReservationDao {
                 .findList();
     }
 
+    //Edit
 
+    @Override
+    public void setReservationToFixed(Long id) throws Exception {
+        Reservation tempReservation = getReservationById(id);
+        if(tempReservation==null)
+            throw new Exception("Reservation does not exist");
+
+        tempReservation.setTemp(false);
+        tempReservation.update();
+    }
+
+    //Delete
+
+    @Override
+    public void deleteReservation( Long id) throws Exception {
+        Reservation tempReservation = getReservationById(id);
+        if(tempReservation==null)
+            throw new Exception("Reservation does not exist");
+
+        if(!tempReservation.getTemp())
+            throw new Exception("Reservation is not temporary");
+
+        getReservationById(id).delete();
+    }
 
 
 }

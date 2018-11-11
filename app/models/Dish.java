@@ -22,10 +22,10 @@ public class Dish extends Model {
     @Column(nullable = false)
     private int price;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(optional = false)
     Menu menu;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
     DishType type;
 
     public String getName() {

@@ -29,3 +29,9 @@ GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaura
 POST /app/getRestaurantMenu controllers.RestaurantController.getRestaurantMenu
 
 POST /app/checkReservationAvailability controllers.ReservationController.checkReservationAvailability
+
+POST /app/makeReservation controllers.ReservationController.makeReservation
+
+POST /app/deleteReservation controllers.ReservationController.deleteReservation
+
+POST /app/setReservationToFixed controllers.ReservationController.setReservationToFixed

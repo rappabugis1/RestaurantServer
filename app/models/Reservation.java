@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Table(name = "reservations")
 public class Reservation extends Model {
     @Id
-    Long id;
+    public Long id;
 
     @Column(nullable = false)
     private int persons;
@@ -30,13 +30,13 @@ public class Reservation extends Model {
     @Column(nullable = false, name="time_created")
     private Timestamp timeCreated;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
     private User user;
 
-    @ManyToOne (cascade = CascadeType.ALL, optional = false)
+    @ManyToOne ( optional = false)
     private Restaurant restaurant;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
     private models.Table table;
 
     public static final Finder<Long,Reservation> finder = new Finder<>(Reservation.class);
