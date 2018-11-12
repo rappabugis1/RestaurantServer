@@ -131,10 +131,10 @@ public class Restaurant extends Model {
             )
     List<Category> categories;
 
-    @OneToMany (mappedBy = "restaurant")
+    @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     List<Review> reviews;
 
-    @OneToMany (mappedBy = "restaurant")
+    @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     List<Menu> menus;
 
     public List<Menu> getMenus() {

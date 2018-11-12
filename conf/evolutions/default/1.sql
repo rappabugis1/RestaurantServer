@@ -114,7 +114,7 @@ create table user_data (
   firstname                     varchar(255) not null,
   last_name                     varchar(255) not null,
   phone                         varchar(255) not null,
-  user_id                       bigint,
+  user_id                       bigint not null,
   location_id                   bigint not null,
   constraint uq_user_data_user_id unique (user_id),
   constraint pk_user_data primary key (id)

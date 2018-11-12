@@ -35,7 +35,7 @@ public class User extends Model {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserData user_data;
 
-    @OneToMany (mappedBy = "user")
+    @OneToMany (cascade = CascadeType.ALL,mappedBy = "user")
     List<Review> reviews;
 
     public List<Review> getReviews() {

@@ -31,10 +31,10 @@ public class UserData extends Model {
     @Size(min=6)
     private String phone;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     private User user;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL,optional = false)
     Location location;
 
 

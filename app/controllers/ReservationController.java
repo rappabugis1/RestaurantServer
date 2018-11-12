@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.implementations.ReservationDaoImpl;
 import daos.implementations.RestaurantDaoImpl;
@@ -181,16 +182,17 @@ public class ReservationController extends Controller {
             }
         }
 
-        //TODO reduce number of available times, right now its 2 per table
+        //TODO reduce number of available times, right now its 2 per table with no indentical values
 
         ArrayList<String> convertedTime = new ArrayList<>();
 
         for (Timestamp stamp : setTimes) {
-            convertedTime.add(getTimeStringFromStamp(stamp));
+            if(!stamp.before(new Date()))
+                convertedTime.add(getTimeStringFromStamp(stamp));
         }
 
         ObjectNode nodeValue = (new ObjectMapper()).createObjectNode();
-        nodeValue.put("bestTime", convertedTime.toString());
+        nodeValue.putArray("bestTime").addAll((ArrayNode)(new ObjectMapper()).valueToTree(convertedTime));
         nodeValue.put("tablesLeft", freeTables);
         nodeValue.put("idRestaurant", idRestaurant);
         nodeValue.put("restaurantName", restDao.getRestaurantbyId(idRestaurant).getRestaurantName());
