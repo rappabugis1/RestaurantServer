@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 

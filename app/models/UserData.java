@@ -1,6 +1,7 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -31,7 +32,8 @@ public class UserData extends Model {
     @Size(min=6)
     private String phone;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(optional = false)
+    @JsonIgnore
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL,optional = false)

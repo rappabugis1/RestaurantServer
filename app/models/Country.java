@@ -1,11 +1,13 @@
 package models;
 
+
+
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
 import javax.persistence.*;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "countries")
@@ -15,14 +17,13 @@ public class Country extends Model {
     public Long id;
 
     @Column(nullable = false, unique = true)
-    @Size(max = 50)
     private String country;
 
     public Country(String country) {
         this.country = country;
     }
 
-
+    @JsonValue
     public String getCountry() {
         return country;
     }

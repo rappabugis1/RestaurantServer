@@ -12,7 +12,7 @@ create table categories (
 
 create table countries (
   id                            bigserial not null,
-  country                       varchar(50) not null,
+  country                       varchar(255) not null,
   constraint uq_countries_country unique (country),
   constraint pk_countries primary key (id)
 );

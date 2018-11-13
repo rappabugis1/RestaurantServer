@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -17,6 +18,7 @@ public class DishType extends Model {
     public Long id;
 
     @Column(nullable = false, unique = true)
+    @JsonValue
     private String type;
 
     public static final Finder<Long, DishType> finder = new Finder<>(DishType.class);

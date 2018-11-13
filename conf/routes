@@ -36,3 +36,7 @@ POST /app/makeReservation controllers.ReservationController.makeReservation
 POST /app/deleteReservation controllers.ReservationController.deleteReservation
 
 POST /app/setReservationToFixed controllers.ReservationController.setReservationToFixed
+
+#Filters
+
+POST /app/getRestaurantsByFilter controllers.FilterController.getRestaurantsByFilter

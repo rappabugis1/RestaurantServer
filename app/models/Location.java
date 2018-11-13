@@ -1,8 +1,7 @@
 package models;
-
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
-
 import javax.persistence.*;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -12,6 +11,7 @@ import javax.validation.constraints.Size;
 public class Location extends Model {
 
     @Id
+    @JsonValue
     public Long id;
 
     public Location(String city, Country country) {

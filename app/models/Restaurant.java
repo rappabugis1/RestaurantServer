@@ -1,6 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -113,6 +115,7 @@ public class Restaurant extends Model {
     private String coverFileName;
 
     @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @JsonProperty("location_id")
     Location location;
 
     public List<Review> getReviews() {
@@ -129,12 +132,15 @@ public class Restaurant extends Model {
                     joinColumns = @JoinColumn(name="restaurant_id", referencedColumnName = "id"),
                     inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
             )
+    @JsonIgnore
     List<Category> categories;
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @JsonIgnore
     List<Review> reviews;
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @JsonIgnore
     List<Menu> menus;
 
     public List<Menu> getMenus() {
@@ -146,5 +152,37 @@ public class Restaurant extends Model {
     }
 
     public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
+
+    @JsonProperty("foodType")
+    private String foodType (){
+        StringBuilder foodType= new StringBuilder();
+        for (Category cat: this.categories
+             ) {
+            foodType.append(cat.getName()).append(" | ");
+        }
+        foodType.setLength(foodType.length()-2);
+        return foodType.toString();
+    }
+
+    @JsonProperty("mark")
+    private int average(){
+        int avg = 0;
+
+        for (Review review : this.reviews) {
+            avg += review.getMark();
+        }
+
+        if (avg > 0 && this.reviews.size() > 0)
+            avg /= this.reviews.size();
+        else
+            avg = 0;
+
+        return avg;
+    }
+
+    @JsonProperty("votes")
+    private int votes(){
+        return reviews.size();
+    }
 
 }
