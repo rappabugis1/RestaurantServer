@@ -25,7 +25,7 @@ public class CountryDaoImpl implements CountryDao {
     public Country getCountryByName (String name){
         return Country.getFinder().query()
                 .where()
-                .eq("country", name)
+                .eq("name", name)
                 .findOne();
     }
 
@@ -33,13 +33,13 @@ public class CountryDaoImpl implements CountryDao {
     public Boolean checkIfExists (String name) {
         return Country.getFinder().query()
                 .where()
-                .eq("country", name)
+                .eq("name", name)
                 .findCount()!=0;
     }
 
     @Override
     public Country checkIfExistsThenReturn (Country country){
-        Country temp = getCountryByName(country.getCountry());
+        Country temp = getCountryByName(country.getName());
         if(temp!=null)
             return temp;
         else return country;

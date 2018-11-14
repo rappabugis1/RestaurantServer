@@ -78,8 +78,8 @@ public class UserController extends Controller {
                     .put("id", newUser.id)
                     .put("email", newUser.getEmail())
                     .put("phone", newUserData.getPhone())
-                    .put("country", newCountry.getCountry())
-                    .put("city", newLocation.getCity())
+                    .put("country", newCountry.getName())
+                    .put("city", newLocation.getName())
                     .put("firstName", newUserData.getFirstName())
                     .put("lastName", newUserData.getLastName());
 
@@ -112,8 +112,8 @@ public class UserController extends Controller {
                     .put("id", temp.id)
                     .put("email", temp.getEmail())
                     .put("phone", temp.getUser_data().getPhone())
-                    .put("country", temp.getUser_data().getLocation().getCountry().getCountry())
-                    .put("city", temp.getUser_data().getLocation().getCity())
+                    .put("country", temp.getUser_data().getLocation().getCountry().getName())
+                    .put("city", temp.getUser_data().getLocation().getName())
                     .put("firstName", temp.getUser_data().getFirstName())
                     .put("lastName", temp.getUser_data().getLastName());
 

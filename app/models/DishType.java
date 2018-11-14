@@ -14,6 +14,10 @@ import javax.validation.constraints.Size;
 @Table(name = "dish_types")
 public class DishType extends Model {
 
+    public DishType(String type) {
+        this.type = type;
+    }
+
     @Id
     public Long id;
 

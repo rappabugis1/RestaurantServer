@@ -10,10 +10,16 @@ create table categories (
   constraint pk_categories primary key (id)
 );
 
+create table categories_restaurants (
+  categories_id                 bigint not null,
+  restaurants_id                bigint not null,
+  constraint pk_categories_restaurants primary key (categories_id,restaurants_id)
+);
+
 create table countries (
   id                            bigserial not null,
-  country                       varchar(255) not null,
-  constraint uq_countries_country unique (country),
+  name                          varchar(255) not null,
+  constraint uq_countries_name unique (name),
   constraint pk_countries primary key (id)
 );
 
@@ -36,9 +42,9 @@ create table dish_types (
 
 create table locations (
   id                            bigserial not null,
-  city                          varchar(30) not null,
+  name                          varchar(30) not null,
   country_id                    bigint not null,
-  constraint uq_locations_city unique (city),
+  constraint uq_locations_name unique (name),
   constraint pk_locations primary key (id)
 );
 
@@ -74,12 +80,6 @@ create table restaurants (
   cover_file_name               varchar(255) not null,
   location_id                   bigint not null,
   constraint pk_restaurants primary key (id)
-);
-
-create table restaurant_categories (
-  restaurant_id                 bigint not null,
-  category_id                   bigint not null,
-  constraint pk_restaurant_categories primary key (restaurant_id,category_id)
 );
 
 create table reviews (
@@ -120,6 +120,12 @@ create table user_data (
   constraint pk_user_data primary key (id)
 );
 
+alter table categories_restaurants add constraint fk_categories_restaurants_categories foreign key (categories_id) references categories (id) on delete restrict on update restrict;
+create index ix_categories_restaurants_categories on categories_restaurants (categories_id);
+
+alter table categories_restaurants add constraint fk_categories_restaurants_restaurants foreign key (restaurants_id) references restaurants (id) on delete restrict on update restrict;
+create index ix_categories_restaurants_restaurants on categories_restaurants (restaurants_id);
+
 alter table dishes add constraint fk_dishes_menu_id foreign key (menu_id) references menus (id) on delete restrict on update restrict;
 create index ix_dishes_menu_id on dishes (menu_id);
 
@@ -144,12 +150,6 @@ create index ix_reservations_table_id on reservations (table_id);
 alter table restaurants add constraint fk_restaurants_location_id foreign key (location_id) references locations (id) on delete restrict on update restrict;
 create index ix_restaurants_location_id on restaurants (location_id);
 
-alter table restaurant_categories add constraint fk_restaurant_categories_restaurants foreign key (restaurant_id) references restaurants (id) on delete restrict on update restrict;
-create index ix_restaurant_categories_restaurants on restaurant_categories (restaurant_id);
-
-alter table restaurant_categories add constraint fk_restaurant_categories_categories foreign key (category_id) references categories (id) on delete restrict on update restrict;
-create index ix_restaurant_categories_categories on restaurant_categories (category_id);
-
 alter table reviews add constraint fk_reviews_user_id foreign key (user_id) references users (id) on delete restrict on update restrict;
 create index ix_reviews_user_id on reviews (user_id);
 
@@ -166,6 +166,12 @@ create index ix_user_data_location_id on user_data (location_id);
 
 
 # --- !Downs
+
+alter table if exists categories_restaurants drop constraint if exists fk_categories_restaurants_categories;
+drop index if exists ix_categories_restaurants_categories;
+
+alter table if exists categories_restaurants drop constraint if exists fk_categories_restaurants_restaurants;
+drop index if exists ix_categories_restaurants_restaurants;
 
 alter table if exists dishes drop constraint if exists fk_dishes_menu_id;
 drop index if exists ix_dishes_menu_id;
@@ -191,12 +197,6 @@ drop index if exists ix_reservations_table_id;
 alter table if exists restaurants drop constraint if exists fk_restaurants_location_id;
 drop index if exists ix_restaurants_location_id;
 
-alter table if exists restaurant_categories drop constraint if exists fk_restaurant_categories_restaurants;
-drop index if exists ix_restaurant_categories_restaurants;
-
-alter table if exists restaurant_categories drop constraint if exists fk_restaurant_categories_categories;
-drop index if exists ix_restaurant_categories_categories;
-
 alter table if exists reviews drop constraint if exists fk_reviews_user_id;
 drop index if exists ix_reviews_user_id;
 
@@ -213,6 +213,8 @@ drop index if exists ix_user_data_location_id;
 
 drop table if exists categories cascade;
 
+drop table if exists categories_restaurants cascade;
+
 drop table if exists countries cascade;
 
 drop table if exists dishes cascade;
@@ -226,8 +228,6 @@ drop table if exists menus cascade;
 drop table if exists reservations cascade;
 
 drop table if exists restaurants cascade;
-
-drop table if exists restaurant_categories cascade;
 
 drop table if exists reviews cascade;
 

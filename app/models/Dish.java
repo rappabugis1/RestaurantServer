@@ -10,6 +10,14 @@ import javax.persistence.Table;
 @Table(name = "dishes")
 public class Dish extends Model {
 
+    public Dish(String name, String description, int price, Menu menu, DishType type) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.menu = menu;
+        this.type = type;
+    }
+
     @Id
     public Long id;
 

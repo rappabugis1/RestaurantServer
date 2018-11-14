@@ -55,10 +55,10 @@ public class RestaurantDaoImpl implements RestaurantDao {
     public String locationsRestaurant () throws IOException {
 
         final String sql =
-                "SELECT r.location_id as id, l.city as \"location\", COUNT(r.location_id) as num\n" +
+                "SELECT r.location_id as id, l.name as \"location\", COUNT(r.location_id) as num\n" +
                 "FROM restaurants r, locations  l  TABLESAMPLE SYSTEM_ROWS(20)\n" +
                 "WHERE r.location_id=l.id\n" +
-                "GROUP BY r.location_id,l.city";
+                "GROUP BY r.location_id,l.name";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql).findList();
 
@@ -73,8 +73,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
          final String sql =
                         "SELECT  r.id,coalesce(reviews.mark, 0) as mark, coalesce(reviews.votes,0) as votes, r.restaurant_name as restaurantName,r.description, r.price_range as priceRange, r.latitude, r.longitude, r.image_file_name as imageFileName, r.cover_file_name as coverFileName, r.location_id, string_agg(categories.name, ' | ') as foodType\n" +
                                 "                        FROM restaurants r TABLESAMPLE SYSTEM_ROWS(6)\n" +
-                                "                        join restaurant_categories on r.id= restaurant_categories.restaurant_id\n" +
-                                "                        join categories on categories.id=restaurant_categories.category_id \n" +
+                                "                        join categories_restaurants on r.id= categories_restaurants.restaurants_id\n" +
+                                "                        join categories on categories.id=categories_restaurants.categories_id \n" +
                                 "left join (SELECT r.id as id, count(reviews.id) as votes, coalesce(round(avg(reviews.mark),0),0) as mark \n" +
                                 "FROM restaurants r , reviews\n" +
                                 "where r.id=reviews.restaurant_id\n" +

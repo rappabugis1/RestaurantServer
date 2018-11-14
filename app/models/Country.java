@@ -17,19 +17,19 @@ public class Country extends Model {
     public Long id;
 
     @Column(nullable = false, unique = true)
-    private String country;
+    private String name;
 
-    public Country(String country) {
-        this.country = country;
+    public Country(String name) {
+        this.name = name;
     }
 
     @JsonValue
-    public String getCountry() {
-        return country;
+    public String getName() {
+        return name;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public static Finder<Long, Country> getFinder() {

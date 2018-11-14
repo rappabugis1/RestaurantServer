@@ -1,6 +1,5 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -18,7 +17,7 @@ public class Category extends Model {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany
     List<Restaurant> restaurants ;
 
     public static final Finder<Long, Category> finder = new Finder<>(Category.class);
@@ -27,11 +26,12 @@ public class Category extends Model {
         return name;
     }
 
-    public Category(int id) {
-
-    }
     public Category(){
 
+    }
+
+    public Category(String name) {
+        this.name = name;
     }
 
     public void setName(String name) {

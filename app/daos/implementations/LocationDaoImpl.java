@@ -11,7 +11,7 @@ public class LocationDaoImpl implements LocationDao {
 
     @Override
     public Boolean createCountry (Location newLocation) {
-        if(!checkIfExists(newLocation.getCity())){
+        if(!checkIfExists(newLocation.getName())){
             newLocation.save();
             return true;
         }
@@ -29,7 +29,7 @@ public class LocationDaoImpl implements LocationDao {
     public Location getLocationByName (String name){
         return Location.getFinder().query()
                 .where()
-                .eq("city", name)
+                .eq("name", name)
                 .findOne();
     }
 
@@ -37,7 +37,7 @@ public class LocationDaoImpl implements LocationDao {
     public Boolean checkIfExists (String name) {
         return Location.getFinder().query()
                 .where()
-                .eq("city", name)
+                .eq("name", name)
                 .findCount()!=0;
     }
 
@@ -51,7 +51,7 @@ public class LocationDaoImpl implements LocationDao {
 
     @Override
     public Location checkIfExistsThenReturn (Location location){
-        Location temp = getLocationByName(location.getCity());
+        Location temp = getLocationByName(location.getName());
         if(temp!=null)
             return temp;
         else return location;

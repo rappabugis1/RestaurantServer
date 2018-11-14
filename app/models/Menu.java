@@ -12,6 +12,10 @@ import java.util.List;
 @Table(name = "menus")
 public class Menu extends Model {
 
+    public Menu(String type, Restaurant restaurant) {
+        this.type = type;
+        this.restaurant = restaurant;
+    }
 
     @Id
     public Long id;

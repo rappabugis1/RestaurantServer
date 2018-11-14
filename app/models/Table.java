@@ -9,6 +9,12 @@ import javax.persistence.*;
 @Entity
 @javax.persistence.Table(name = "tables")
 public class Table extends Model {
+
+    public Table(int sitting_places, Restaurant restaurant) {
+        this.sitting_places = sitting_places;
+        this.restaurant = restaurant;
+    }
+
     @Id
     public Long id;
 

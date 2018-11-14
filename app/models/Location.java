@@ -14,28 +14,28 @@ public class Location extends Model {
     @JsonValue
     public Long id;
 
-    public Location(String city, Country country) {
-        this.city = city;
+    public Location(String name, Country country) {
+        this.name = name;
         this.country = country;
     }
 
     @Column(nullable = false, unique = true)
     @Size(max = 30)
-    private String city;
+    private String name;
 
     @ManyToOne(cascade = CascadeType.ALL,optional = false)
     Country country;
 
-    public String getCity() {
-        return city;
+    public String getName() {
+        return name;
     }
 
     public static Finder<Long, Location> getFinder() {
         return finder;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Country getCountry() {

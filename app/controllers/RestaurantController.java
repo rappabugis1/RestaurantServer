@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,13 +12,11 @@ import daos.interfaces.CategoryDao;
 import daos.interfaces.LocationDao;
 import daos.interfaces.RestaurantDao;
 import models.*;
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.List;
 
 public class RestaurantController extends Controller {
 
@@ -55,7 +52,7 @@ public class RestaurantController extends Controller {
 
             restDao.createRestaurant(newRestaurant);
 
-            return ok(getJsonRest(newRestaurant));
+            return ok((new ObjectMapper()).valueToTree(newRestaurant).toString());
 
 
         } catch (IOException e) {
@@ -76,11 +73,7 @@ public class RestaurantController extends Controller {
             return badRequest("Restaurant doesn't exist!");
         }
 
-        try {
-            return ok(getJsonRest(restaurant));
-        } catch (IOException e) {
-            return badRequest("Error parsing restaurant to JSON :(");
-        }
+        return ok((new ObjectMapper()).valueToTree(restaurant).toString());
     }
 
     public Result getRestaurantMenu() {
@@ -191,46 +184,6 @@ public class RestaurantController extends Controller {
         }
     }
 
-    private static String getJsonRest(Restaurant restaurant) throws IOException {
-        int avg = 0;
-
-        for (Review review : restaurant.getReviews()) {
-            avg += review.getMark();
-        }
-
-        if (avg > 0 && restaurant.getReviews().size() > 0)
-            avg /= restaurant.getReviews().size();
-        else
-            avg = 0;
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        ObjectNode node = mapper.createObjectNode();
-
-        StringBuilder foodType = new StringBuilder();
-
-        for (Category category : restaurant.getCategories()) {
-            if (category.getName() != null)
-                foodType.append(category.getName() + " | ");
-        }
-
-        node
-                .put("id", restaurant.id)
-                .put("restaurantName", restaurant.getRestaurantName())
-                .put("description", restaurant.getDescription())
-                .put("latitude", restaurant.getLatitude())
-                .put("longitude", restaurant.getLongitude())
-                .put("mark", avg)
-                .put("votes", restaurant.getReviews().size())
-                .put("priceRange", restaurant.getPriceRange())
-                .put("imageFileName", restaurant.getImageFileName())
-                .put("coverFileName", restaurant.getCoverFileName())
-                .put("location", restaurant.getLocation().id)
-                .put("foodType", foodType.toString());
-
-        return (new ObjectMapper().readTree(node.toString())).toString();
-    }
-
     private static String getJsonMenu(Menu menu, Long id) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -242,9 +195,11 @@ public class RestaurantController extends Controller {
             nodeChild
                     .put("id", dish.id)
                     .put("idRestaurant", id)
-                    .put("type", dish.getType())
+                    .put("dishType", dish.getType())
                     .put("name", dish.getName())
-                    .put("description", dish.getDescription());
+                    .put("description", dish.getDescription())
+                    .put("type", menu.getType())
+                    .put("price", dish.getPrice());
 
             nodeParent.add(nodeChild);
         }
