@@ -47,6 +47,8 @@ public class Restaurant extends Model {
     @Column(nullable = false, name="cover_file_name")
     private String coverFileName;
 
+    private int mark =average();
+
     @ManyToOne(cascade = CascadeType.ALL,optional = false)
     @JsonProperty("location_id")
     Location location;
@@ -73,9 +75,9 @@ public class Restaurant extends Model {
     @JsonIgnore
     List<models.Table> tables;
 
-    @OneToMany( cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "restaurant" )
     @JsonIgnore
-    List<Reservation> reservations;
+    List<Reservation> reservationList;
 
     @JsonProperty("foodType")
     private String foodType (){
@@ -211,12 +213,12 @@ public class Restaurant extends Model {
         this.menus = menus;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
+    public List<Reservation> getReservationList() {
+        return reservationList;
     }
 
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+    public void setReservationList(List<Reservation> reservationList) {
+        this.reservationList = reservationList;
     }
 
     public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);

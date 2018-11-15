@@ -47,8 +47,8 @@ public class UserController extends Controller {
         //Mapping to temp
         UserData newUserData = mapper.convertValue(json, UserData.class);
         User newUser = mapper.convertValue(json, User.class);
-        Location newLocation = mapper.convertValue(json, Location.class);
-        Country newCountry = mapper.convertValue(json, Country.class);
+        Location newLocation = new Location(json.get("city").asText());
+        Country newCountry = new Country(json.get("country").asText());
 
         newUser.setUser_type("regular_user");
 

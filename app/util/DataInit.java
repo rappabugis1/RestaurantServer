@@ -30,6 +30,8 @@ public class DataInit {
             cityNames.add("Travnik");
             cityNames.add("Banja Luka");
             cityNames.add("Maglaj");
+            cityNames.add("Kljuc");
+            cityNames.add("Vitez");
 
             for (String name: cityNames) {
                 Location location = new Location(name, country);
@@ -149,7 +151,7 @@ public class DataInit {
             menuTypes.add("Dinner");
 
             for (String name: restaurantNames) {
-                Restaurant restaurant= new Restaurant(name, description, lat, longit, restaurantImageFiles.get(rand.nextInt(restaurantImageFiles.size())), coverFile, rand.nextInt(4));
+                Restaurant restaurant= new Restaurant(name, description, lat, longit, restaurantImageFiles.get(rand.nextInt(restaurantImageFiles.size())), coverFile, rand.nextInt(5)+1);
 
                 List<Category> tempCats = new ArrayList<>(categories);
 

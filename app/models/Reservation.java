@@ -34,6 +34,7 @@ public class Reservation extends Model {
     private User user;
 
     @ManyToOne (optional = false)
+
     private Restaurant restaurant;
 
     @ManyToOne( optional = false)

@@ -19,6 +19,10 @@ public class Location extends Model {
         this.country = country;
     }
 
+    public Location(String name) {
+        this.name = name;
+    }
+
     @Column(nullable = false, unique = true)
     @Size(max = 30)
     private String name;

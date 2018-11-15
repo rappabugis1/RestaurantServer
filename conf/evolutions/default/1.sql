@@ -78,6 +78,7 @@ create table restaurants (
   longitude                     float not null,
   image_file_name               varchar(255) not null,
   cover_file_name               varchar(255) not null,
+  mark                          integer not null,
   location_id                   bigint not null,
   constraint pk_restaurants primary key (id)
 );

@@ -1,9 +1,9 @@
 package filters;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.ebean.ExpressionList;
-import io.ebean.PagedList;
+import io.ebean.*;
 import models.Restaurant;
+import play.Logger;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class QueryBuilder {
 
-    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().where();
+    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().alias("main").fetch("categories").where();
 
     private void finishQuery(int itemsPerPage, int pageNumber){
         query.setFirstRow(itemsPerPage*(pageNumber-1))
@@ -26,6 +26,10 @@ public class QueryBuilder {
         int pageNumber=json.get("pageNumber").asInt();
         JsonNode searchTextNode= json.get("searchText");
         JsonNode reservationInfoNode= json.get("reservationInfo");
+        JsonNode priceRange = json.get("priceRange");
+        JsonNode mark= json.get("mark");
+        JsonNode categories = json.get("categories");
+
 
         //Add searchText parameter to filter if exists
         if(searchTextNode!=null){
@@ -38,27 +42,42 @@ public class QueryBuilder {
                     .endOr();
         }
 
+        if(  !priceRange.isNull()){
+            int priceFilter = priceRange.asInt();
+            query.eq("price_range", priceFilter);
+        }
+
+        if(!mark.isNull()){
+            int markFilter = mark.asInt();
+            query.eq("mark", markFilter);
+        }
+
+
         //Add reservation parameters to filter if exists
-        if(reservationInfoNode!=null){
+        if(!reservationInfoNode.isNull()){
 
-            Timestamp reservationDateTime=getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
+            Timestamp reservationDateTime=getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
+            Logger.info(reservationDateTime.toString());
 
-            int lengthOfStay= json.get("lengthOfStay").asInt();
+            int lengthOfStay= reservationInfoNode.get("lengthOfStay").asInt();
 
             //Get reservation end time
             Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
+            Logger.info(reservationEnd.toString());
+
 
             query
-                    .and()
-                        .ge("tables.sitting_places", reservationInfoNode.get("persons").asInt())
-                        .and()
-                            .ge("reservations.reservationDateTime", reservationDateTime)
-                            .le("reservations.reservationEndDateTime", reservationEnd)
-                        .endAnd()
-                    .endAnd();
+                    .ge("tables.sitting_places", reservationInfoNode.get("persons").asInt())
+                    .or()
+                    .isEmpty("reservationList")
+                    .not()
+                    .betweenProperties("reservationList.reservationDateTime","reservationList.reservationEndDateTime", reservationDateTime)
+                    .endNot()
+                    .endOr();
         }
 
         finishQuery(itemsPerPage, pageNumber);
+
 
 
 
