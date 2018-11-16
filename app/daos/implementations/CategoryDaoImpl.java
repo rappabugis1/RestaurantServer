@@ -27,5 +27,10 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public Long getIdFromName(String name){
+        return Category.getFinder().query().where().eq("name", name).findOne().id;
+    }
+
+    @Override
     public List<Category> getAllCategories(){ return Category.finder.all();}
 }

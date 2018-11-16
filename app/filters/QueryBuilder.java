@@ -8,11 +8,12 @@ import play.Logger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class QueryBuilder {
 
-    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().alias("main").fetch("categories").where();
+    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().alias("main").fetch("categoryList").where();
 
     private void finishQuery(int itemsPerPage, int pageNumber){
         query.setFirstRow(itemsPerPage*(pageNumber-1))
@@ -37,7 +38,7 @@ public class QueryBuilder {
             query
                     .or()
                         .icontains("restaurant_name", searchText)
-                        .icontains("categories.name", searchText)
+                        .icontains("categoryList.name", searchText)
                         .icontains("location.name", searchText)
                     .endOr();
         }
@@ -63,8 +64,6 @@ public class QueryBuilder {
 
             //Get reservation end time
             Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
-            Logger.info(reservationEnd.toString());
-
 
             query
                     .ge("tables.sitting_places", reservationInfoNode.get("persons").asInt())
@@ -74,6 +73,17 @@ public class QueryBuilder {
                     .betweenProperties("reservationList.reservationDateTime","reservationList.reservationEndDateTime", reservationDateTime)
                     .endNot()
                     .endOr();
+        }
+
+        if(categories.isArray()){
+
+            ArrayList<String> names = new ArrayList<>();
+            for (JsonNode catName: categories
+                 ) {
+                query.exists(Ebean.createQuery(Restaurant.class).where().in("categoryList.name", catName.asText()).raw("t0.id=main.id").query());
+            }
+
+
         }
 
         finishQuery(itemsPerPage, pageNumber);

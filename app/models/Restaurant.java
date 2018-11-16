@@ -61,7 +61,7 @@ public class Restaurant extends Model {
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
     )
     @JsonIgnore
-    List<Category> categories;
+    List<Category> categoryList;
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
@@ -82,7 +82,7 @@ public class Restaurant extends Model {
     @JsonProperty("foodType")
     private String foodType (){
         StringBuilder foodType= new StringBuilder();
-        for (Category cat: this.categories
+        for (Category cat: this.categoryList
              ) {
             foodType.append(cat.getName()).append(" | ");
         }
@@ -185,12 +185,12 @@ public class Restaurant extends Model {
         this.location = location;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public List<Category> getCategoryList() {
+        return categoryList;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setCategoryList(List<Category> categoryList) {
+        this.categoryList = categoryList;
     }
 
     public static Finder<Long, Restaurant> getFinder() {

@@ -44,10 +44,10 @@ public class RestaurantController extends Controller {
 
             newRestaurant.setLocation(locDao.getById(location_id));
 
-            newRestaurant.getCategories().clear();
+            newRestaurant.getCategoryList().clear();
             for (JsonNode cat : categories
             ) {
-                newRestaurant.getCategories().add(catDao.getCategoryDetails(cat.asLong()));
+                newRestaurant.getCategoryList().add(catDao.getCategoryDetails(cat.asLong()));
             }
 
             restDao.createRestaurant(newRestaurant);

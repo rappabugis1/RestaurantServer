@@ -14,6 +14,9 @@ public interface CategoryDao {
     //Read methods
 
     Category getCategoryDetails(Long id);
+
+    Long getIdFromName(String name);
+
     List<Category> getAllCategories();
     //Update methods
 

@@ -1,7 +1,6 @@
 package util;
 
 import io.ebean.Ebean;
-import io.ebean.SqlQuery;
 import models.*;
 
 import java.util.ArrayList;
@@ -16,6 +15,8 @@ public class DataInit {
             //Create extension for randoms
             String sql ="CREATE EXTENSION tsm_system_rows;";
             Ebean.createSqlUpdate(sql).execute();
+
+
 
             //One country
             Country country = new Country("Bosnia and Herzegovina");
@@ -32,6 +33,7 @@ public class DataInit {
             cityNames.add("Maglaj");
             cityNames.add("Kljuc");
             cityNames.add("Vitez");
+            cityNames.add("Gorazde");
 
             for (String name: cityNames) {
                 Location location = new Location(name, country);
@@ -94,7 +96,7 @@ public class DataInit {
             restaurantNames.add("Cevabdzinica Zeljo");
             restaurantNames.add("Pizzeria Mozzart");
             restaurantNames.add("Sushi San");
-            restaurantNames.add("Steak House Bosnian House");
+            restaurantNames.add("Steak House");
             restaurantNames.add("Mr Gurman");
             restaurantNames.add("Dulagin Dvor");
             restaurantNames.add("Aeroplan");
@@ -134,8 +136,8 @@ public class DataInit {
                     "\n" +
                     "Restaurants range from inexpensive and informal lunching or dining places catering to people working nearby, with modest food served in simple settings at low prices, to expensive establishments serving refined food and fine wines in a formal setting. In the former case, customers usually wear casual clothing. In the latter case, depending on culture and local traditions, customers might wear semi-casual, semi-formal or formal wear. Typically, at mid- to high-priced restaurants, customers sit at tables, their orders are taken by a waiter, who brings the food when it is ready. After eating, the customers then pay the bill. In some restaurants, such as workplace cafeterias, there are no waiters; the customers use trays, on which they place cold items that they select from a refrigerated container and hot items which they request from cooks, and then they pay a cashier before they sit down. Another restaurant approach which uses few waiters is the buffet restaurant. Customers serve food onto their own plates and then pay at the end of the meal. Buffet restaurants typically still have waiters to serve drinks and alcoholic beverages. Fast food restaurants are also considered a restaurant.";
 
-            float lat = -45.17877f;
-            float longit = -122.70409f;
+            float lat = 18.4130763f;
+            float longit = 43.8562586f;
 
             Random rand= new Random();
 
@@ -155,11 +157,11 @@ public class DataInit {
 
                 List<Category> tempCats = new ArrayList<>(categories);
 
-                restaurant.getCategories().clear();
+                restaurant.getCategoryList().clear();
 
                 for (int i = 0; i < 3; i++) {
                     int randomIndex = rand.nextInt(tempCats.size());
-                    restaurant.getCategories().add(tempCats.get(randomIndex));
+                    restaurant.getCategoryList().add(tempCats.get(randomIndex));
                     tempCats.remove(randomIndex);
                 }
 
