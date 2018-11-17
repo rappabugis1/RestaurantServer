@@ -13,7 +13,7 @@ public class DataInit {
         if(!(Country.getFinder().all().size()>0)){
 
             //Create extension for randoms
-            String sql ="CREATE EXTENSION tsm_system_rows;";
+            String sql ="CREATE EXTENSION if not exists tsm_system_rows;";
             Ebean.createSqlUpdate(sql).execute();
 
             //One country
@@ -32,7 +32,7 @@ public class DataInit {
             cityNames.add("Kljuc");
             cityNames.add("Vitez");
             cityNames.add("Gorazde");
-            cityNames.add("Banja Luka");
+            cityNames.add("Gracanica");
             cityNames.add("Cazin");
             cityNames.add("Visoko");
 
