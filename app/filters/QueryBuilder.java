@@ -2,7 +2,9 @@ package filters;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.*;
+import models.Reservation;
 import models.Restaurant;
+import models.Table;
 import play.Logger;
 
 import java.sql.Timestamp;
@@ -57,7 +59,8 @@ public class QueryBuilder {
         if(!reservationInfoNode.isNull()){
 
             Timestamp reservationDateTime=getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
-            Logger.info(reservationDateTime.toString());
+
+
 
             int lengthOfStay= reservationInfoNode.get("lengthOfStay").asInt();
 
@@ -65,13 +68,8 @@ public class QueryBuilder {
             Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
 
             query
-                    .ge("tables.sitting_places", reservationInfoNode.get("persons").asInt())
-                    .or()
-                    .isEmpty("reservationList")
-                    .not()
-                    .betweenProperties("reservationList.reservationDateTime","reservationList.reservationEndDateTime", reservationDateTime)
-                    .endNot()
-                    .endOr();
+                    .exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places",reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time","r.reservation_end_date_time", reservationDateTime).query()).query());
+
         }
 
         if(categories.isArray() && categories.size()>0){

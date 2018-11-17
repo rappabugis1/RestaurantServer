@@ -144,6 +144,9 @@ public class DataInit {
             restaurantImageFiles.add("https://images.pexels.com/photos/720299/pexels-photo-720299.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
             restaurantImageFiles.add("https://images.pexels.com/photos/279813/pexels-photo-279813.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
             restaurantImageFiles.add("https://images.pexels.com/photos/1024359/pexels-photo-1024359.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
+            restaurantImageFiles.add("https://images.pexels.com/photos/6267/menu-restaurant-vintage-table.jpg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
+            restaurantImageFiles.add("https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=4800");
+
 
             String coverFile= "https://images.pexels.com/photos/791810/pexels-photo-791810.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260";
 
@@ -278,7 +281,7 @@ public class DataInit {
             }
 
 
-            
+
 
         }
     }

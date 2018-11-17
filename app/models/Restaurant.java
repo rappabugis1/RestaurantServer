@@ -73,7 +73,7 @@ public class Restaurant extends Model {
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
-    List<models.Table> tables;
+    List<models.Table> tableList;
 
     @OneToMany( cascade = CascadeType.ALL, mappedBy = "restaurant" )
     @JsonIgnore
@@ -197,12 +197,12 @@ public class Restaurant extends Model {
         return finder;
     }
 
-    public List<models.Table> getTables() {
-        return tables;
+    public List<models.Table> getTableList() {
+        return tableList;
     }
 
-    public void setTables(List<models.Table> tables) {
-        this.tables = tables;
+    public void setTableList(List<models.Table> tableList) {
+        this.tableList = tableList;
     }
 
     public List<Menu> getMenus() {
