@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -20,12 +22,15 @@ public class Review extends Model {
     private String comment;
 
     @Column(nullable = false, name = "insert_time")
+    @JsonIgnore
     private String insertTime;
 
     @ManyToOne (optional = false)
+    @JsonIgnore
      User user;
 
     @ManyToOne (optional = false)
+    @JsonIgnore
      Restaurant restaurant;
 
     public int getMark() {
@@ -35,6 +40,15 @@ public class Review extends Model {
     public void setMark(int mark) {
         this.mark = mark;
     }
+
+
+    @JsonProperty("name")
+    public String userName (){
+        return user.getUser_data().getFirstName() + " " + user.getUser_data().getLastName();
+    }
+
+    @JsonProperty("insertTime")
+    public String time (){return  insertTime.substring(0,11);}
 
     public String getComment() {
         return comment;

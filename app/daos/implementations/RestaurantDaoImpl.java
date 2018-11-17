@@ -10,6 +10,7 @@ import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
 import models.Restaurant;
+import models.Review;
 import org.omg.CORBA.Object;
 import play.Logger;
 import play.libs.Json;
@@ -112,6 +113,13 @@ public class RestaurantDaoImpl implements RestaurantDao {
         }
 
         return mapper.writeValueAsString(node);
+    }
+
+    @Override
+    public String getAllRestaurantComments(Long id) throws JsonProcessingException {
+        List<Review> reviews= Review.getFinder().query().where().eq("restaurant.id", id).findList();
+
+        return (new ObjectMapper()).writeValueAsString(reviews);
     }
     //Update methods
 

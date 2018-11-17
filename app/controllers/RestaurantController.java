@@ -163,6 +163,23 @@ public class RestaurantController extends Controller {
 
     }
 
+    public Result getAllRestaurantComments(){
+        JsonNode json = request().body().asJson();
+
+
+        if (json == null)
+            return badRequest("Invalid Json is null");
+
+        try{
+
+            Long id= json.get("idRestaurant").asLong();
+
+            return ok(restDao.getAllRestaurantComments(id));
+        }catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
     public Result getAllCategories() {
         try{
             ObjectMapper mapper = new ObjectMapper();
