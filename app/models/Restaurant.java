@@ -65,7 +65,7 @@ public class Restaurant extends Model {
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
-    List<Review> reviews;
+    List<Review> reviewList;
 
     @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
@@ -94,12 +94,12 @@ public class Restaurant extends Model {
     private int average(){
         int avg = 0;
 
-        for (Review review : this.reviews) {
+        for (Review review : this.reviewList) {
             avg += review.getMark();
         }
 
-        if (avg > 0 && this.reviews.size() > 0)
-            avg /= this.reviews.size();
+        if (avg > 0 && this.reviewList.size() > 0)
+            avg /= this.reviewList.size();
         else
             avg = 0;
 
@@ -108,17 +108,17 @@ public class Restaurant extends Model {
 
     @JsonProperty("votes")
     private int votes(){
-        return reviews.size();
+        return reviewList.size();
     }
 
     //Getters and setters
 
-    public List<Review> getReviews() {
-        return reviews;
+    public List<Review> getReviewList() {
+        return reviewList;
     }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
+    public void setReviewList(List<Review> reviewList) {
+        this.reviewList = reviewList;
     }
 
     public String getRestaurantName() {

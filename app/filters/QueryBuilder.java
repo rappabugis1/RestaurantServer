@@ -8,12 +8,11 @@ import play.Logger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class QueryBuilder {
 
-    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().alias("main").fetch("categoryList").where();
+    private ExpressionList<Restaurant> query= Restaurant.getFinder().query().alias("main").fetch("categoryList").fetch("reviewList").where();
 
     private void finishQuery(int itemsPerPage, int pageNumber){
         query.setFirstRow(itemsPerPage*(pageNumber-1))
@@ -43,14 +42,14 @@ public class QueryBuilder {
                     .endOr();
         }
 
-        if(  !priceRange.isNull()){
+        if(  !priceRange.isNull() && priceRange.asInt()!=0){
             int priceFilter = priceRange.asInt();
             query.eq("price_range", priceFilter);
         }
 
-        if(!mark.isNull()){
-            int markFilter = mark.asInt();
-            query.eq("mark", markFilter);
+        if(!mark.isNull() && mark.asInt()!=0){
+
+            query.eq("round((Select avg(reviews.mark) From reviews where restaurant_id=main.id),0)", mark.asInt());
         }
 
 
@@ -75,14 +74,11 @@ public class QueryBuilder {
                     .endOr();
         }
 
-        if(categories.isArray()){
-
-            ArrayList<String> names = new ArrayList<>();
+        if(categories.isArray() && categories.size()>0){
             for (JsonNode catName: categories
                  ) {
                 query.exists(Ebean.createQuery(Restaurant.class).where().in("categoryList.name", catName.asText()).raw("t0.id=main.id").query());
             }
-
 
         }
 

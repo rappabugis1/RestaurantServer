@@ -16,8 +16,6 @@ public class DataInit {
             String sql ="CREATE EXTENSION tsm_system_rows;";
             Ebean.createSqlUpdate(sql).execute();
 
-
-
             //One country
             Country country = new Country("Bosnia and Herzegovina");
             country.save();
@@ -34,6 +32,9 @@ public class DataInit {
             cityNames.add("Kljuc");
             cityNames.add("Vitez");
             cityNames.add("Gorazde");
+            cityNames.add("Banja Luka");
+            cityNames.add("Cazin");
+            cityNames.add("Visoko");
 
             for (String name: cityNames) {
                 Location location = new Location(name, country);
@@ -107,9 +108,9 @@ public class DataInit {
             restaurantNames.add("Zacin");
             restaurantNames.add("Soho Caffe Restoran");
             restaurantNames.add("Restoran Sendi");
-            restaurantNames.add("Pivnica Sarajevo");
+            restaurantNames.add("Pivnica");
             restaurantNames.add("Mala Basta");
-            restaurantNames.add("Milki Sarajevo");
+            restaurantNames.add("Milki ");
             restaurantNames.add("Esmeralda");
             restaurantNames.add("Cevabdzinica Kastel");
             restaurantNames.add("Hacienda");
@@ -120,8 +121,22 @@ public class DataInit {
             restaurantNames.add("Yam Yam");
             restaurantNames.add("Mrkva");
             restaurantNames.add("Metropolis");
-            restaurantNames.add("Restoran San Sarajevo");
+            restaurantNames.add("Restoran San ");
             restaurantNames.add("Trattoria Anatra");
+            restaurantNames.add("Tima-Irma");
+            restaurantNames.add("Sadrvan");
+            restaurantNames.add("Hindin Han");
+            restaurantNames.add("Lagero");
+            restaurantNames.add("Konoba Taurus");
+            restaurantNames.add("Food House");
+            restaurantNames.add("Megi");
+            restaurantNames.add("Behar");
+            restaurantNames.add("Restoran Babilon");
+            restaurantNames.add("Europa Restoran");
+            restaurantNames.add("Porto Pizzeria");
+            restaurantNames.add("Restoran Teatar");
+            restaurantNames.add("Moon Star Caffe ");
+            restaurantNames.add("Gusar");
 
             ArrayList<String> restaurantImageFiles = new ArrayList<>();
             restaurantImageFiles.add("https://images.pexels.com/photos/460537/pexels-photo-460537.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
@@ -223,8 +238,12 @@ public class DataInit {
             List<Menu> menus = Menu.getFinder().all();
 
             for (Menu menuTemp: menus) {
+                List<String> tempBev = new ArrayList<>(bevaregeNames);
+                List<String> tempMeal = new ArrayList<>( mealNames);
+                List<String> tempSoup =new ArrayList<>( soupNames);
+                List<String> tempBBQ = new ArrayList<>(bbqNames);
+
                 for(int i=0; i<4; i++){
-                    List<String> tempBev = new ArrayList<>(bevaregeNames);
 
                     int randomIndex = rand.nextInt(tempBev.size());
                     Dish dish = new Dish(tempBev.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Beverages").findOne());
@@ -233,7 +252,6 @@ public class DataInit {
                     dish.save();
                 }
                 for(int i=0; i<4; i++){
-                    List<String> tempMeal = new ArrayList<>( mealNames);
 
                     int randomIndex = rand.nextInt(tempMeal.size());
                     Dish dish = new Dish(tempMeal.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Meals").findOne());
@@ -242,7 +260,6 @@ public class DataInit {
                     dish.save();
                 }
                 for(int i=0; i<4; i++){
-                    List<String> tempSoup =new ArrayList<>( soupNames);
 
                     int randomIndex = rand.nextInt(tempSoup.size());
                     Dish dish = new Dish(tempSoup.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Soups").findOne());
@@ -251,7 +268,6 @@ public class DataInit {
                     dish.save();
                 }
                 for(int i=0; i<4; i++){
-                    List<String> tempBBQ = new ArrayList<>(bbqNames);
 
                     int randomIndex = rand.nextInt(tempBBQ.size());
                     Dish dish = new Dish(tempBBQ.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","BBQ Foods").findOne());
@@ -260,6 +276,9 @@ public class DataInit {
                     dish.save();
                 }
             }
+
+
+            
 
         }
     }
