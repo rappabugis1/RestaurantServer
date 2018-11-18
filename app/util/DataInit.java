@@ -1,5 +1,7 @@
 package util;
 
+import daos.implementations.LocationDaoImpl;
+import daos.interfaces.LocationDao;
 import io.ebean.Ebean;
 import models.*;
 
@@ -9,6 +11,8 @@ import java.util.Random;
 
 public class DataInit {
     public DataInit() {
+
+        LocationDao locDao = new LocationDaoImpl();
 
         if(!(Country.getFinder().all().size()>0)){
 
@@ -281,9 +285,33 @@ public class DataInit {
             }
 
 
+            //User seeding
 
+            //admin
+
+            UserData adminData = new UserData("Ridvan", "Appa Bugis", "061641709");
+            adminData.setLocation(locDao.getLocationByName("Sarajevo"));
+
+            User admin = new User("ridvan_appa@hotmail.com", "admin", "admin");
+
+            admin.setUser_data(adminData);
+
+            adminData.setUser(admin);
+
+            PasswordSetting(admin);
+
+            admin.save();
+            
 
         }
+    }
+
+    private static void PasswordSetting(User user ){
+        String salt = PasswordUtil.getSalt(30);
+        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
+
+        user.setPassword(securedPassword);
+        user.setSalt(salt);
     }
 
 }

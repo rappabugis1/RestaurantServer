@@ -67,11 +67,11 @@ public class UserController extends Controller {
             newUserData.setUser(newUser);
 
             //Password encrytpion
-            PasswordSeting(newUser);
+            PasswordSetting(newUser);
 
 
             try {
-                newUser.save();
+                userDao.createUser(newUser);
             } catch (Exception e){
                 return badRequest("Invalid JSON" + e.getMessage());
             }
@@ -150,7 +150,7 @@ public class UserController extends Controller {
 
     }
 
-    private static void PasswordSeting(User user ){
+    private static void PasswordSetting(User user ){
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
 
