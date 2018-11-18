@@ -39,6 +39,8 @@ POST /app/setReservationToFixed controllers.ReservationController.setReservation
 
 POST /app/getAllRestaurantComments controllers.RestaurantController.getAllRestaurantComments
 
+GET /app/getListOfReservationsForUser controllers.UserController.getListOfReservationsForUser
+
 #Filters
 
 POST /app/getRestaurantsByFilter controllers.FilterController.getRestaurantsByFilter

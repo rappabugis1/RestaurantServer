@@ -1,9 +1,12 @@
 package daos.implementations;
 
 import daos.interfaces.UserDao;
+import models.Reservation;
 import models.User;
 import util.PasswordUtil;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -66,7 +69,19 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+    @Override
+    public List<Reservation> getUserReservationsActive(Long id){
+        Timestamp today = new Timestamp(new Date().getTime());
 
+        return Reservation.getFinder().query().where().eq("user.id", id).ge("reservationDateTime", today).setOrderBy("reservationDateTime").findList();
+    }
+
+    @Override
+    public List<Reservation> getUserReservationsPassed(Long id){
+        Timestamp today = new Timestamp(new Date().getTime());
+
+        return Reservation.getFinder().query().where().eq("user.id", id).lt("reservationDateTime", today).setOrderBy("reservationDateTime").findList();
+    }
 
     //Update methods
 

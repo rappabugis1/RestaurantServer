@@ -2,9 +2,11 @@ package controllers;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import daos.implementations.CountryDaoImpl;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Optional;
 
 
 public class UserController extends Controller {
@@ -125,6 +128,28 @@ public class UserController extends Controller {
         }
     }
 
+    public Result getListOfReservationsForUser(){
+
+        try{
+            //Get token
+            Optional<String> token= request().getHeaders().get("Authorization");
+
+            //Decode token and get user_id
+            DecodedJWT jwt = JWT.decode(token.get().substring(7));
+            Long idUser = jwt.getClaim("user_id").asLong();
+
+            ObjectNode nodeValue = (new ObjectMapper()).createObjectNode();
+            nodeValue.putArray("activeReservations").addAll((ArrayNode)(new ObjectMapper()).valueToTree(userDao.getUserReservationsActive(idUser)));
+            nodeValue.putArray("pastReservations").addAll((ArrayNode)(new ObjectMapper()).valueToTree(userDao.getUserReservationsPassed(idUser)));
+
+            return ok((new ObjectMapper()).writeValueAsString(nodeValue));
+
+        }catch (Exception e){
+           return badRequest("Unauthorized! " + e.getMessage());
+        }
+
+    }
+
     private static void PasswordSeting(User user ){
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
@@ -145,5 +170,6 @@ public class UserController extends Controller {
                 .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(10).toInstant()))
                 .sign(algorithm);
     }
+
 
 }

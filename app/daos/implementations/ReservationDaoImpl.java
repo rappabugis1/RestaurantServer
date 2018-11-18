@@ -3,8 +3,6 @@ package daos.implementations;
 import daos.interfaces.ReservationDao;
 import models.Reservation;
 import models.Table;
-import play.Logger;
-
 import java.sql.Timestamp;
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package daos.interfaces;
 
+import models.Reservation;
 import models.User;
 import models.UserData;
 
@@ -17,6 +18,10 @@ public interface UserDao {
     User getUserbyEmail(String email);
     Boolean checkEmailExists (String email);
     User verifyProvidedInfo(String email, String password);
+
+    List<Reservation> getUserReservationsActive(Long id);
+
+    List<Reservation> getUserReservationsPassed(Long id);
 
     //Update methods
 
