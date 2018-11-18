@@ -17,6 +17,7 @@ import models.Reservation;
 import models.Table;
 import play.mvc.Controller;
 import play.mvc.Result;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,19 +25,19 @@ import java.util.*;
 
 public class ReservationController extends Controller {
 
-    private UserDao userDao= new UserDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
     private RestaurantDao restDao = new RestaurantDaoImpl();
-    private ReservationDao resDao= new ReservationDaoImpl();
+    private ReservationDao resDao = new ReservationDaoImpl();
 
     //Post actions
 
-    public Result makeReservation (){
+    public Result makeReservation() {
         JsonNode json = request().body().asJson();
 
         if (json == null)
             return badRequest("Invalid Json is null");
 
-        try{
+        try {
             //-------------Getting required data
             Reservation tempReservation = getReservationFromRequest(json);
 
@@ -54,7 +55,7 @@ public class ReservationController extends Controller {
                 }
             }
 
-            if(tempReservation.getTable()!=null){
+            if (tempReservation.getTable() != null) {
                 resDao.CreateReservation(tempReservation);
                 ObjectNode returnValue = (new ObjectMapper()).createObjectNode();
                 returnValue.put("id", tempReservation.id);
@@ -67,75 +68,75 @@ public class ReservationController extends Controller {
             }
             return badRequest("No available tables for that time!");
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
 
-    public Result deleteReservation(){
+    public Result deleteReservation() {
         JsonNode json = request().body().asJson();
 
-        if(json==null)
+        if (json == null)
             return badRequest("Json is null");
         try {
 
             resDao.deleteReservation(json.get("idReservation").asLong());
             return ok();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
 
-    public Result setReservationToFixed(){
+    public Result setReservationToFixed() {
         JsonNode json = request().body().asJson();
 
-        if(json==null)
+        if (json == null)
             return badRequest("Json is null");
         try {
 
             resDao.setReservationToFixed(json.get("idReservation").asLong(), json.get("request").asText());
             return ok();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
 
-    public Result checkReservationAvailability(){
+    public Result checkReservationAvailability() {
         JsonNode json = request().body().asJson();
 
         if (json == null)
             return badRequest("Invalid Json is null");
 
-        try{
+        try {
             //-------------Getting required data
 
-            Timestamp reservationDateTime=getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
+            Timestamp reservationDateTime = getStampFromDate(json.get("reservationDate").asText(), json.get("reservationHour").asText());
 
             Long idRestaurant = json.get("idRestaurant").asLong();
 
             int persons = json.get("persons").asInt();
 
             //Hardcoded value for length of stay, right now not a requirement in frontend but this is how it should work, default stay is 2 hours
-            int lengthOfStay= json.get("lengthOfStay").asInt();
+            int lengthOfStay = json.get("lengthOfStay").asInt();
 
             //Get reservation end time
-            Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
+            Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay * 60) * 1000);
 
             //Check availability
-            ObjectNode returnValue=checkAvailability(persons, idRestaurant, reservationDateTime, reservationEnd);
+            ObjectNode returnValue = checkAvailability(persons, idRestaurant, reservationDateTime, reservationEnd);
 
             return ok((new ObjectMapper()).writeValueAsString(returnValue));
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
 
     //Logic methods
 
-    private ObjectNode checkAvailability(int persons, Long idRestaurant,Timestamp reservationDateTime, Timestamp reservationEnd) throws Exception {
+    private ObjectNode checkAvailability(int persons, Long idRestaurant, Timestamp reservationDateTime, Timestamp reservationEnd) throws Exception {
         //check if available
 
         //Get tables that are in restaurant
@@ -187,12 +188,12 @@ public class ReservationController extends Controller {
         ArrayList<String> convertedTime = new ArrayList<>();
 
         for (Timestamp stamp : setTimes) {
-            if(!stamp.before(new Date()))
+            if (!stamp.before(new Date()))
                 convertedTime.add(getTimeStringFromStamp(stamp));
         }
 
         ObjectNode nodeValue = (new ObjectMapper()).createObjectNode();
-        nodeValue.putArray("bestTime").addAll((ArrayNode)(new ObjectMapper()).valueToTree(convertedTime));
+        nodeValue.putArray("bestTime").addAll((ArrayNode) (new ObjectMapper()).valueToTree(convertedTime));
         nodeValue.put("tablesLeft", freeTables);
         nodeValue.put("idRestaurant", idRestaurant);
         nodeValue.put("restaurantName", restDao.getRestaurantbyId(idRestaurant).getRestaurantName());
@@ -204,7 +205,7 @@ public class ReservationController extends Controller {
     private Reservation getReservationFromRequest(JsonNode json) throws ParseException {
 
         //Get token
-        Optional<String> token= request().getHeaders().get("Authorization");
+        Optional<String> token = request().getHeaders().get("Authorization");
 
         //Decode token and get user_id
         DecodedJWT jwt = JWT.decode(token.get().substring(7));
@@ -218,29 +219,29 @@ public class ReservationController extends Controller {
         int persons = json.get("persons").asInt();
 
         //Hardcoded value for length of stay, right now not a requirement in frontend but this is how it should work, default stay is 2 hours
-        int lengthOfStay= json.get("lengthOfStay").asInt();
+        int lengthOfStay = json.get("lengthOfStay").asInt();
 
         //Get reservation end
-        Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay*60)*1000);
+        Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay * 60) * 1000);
 
         Reservation returnReservation = new Reservation(persons, reservationDateTime, "", true, reservationEnd, new Timestamp(System.currentTimeMillis()));
 
         returnReservation.setRestaurant(restDao.getRestaurantbyId(idRestaurant));
         returnReservation.setUser(userDao.getUserbyId(idUser));
 
-        return  returnReservation;
+        return returnReservation;
     }
 
-    private String getTimeStringFromStamp(Timestamp stamp){
+    private String getTimeStringFromStamp(Timestamp stamp) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(stamp);
     }
 
     private Timestamp getStampFromDate(String reservationDate, String reservationHour) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        Date parsedDate = dateFormat.parse(reservationDate+" "+reservationHour);
+        Date parsedDate = dateFormat.parse(reservationDate + " " + reservationHour);
 
-        if(parsedDate.before(new Date()))
+        if (parsedDate.before(new Date()))
             throw new ParseException("Date is expired", 1);
 
         return new Timestamp(parsedDate.getTime());
@@ -249,46 +250,44 @@ public class ReservationController extends Controller {
     //-------------------RECURSIVE
     //For each table reservations that evaluate true to the expression: (endOfReservation > userReservationStartTime) and ( startOfReservation < endTimeOfUserReservation)
     //If there is none , the table is free for that time and the reservation is available
-    private Reservation FindReservationColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+    private Reservation FindReservationColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end) {
 
-        try{
-            List<Reservation> collisions= resDao.findColisions(resaurant_id, table_id, start, end);
+        try {
+            List<Reservation> collisions = resDao.findColisions(resaurant_id, table_id, start, end);
 
             return collisions.get(0);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
     //Recursive algorithm to find the nearest available time of a table
     //Left side takes start as (beginning of collision - the length of the reservation), end is the beginning of collision
-    private Timestamp FindNextAvailableTimeLeft(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+    private Timestamp FindNextAvailableTimeLeft(Long resaurant_id, Long table_id, Timestamp start, Timestamp end) {
         Reservation colision = FindReservationColisions(resaurant_id, table_id, start, end);
 
-        if(colision==null)
+        if (colision == null)
             return start;
-        else{
+        else {
             //Calculates new start time
-            Timestamp startNewLeft = new Timestamp( colision.getReservationDateTime().getTime()-(end.getTime()-start.getTime()));
-            return FindNextAvailableTimeLeft(resaurant_id,table_id, startNewLeft, colision.getReservationDateTime());
+            Timestamp startNewLeft = new Timestamp(colision.getReservationDateTime().getTime() - (end.getTime() - start.getTime()));
+            return FindNextAvailableTimeLeft(resaurant_id, table_id, startNewLeft, colision.getReservationDateTime());
         }
     }
 
     //Right side takes start as the end time of the collision, and the end as the (end of collision + length of reservation)
-    private Timestamp FindNextAvailableTimeRight(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+    private Timestamp FindNextAvailableTimeRight(Long resaurant_id, Long table_id, Timestamp start, Timestamp end) {
         Reservation colision = FindReservationColisions(resaurant_id, table_id, start, end);
 
-        if(colision==null)
+        if (colision == null)
             return start;
-        else{
+        else {
             //Calculates new start time
-            Timestamp endNewRight = new Timestamp(colision.getReservationEndDateTime().getTime()+(end.getTime()-start.getTime()));
-            return FindNextAvailableTimeRight(resaurant_id,table_id,colision.getReservationEndDateTime(), endNewRight);
+            Timestamp endNewRight = new Timestamp(colision.getReservationEndDateTime().getTime() + (end.getTime() - start.getTime()));
+            return FindNextAvailableTimeRight(resaurant_id, table_id, colision.getReservationEndDateTime(), endNewRight);
 
         }
     }
-
 
 
 }

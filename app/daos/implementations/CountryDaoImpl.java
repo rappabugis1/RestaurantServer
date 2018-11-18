@@ -9,11 +9,10 @@ public class CountryDaoImpl implements CountryDao {
     //Create methods
 
     @Override
-    public Boolean createCountry (Country newCountry) {
-        try{
+    public Boolean createCountry(Country newCountry) {
+        try {
             newCountry.save();
-        }
-        catch (DuplicateKeyException e){
+        } catch (DuplicateKeyException e) {
             return false;
         }
 
@@ -22,7 +21,7 @@ public class CountryDaoImpl implements CountryDao {
 
     //Read methods
     @Override
-    public Country getCountryByName (String name){
+    public Country getCountryByName(String name) {
         return Country.getFinder().query()
                 .where()
                 .eq("name", name)
@@ -30,17 +29,17 @@ public class CountryDaoImpl implements CountryDao {
     }
 
     @Override
-    public Boolean checkIfExists (String name) {
+    public Boolean checkIfExists(String name) {
         return Country.getFinder().query()
                 .where()
                 .eq("name", name)
-                .findCount()!=0;
+                .findCount() != 0;
     }
 
     @Override
-    public Country checkIfExistsThenReturn (Country country){
+    public Country checkIfExistsThenReturn(Country country) {
         Country temp = getCountryByName(country.getName());
-        if(temp!=null)
+        if (temp != null)
             return temp;
         else return country;
     }

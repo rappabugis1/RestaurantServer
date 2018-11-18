@@ -30,7 +30,7 @@ public class Dish extends Model {
     @Column(nullable = false)
     private int price;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     Menu menu;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
@@ -68,7 +68,7 @@ public class Dish extends Model {
         this.menu = menu;
     }
 
-    public String  getType() {
+    public String getType() {
 
         return type.getType();
     }

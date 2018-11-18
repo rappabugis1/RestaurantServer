@@ -3,6 +3,7 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
+
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.util.List;
@@ -15,19 +16,19 @@ public class User extends Model {
     public Long id;
 
 
-    public User(String email, String password,  String user_type) {
+    public User(String email, String password, String user_type) {
         this.email = email;
         this.password = password;
         this.user_type = user_type;
     }
 
-    @Column (nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String salt;
 
     @Column(nullable = false)
@@ -36,7 +37,7 @@ public class User extends Model {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserData user_data;
 
-    @OneToMany (cascade = CascadeType.ALL,mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
     List<Review> reviews;
 
@@ -48,7 +49,7 @@ public class User extends Model {
         this.reviews = reviews;
     }
 
-    public static final Finder<Long, User> finder= new Finder<>(User.class);
+    public static final Finder<Long, User> finder = new Finder<>(User.class);
 
     public String getSalt() {
         return salt;

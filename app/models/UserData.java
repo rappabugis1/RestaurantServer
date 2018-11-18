@@ -16,27 +16,27 @@ public class UserData extends Model {
     @Id
     public Long id;
 
-    public UserData( String firstName, String lastName, String phone) {
+    public UserData(String firstName, String lastName, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
     }
 
-    @Column (name="firstName",nullable = false)
+    @Column(name = "firstName", nullable = false)
     private String firstName;
 
-    @Column (name="last_name", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column (nullable = false)
-    @Size(min=6)
+    @Column(nullable = false)
+    @Size(min = 6)
     private String phone;
 
     @OneToOne(optional = false)
     @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     Location location;
 
 

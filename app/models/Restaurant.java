@@ -20,7 +20,7 @@ public class Restaurant extends Model {
         this.longitude = longitude;
         this.imageFileName = imageFileName;
         this.coverFileName = coverFileName;
-        this.priceRange= priceRange;
+        this.priceRange = priceRange;
     }
 
     @Id
@@ -44,54 +44,54 @@ public class Restaurant extends Model {
     @Column(nullable = false, name = "image_file_name")
     private String imageFileName;
 
-    @Column(nullable = false, name="cover_file_name")
+    @Column(nullable = false, name = "cover_file_name")
     private String coverFileName;
 
-    private int mark =average();
+    private int mark = average();
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JsonProperty("location_id")
     Location location;
 
 
     @ManyToMany(mappedBy = "restaurants")
     @JoinTable(
-            name="categories_restaurants",
-            joinColumns = @JoinColumn(name="restaurant_id", referencedColumnName = "id"),
+            name = "categories_restaurants",
+            joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
     )
     @JsonIgnore
     List<Category> categoryList;
 
-    @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
     List<Review> reviewList;
 
-    @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
     List<Menu> menus;
 
-    @OneToMany (cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
     List<models.Table> tableList;
 
-    @OneToMany( cascade = CascadeType.ALL, mappedBy = "restaurant" )
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
     List<Reservation> reservationList;
 
     @JsonProperty("foodType")
-    private String foodType (){
-        StringBuilder foodType= new StringBuilder();
-        for (Category cat: this.categoryList
-             ) {
+    private String foodType() {
+        StringBuilder foodType = new StringBuilder();
+        for (Category cat : this.categoryList
+        ) {
             foodType.append(cat.getName()).append(" | ");
         }
-        foodType.setLength(foodType.length()-2);
+        foodType.setLength(foodType.length() - 2);
         return foodType.toString();
     }
 
     @JsonProperty("mark")
-    private int average(){
+    private int average() {
         int avg = 0;
 
         for (Review review : this.reviewList) {
@@ -107,7 +107,7 @@ public class Restaurant extends Model {
     }
 
     @JsonProperty("votes")
-    private int votes(){
+    private int votes() {
         return reviewList.size();
     }
 

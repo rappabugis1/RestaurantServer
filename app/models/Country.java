@@ -1,12 +1,13 @@
 package models;
 
 
-
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
@@ -37,7 +38,6 @@ public class Country extends Model {
     }
 
     public static final Finder<Long, Country> finder = new Finder<>(Country.class);
-
 
 
 }

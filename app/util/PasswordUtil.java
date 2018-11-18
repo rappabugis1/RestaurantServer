@@ -17,12 +17,12 @@ public class PasswordUtil {
     private static final int ITERATIONS = 10000;
     private static final int KEY_LENGTH = 256;
 
-    public static String getSalt(int length){
+    public static String getSalt(int length) {
         StringBuilder returnValue = new StringBuilder(length);
 
         //Generates salt value of specific length - adds random ALPHABET char to returnValue till i=length
 
-        for(int i=0; i <length;i++){
+        for (int i = 0; i < length; i++) {
             returnValue.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
         }
 
@@ -30,7 +30,7 @@ public class PasswordUtil {
     }
 
 
-    public static byte[] hash (char[] password, byte[] salt) {
+    public static byte[] hash(char[] password, byte[] salt) {
         PBEKeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH);
 
         Arrays.fill(password, Character.MIN_VALUE);
@@ -47,12 +47,12 @@ public class PasswordUtil {
 
     //Generates the encrypted version of the given password based on the provided salt
 
-    public static  String generateSecurePassword(String password, String salt) {
-        String returnValue= null;
+    public static String generateSecurePassword(String password, String salt) {
+        String returnValue = null;
 
-        byte[] securePassword= hash(password.toCharArray(), salt.getBytes());
+        byte[] securePassword = hash(password.toCharArray(), salt.getBytes());
 
-        returnValue= Base64.getEncoder().encodeToString(securePassword);
+        returnValue = Base64.getEncoder().encodeToString(securePassword);
 
         return returnValue;
     }
@@ -63,7 +63,7 @@ public class PasswordUtil {
 
         String newSecurePassword = generateSecurePassword(providedPassword, salt);
 
-        returnValue= newSecurePassword.equalsIgnoreCase(securedPassword);
+        returnValue = newSecurePassword.equalsIgnoreCase(securedPassword);
 
         return returnValue;
     }

@@ -14,10 +14,10 @@ public class DataInit {
 
         LocationDao locDao = new LocationDaoImpl();
 
-        if(!(Country.getFinder().all().size()>0)){
+        if (!(Country.getFinder().all().size() > 0)) {
 
             //Create extension for randoms
-            String sql ="CREATE EXTENSION if not exists tsm_system_rows;";
+            String sql = "CREATE EXTENSION if not exists tsm_system_rows;";
             Ebean.createSqlUpdate(sql).execute();
 
             //One country
@@ -40,7 +40,7 @@ public class DataInit {
             cityNames.add("Cazin");
             cityNames.add("Visoko");
 
-            for (String name: cityNames) {
+            for (String name : cityNames) {
                 Location location = new Location(name, country);
                 location.save();
             }
@@ -60,7 +60,7 @@ public class DataInit {
             categoryNames.add("Spanish");
             categoryNames.add("Take-out");
 
-            for (String name: categoryNames) {
+            for (String name : categoryNames) {
                 Category category = new Category(name);
                 category.save();
             }
@@ -72,7 +72,7 @@ public class DataInit {
             dishTypeNames.add("Soups");
             dishTypeNames.add("BBQ Foods");
 
-            for (String name: dishTypeNames) {
+            for (String name : dishTypeNames) {
                 DishType dishType = new DishType(name);
                 dishType.save();
             }
@@ -152,20 +152,19 @@ public class DataInit {
             restaurantImageFiles.add("https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=4800");
 
 
-            String coverFile= "https://images.pexels.com/photos/791810/pexels-photo-791810.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260";
+            String coverFile = "https://images.pexels.com/photos/791810/pexels-photo-791810.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260";
 
-            String description= "Restaurants are classified or distinguished in many different ways. The primary factors are usually the food itself (e.g. vegetarian, seafood, steak); the cuisine (e.g. Italian, Chinese, Japanese, Indian, French, Mexican, Thai) or the style of offering (e.g. tapas bar, a sushi train, a tastet restaurant, a buffet restaurant or a yum cha restaurant). Beyond this, restaurants may differentiate themselves on factors including speed (see fast food), formality, location, cost, service, or novelty themes (such as automated restaurants).\n" +
+            String description = "Restaurants are classified or distinguished in many different ways. The primary factors are usually the food itself (e.g. vegetarian, seafood, steak); the cuisine (e.g. Italian, Chinese, Japanese, Indian, French, Mexican, Thai) or the style of offering (e.g. tapas bar, a sushi train, a tastet restaurant, a buffet restaurant or a yum cha restaurant). Beyond this, restaurants may differentiate themselves on factors including speed (see fast food), formality, location, cost, service, or novelty themes (such as automated restaurants).\n" +
                     "\n" +
                     "Restaurants range from inexpensive and informal lunching or dining places catering to people working nearby, with modest food served in simple settings at low prices, to expensive establishments serving refined food and fine wines in a formal setting. In the former case, customers usually wear casual clothing. In the latter case, depending on culture and local traditions, customers might wear semi-casual, semi-formal or formal wear. Typically, at mid- to high-priced restaurants, customers sit at tables, their orders are taken by a waiter, who brings the food when it is ready. After eating, the customers then pay the bill. In some restaurants, such as workplace cafeterias, there are no waiters; the customers use trays, on which they place cold items that they select from a refrigerated container and hot items which they request from cooks, and then they pay a cashier before they sit down. Another restaurant approach which uses few waiters is the buffet restaurant. Customers serve food onto their own plates and then pay at the end of the meal. Buffet restaurants typically still have waiters to serve drinks and alcoholic beverages. Fast food restaurants are also considered a restaurant.";
 
             float lat = 18.4130763f;
             float longit = 43.8562586f;
 
-            Random rand= new Random();
+            Random rand = new Random();
 
-            List<Location> locations =Location.getFinder().all();
+            List<Location> locations = Location.getFinder().all();
             List<Category> categories = Category.finder.all();
-
 
 
             //MenuTypes
@@ -174,8 +173,8 @@ public class DataInit {
             menuTypes.add("Lunch");
             menuTypes.add("Dinner");
 
-            for (String name: restaurantNames) {
-                Restaurant restaurant= new Restaurant(name, description, lat, longit, restaurantImageFiles.get(rand.nextInt(restaurantImageFiles.size())), coverFile, rand.nextInt(5)+1);
+            for (String name : restaurantNames) {
+                Restaurant restaurant = new Restaurant(name, description, lat, longit, restaurantImageFiles.get(rand.nextInt(restaurantImageFiles.size())), coverFile, rand.nextInt(5) + 1);
 
                 List<Category> tempCats = new ArrayList<>(categories);
 
@@ -192,12 +191,12 @@ public class DataInit {
                 restaurant.save();
 
                 //Menus for each restaurant
-                for (String menuType: menuTypes) {
+                for (String menuType : menuTypes) {
                     Menu menu = new Menu(menuType, restaurant);
                     menu.save();
                 }
 
-                for(int i=1; i<8; i++){
+                for (int i = 1; i < 8; i++) {
                     Table table = new Table(i, restaurant);
                     table.save();
                 }
@@ -244,40 +243,40 @@ public class DataInit {
 
             List<Menu> menus = Menu.getFinder().all();
 
-            for (Menu menuTemp: menus) {
+            for (Menu menuTemp : menus) {
                 List<String> tempBev = new ArrayList<>(bevaregeNames);
-                List<String> tempMeal = new ArrayList<>( mealNames);
-                List<String> tempSoup =new ArrayList<>( soupNames);
+                List<String> tempMeal = new ArrayList<>(mealNames);
+                List<String> tempSoup = new ArrayList<>(soupNames);
                 List<String> tempBBQ = new ArrayList<>(bbqNames);
 
-                for(int i=0; i<4; i++){
+                for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempBev.size());
-                    Dish dish = new Dish(tempBev.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Beverages").findOne());
+                    Dish dish = new Dish(tempBev.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Beverages").findOne());
                     tempBev.remove(randomIndex);
 
                     dish.save();
                 }
-                for(int i=0; i<4; i++){
+                for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempMeal.size());
-                    Dish dish = new Dish(tempMeal.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Meals").findOne());
+                    Dish dish = new Dish(tempMeal.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Meals").findOne());
                     tempMeal.remove(randomIndex);
 
                     dish.save();
                 }
-                for(int i=0; i<4; i++){
+                for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempSoup.size());
-                    Dish dish = new Dish(tempSoup.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","Soups").findOne());
+                    Dish dish = new Dish(tempSoup.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Soups").findOne());
                     tempSoup.remove(randomIndex);
 
                     dish.save();
                 }
-                for(int i=0; i<4; i++){
+                for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempBBQ.size());
-                    Dish dish = new Dish(tempBBQ.get(randomIndex),"",rand.nextInt(20),menuTemp,DishType.getFinder().query().where().eq("type","BBQ Foods").findOne());
+                    Dish dish = new Dish(tempBBQ.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "BBQ Foods").findOne());
                     tempBBQ.remove(randomIndex);
 
                     dish.save();
@@ -306,9 +305,9 @@ public class DataInit {
         }
     }
 
-    private static void PasswordSetting(User user ){
+    private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
-        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
+        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);
 
         user.setPassword(securedPassword);
         user.setSalt(salt);

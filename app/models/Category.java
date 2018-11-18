@@ -18,7 +18,7 @@ public class Category extends Model {
     private String name;
 
     @ManyToMany
-    List<Restaurant> restaurants ;
+    List<Restaurant> restaurants;
 
     public static final Finder<Long, Category> finder = new Finder<>(Category.class);
 
@@ -26,7 +26,7 @@ public class Category extends Model {
         return name;
     }
 
-    public Category(){
+    public Category() {
 
     }
 

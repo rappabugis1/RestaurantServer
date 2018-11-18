@@ -6,14 +6,16 @@ public interface CountryDao {
 
     //Create methods
 
-    public Boolean createCountry (Country newCountry);
+    public Boolean createCountry(Country newCountry);
 
 
     //Read methods
 
-    public Country getCountryByName (String name);
-    public Boolean checkIfExists (String name);
-    public  Country checkIfExistsThenReturn (Country country);
+    public Country getCountryByName(String name);
+
+    public Boolean checkIfExists(String name);
+
+    public Country checkIfExistsThenReturn(Country country);
     //Update methods
 
     //Delete methods

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
+
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -35,23 +36,23 @@ public class Reservation extends Model {
     @JsonIgnore
     private Boolean temp;
 
-    @Column(nullable = false, name="time_created")
+    @Column(nullable = false, name = "time_created")
     @JsonIgnore
     private Timestamp timeCreated;
 
-    @ManyToOne( optional = false)
+    @ManyToOne(optional = false)
     @JsonIgnore
     private User user;
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     @JsonIgnore
     private Restaurant restaurant;
 
-    @ManyToOne( optional = false)
+    @ManyToOne(optional = false)
     @JsonIgnore
     private models.Table table;
 
-    public static final Finder<Long,Reservation> finder = new Finder<>(Reservation.class);
+    public static final Finder<Long, Reservation> finder = new Finder<>(Reservation.class);
 
     public Reservation(int persons, Timestamp reservationDateTime, String request, Boolean temp, Timestamp endTime, Timestamp timeCreated) {
         this.persons = persons;
@@ -140,29 +141,29 @@ public class Reservation extends Model {
     }
 
     @JsonProperty("restaurantName")
-    private String getRestaurantName (){
+    private String getRestaurantName() {
         return this.restaurant.getRestaurantName();
     }
 
     @JsonProperty("imageFileName")
-    private String getRestImage(){
+    private String getRestImage() {
         return this.restaurant.getImageFileName();
     }
 
     @JsonProperty("reservationDate")
-    private String getDate (){
+    private String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
         return dateFormat.format(this.reservationDateTime);
     }
 
     @JsonProperty("reservationHour")
-    private String getHour (){
+    private String getHour() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(this.reservationDateTime);
     }
 
     @JsonProperty("reservationDuration")
-    private long getDuration (){
-        return  ((this.reservationEndDateTime.getTime()-this.reservationDateTime.getTime())/1000)/60;
+    private long getDuration() {
+        return ((this.reservationEndDateTime.getTime() - this.reservationDateTime.getTime()) / 1000) / 60;
     }
 }

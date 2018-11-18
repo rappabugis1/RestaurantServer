@@ -9,14 +9,18 @@ public interface LocationDao {
 
     //Create methods
 
-    Boolean createCountry (Location newLocation);
+    Boolean createCountry(Location newLocation);
 
     //Read methods
     Location getById(Long id);
-    Location getLocationByName (String name);
-    Boolean checkIfExists (String name);
-    List<Location> getLocationsOfCountry (Country country);
-    Location checkIfExistsThenReturn (Location location);
+
+    Location getLocationByName(String name);
+
+    Boolean checkIfExists(String name);
+
+    List<Location> getLocationsOfCountry(Country country);
+
+    Location checkIfExistsThenReturn(Location location);
 
     //Update methods
 

@@ -14,22 +14,21 @@ import java.io.IOException;
 
 public class CategoriesAdmin extends Controller {
 
-    CategoryDao catDao= new CategoryDaoImpl();
+    CategoryDao catDao = new CategoryDaoImpl();
 
-    public Result addCategory (){
+    public Result addCategory() {
 
-        JsonNode json= request().body().asJson();
+        JsonNode json = request().body().asJson();
 
-        if(json==null || json.get("name")==null)
+        if (json == null || json.get("name") == null)
             return badRequest();
 
         Category newCategory = catDao.createCategory(json.get("name").asText());
 
-        if(newCategory==null)
+        if (newCategory == null)
             return badRequest();
 
         ObjectMapper mapper = new ObjectMapper();
-
 
 
         try {
@@ -45,15 +44,15 @@ public class CategoriesAdmin extends Controller {
         }
     }
 
-    public Result getCategoryDetails (){
-        JsonNode json= request().body().asJson();
+    public Result getCategoryDetails() {
+        JsonNode json = request().body().asJson();
 
-        if(json==null || json.get("id")==null)
+        if (json == null || json.get("id") == null)
             return badRequest();
 
         Category newCategory = catDao.getCategoryDetails(json.get("id").asLong());
 
-        if(newCategory==null)
+        if (newCategory == null)
             return badRequest("Catergory exists!");
 
         ObjectMapper mapper = new ObjectMapper();

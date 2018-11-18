@@ -132,13 +132,12 @@ public class RestaurantController extends Controller {
                     .query()
                     .where()
                     .eq("user_id", json.get("idUser").asLong())
-                    .eq("restaurant_id" ,json.get("idRestaurant").asLong())
+                    .eq("restaurant_id", json.get("idRestaurant").asLong())
                     .findOne();
 
 
-
-            if(newReview==null) {
-                newReview= new Review();
+            if (newReview == null) {
+                newReview = new Review();
                 newReview.setMark(json.get("mark").asInt());
                 newReview.setComment(json.get("comment").toString());
                 newReview.setInsertTime(new Timestamp(System.currentTimeMillis()).toString());
@@ -146,8 +145,7 @@ public class RestaurantController extends Controller {
                 newReview.setRestaurant(Restaurant.finder.byId(json.get("idRestaurant").asLong()));
                 newReview.save();
 
-            }
-            else{
+            } else {
                 newReview.setComment(json.get("comment").toString());
                 newReview.setMark(json.get("mark").asInt());
                 newReview.update();
@@ -163,37 +161,36 @@ public class RestaurantController extends Controller {
 
     }
 
-    public Result getAllRestaurantComments(){
+    public Result getAllRestaurantComments() {
         JsonNode json = request().body().asJson();
 
 
         if (json == null)
             return badRequest("Invalid Json is null");
 
-        try{
+        try {
 
-            Long id= json.get("idRestaurant").asLong();
+            Long id = json.get("idRestaurant").asLong();
 
             return ok(restDao.getAllRestaurantComments(id));
-        }catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
 
     public Result getAllCategories() {
-        try{
+        try {
             ObjectMapper mapper = new ObjectMapper();
 
             ArrayNode returnNode = mapper.valueToTree(catDao.getAllCategories());
 
             return ok(returnNode.toString());
-        }
-        catch (Exception e) {
-            return  badRequest("Something went wrong : " +e.getMessage());
+        } catch (Exception e) {
+            return badRequest("Something went wrong : " + e.getMessage());
         }
     }
 
-    public Result getRandomRestaurants(){
+    public Result getRandomRestaurants() {
         try {
             return ok(restDao.getRandomRestaurants());
         } catch (Exception e) {

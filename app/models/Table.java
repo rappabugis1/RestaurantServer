@@ -21,7 +21,7 @@ public class Table extends Model {
     @Column(nullable = false)
     private int sitting_places;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     Restaurant restaurant;
 
     public static final Finder<Long, Table> finder = new Finder<>(Table.class);

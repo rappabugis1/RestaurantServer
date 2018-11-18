@@ -8,7 +8,7 @@ public interface CategoryDao {
 
     //Create methods
 
-    Category createCategory (String categoryName);
+    Category createCategory(String categoryName);
 
     //TODO
     //Read methods

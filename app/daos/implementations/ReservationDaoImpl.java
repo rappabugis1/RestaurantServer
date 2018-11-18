@@ -3,6 +3,7 @@ package daos.implementations;
 import daos.interfaces.ReservationDao;
 import models.Reservation;
 import models.Table;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -10,31 +11,31 @@ public class ReservationDaoImpl implements ReservationDao {
 
     //Create
     @Override
-    public void CreateReservation(Reservation reservation){
+    public void CreateReservation(Reservation reservation) {
         reservation.save();
     }
 
     //Read
 
     @Override
-    public Reservation getReservationById(Long id){
+    public Reservation getReservationById(Long id) {
         return Reservation.getFinder().byId(id);
     }
 
     @Override
 
-    public List<Table> getTablesOfRestaurantWithPersons(int persons, Long restaurant_id){
+    public List<Table> getTablesOfRestaurantWithPersons(int persons, Long restaurant_id) {
         return Table.getFinder().query()
                 .where()
                 .eq("restaurant_id", restaurant_id)
                 .and()
-                .ge("sitting_places",persons)
+                .ge("sitting_places", persons)
                 .findList();
     }
 
     @Override
 
-    public List<Reservation> findColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end){
+    public List<Reservation> findColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end) {
 
         return Reservation.getFinder().query()
                 .where()
@@ -50,7 +51,7 @@ public class ReservationDaoImpl implements ReservationDao {
     @Override
     public void setReservationToFixed(Long id, String request) throws Exception {
         Reservation tempReservation = getReservationById(id);
-        if(tempReservation==null)
+        if (tempReservation == null)
             throw new Exception("Reservation does not exist");
 
         tempReservation.setRequest(request);
@@ -61,12 +62,12 @@ public class ReservationDaoImpl implements ReservationDao {
     //Delete
 
     @Override
-    public void deleteReservation( Long id) throws Exception {
+    public void deleteReservation(Long id) throws Exception {
         Reservation tempReservation = getReservationById(id);
-        if(tempReservation==null)
+        if (tempReservation == null)
             throw new Exception("Reservation does not exist");
 
-        if(!tempReservation.getTemp())
+        if (!tempReservation.getTemp())
             throw new Exception("Reservation is not temporary");
 
         getReservationById(id).delete();

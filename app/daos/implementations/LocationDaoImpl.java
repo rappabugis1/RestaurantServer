@@ -1,4 +1,5 @@
 package daos.implementations;
+
 import daos.interfaces.LocationDao;
 import models.Country;
 import models.Location;
@@ -10,8 +11,8 @@ public class LocationDaoImpl implements LocationDao {
     //Create methods
 
     @Override
-    public Boolean createCountry (Location newLocation) {
-        if(!checkIfExists(newLocation.getName())){
+    public Boolean createCountry(Location newLocation) {
+        if (!checkIfExists(newLocation.getName())) {
             newLocation.save();
             return true;
         }
@@ -21,12 +22,12 @@ public class LocationDaoImpl implements LocationDao {
     //Read methods
 
     @Override
-    public Location getById(Long id){
+    public Location getById(Long id) {
         return Location.getFinder().byId(id);
     }
 
     @Override
-    public Location getLocationByName (String name){
+    public Location getLocationByName(String name) {
         return Location.getFinder().query()
                 .where()
                 .eq("name", name)
@@ -34,15 +35,15 @@ public class LocationDaoImpl implements LocationDao {
     }
 
     @Override
-    public Boolean checkIfExists (String name) {
+    public Boolean checkIfExists(String name) {
         return Location.getFinder().query()
                 .where()
                 .eq("name", name)
-                .findCount()!=0;
+                .findCount() != 0;
     }
 
     @Override
-    public List<Location> getLocationsOfCountry (Country country) {
+    public List<Location> getLocationsOfCountry(Country country) {
         return Location.getFinder().query()
                 .where()
                 .eq("country", country)
@@ -50,9 +51,9 @@ public class LocationDaoImpl implements LocationDao {
     }
 
     @Override
-    public Location checkIfExistsThenReturn (Location location){
+    public Location checkIfExistsThenReturn(Location location) {
         Location temp = getLocationByName(location.getName());
-        if(temp!=null)
+        if (temp != null)
             return temp;
         else return location;
     }

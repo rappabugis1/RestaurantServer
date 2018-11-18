@@ -3,17 +3,12 @@ package daos.implementations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
 import models.Restaurant;
 import models.Review;
-import org.omg.CORBA.Object;
-import play.Logger;
-import play.libs.Json;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,13 +17,12 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     //Create methods
     @Override
-    public Restaurant createRestaurant (Restaurant newRest){
-        try{
+    public Restaurant createRestaurant(Restaurant newRest) {
+        try {
             newRest.save();
 
             return newRest;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -36,16 +30,17 @@ public class RestaurantDaoImpl implements RestaurantDao {
     //Read methods
 
     @Override
-    public List<Restaurant> getRestaurants(){
+    public List<Restaurant> getRestaurants() {
         return Restaurant.finder.all();
     }
+
     @Override
-    public Restaurant getRestaurantbyId(Long id){
+    public Restaurant getRestaurantbyId(Long id) {
         return Restaurant.finder.byId(id);
     }
 
     @Override
-    public Restaurant getRestaurantByName (String name){
+    public Restaurant getRestaurantByName(String name) {
         return Restaurant.getFinder().query()
                 .where()
                 .eq("restaurant_name", name)
@@ -53,13 +48,13 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public String locationsRestaurant () throws IOException {
+    public String locationsRestaurant() throws IOException {
 
         final String sql =
                 "SELECT r.location_id as id, l.name as \"location\", COUNT(r.location_id) as num\n" +
-                "FROM restaurants r, locations  l  TABLESAMPLE SYSTEM_ROWS(20)\n" +
-                "WHERE r.location_id=l.id\n" +
-                "GROUP BY r.location_id,l.name";
+                        "FROM restaurants r, locations  l  TABLESAMPLE SYSTEM_ROWS(20)\n" +
+                        "WHERE r.location_id=l.id\n" +
+                        "GROUP BY r.location_id,l.name";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql).findList();
 
@@ -71,16 +66,16 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public String getRandomRestaurants() throws IOException {
-         final String sql =
-                        "SELECT  r.id,coalesce(reviews.mark, 0) as mark, coalesce(reviews.votes,0) as votes, r.restaurant_name as restaurantName,r.description, r.price_range as priceRange, r.latitude, r.longitude, r.image_file_name as imageFileName, r.cover_file_name as coverFileName, r.location_id, string_agg(categories.name, ' | ') as foodType\n" +
-                                "                        FROM restaurants r TABLESAMPLE SYSTEM_ROWS(6)\n" +
-                                "                        join categories_restaurants on r.id= categories_restaurants.restaurants_id\n" +
-                                "                        join categories on categories.id=categories_restaurants.categories_id \n" +
-                                "left join (SELECT r.id as id, count(reviews.id) as votes, coalesce(round(avg(reviews.mark),0),0) as mark \n" +
-                                "FROM restaurants r , reviews\n" +
-                                "where r.id=reviews.restaurant_id\n" +
-                                "group by r.id) as reviews on r.id=reviews.id\n" +
-                                "group by r.id, r.restaurant_name, reviews.mark, reviews.votes\n";
+        final String sql =
+                "SELECT  r.id,coalesce(reviews.mark, 0) as mark, coalesce(reviews.votes,0) as votes, r.restaurant_name as restaurantName,r.description, r.price_range as priceRange, r.latitude, r.longitude, r.image_file_name as imageFileName, r.cover_file_name as coverFileName, r.location_id, string_agg(categories.name, ' | ') as foodType\n" +
+                        "                        FROM restaurants r TABLESAMPLE SYSTEM_ROWS(6)\n" +
+                        "                        join categories_restaurants on r.id= categories_restaurants.restaurants_id\n" +
+                        "                        join categories on categories.id=categories_restaurants.categories_id \n" +
+                        "left join (SELECT r.id as id, count(reviews.id) as votes, coalesce(round(avg(reviews.mark),0),0) as mark \n" +
+                        "FROM restaurants r , reviews\n" +
+                        "where r.id=reviews.restaurant_id\n" +
+                        "group by r.id) as reviews on r.id=reviews.id\n" +
+                        "group by r.id, r.restaurant_name, reviews.mark, reviews.votes\n";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql).findList();
 
@@ -94,7 +89,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
         if (node.isArray()) {
 
-            for ( JsonNode objNode : node) {
+            for (JsonNode objNode : node) {
 
 
                 ((ObjectNode) objNode).set("restaurantName", objNode.get("restaurantname"));
@@ -117,7 +112,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public String getAllRestaurantComments(Long id) throws JsonProcessingException {
-        List<Review> reviews= Review.getFinder().query().where().eq("restaurant.id", id).findList();
+        List<Review> reviews = Review.getFinder().query().where().eq("restaurant.id", id).findList();
 
         return (new ObjectMapper()).writeValueAsString(reviews);
     }

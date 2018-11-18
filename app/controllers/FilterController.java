@@ -12,25 +12,25 @@ import play.mvc.Result;
 public class FilterController extends Controller {
 
 
-    public Result getRestaurantsByFilter(){
+    public Result getRestaurantsByFilter() {
         JsonNode json = request().body().asJson();
 
-        if(json==null)
+        if (json == null)
             return badRequest("Json is null");
 
-        try{
+        try {
             PagedList result = new QueryBuilder().executeQuery(json);
 
 
-            ObjectNode returnNode= (new ObjectMapper()).createObjectNode();
+            ObjectNode returnNode = (new ObjectMapper()).createObjectNode();
             returnNode.put("numberOfRestaurantPages", result.getTotalPageCount());
 
 
-            returnNode.putArray("restaurants").addAll((ArrayNode)(new ObjectMapper()).valueToTree(result.getList()));
+            returnNode.putArray("restaurants").addAll((ArrayNode) (new ObjectMapper()).valueToTree(result.getList()));
 
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }

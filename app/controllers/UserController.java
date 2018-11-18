@@ -19,8 +19,10 @@ import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 import util.PasswordUtil;
+
 import javax.inject.Inject;
 import java.io.IOException;
 import java.time.ZoneId;
@@ -34,14 +36,14 @@ public class UserController extends Controller {
     @Inject
     private Config config;
 
-    CountryDao countryDao= new CountryDaoImpl();
-    UserDao userDao= new UserDaoImpl();
+    CountryDao countryDao = new CountryDaoImpl();
+    UserDao userDao = new UserDaoImpl();
     LocationDao locDao = new LocationDaoImpl();
 
     public Result registerUser()
-            throws  IOException {
+            throws IOException {
 
-        JsonNode json= request().body().asJson();
+        JsonNode json = request().body().asJson();
 
 
         ObjectMapper mapper = new ObjectMapper()
@@ -57,7 +59,7 @@ public class UserController extends Controller {
 
         //Creating the user
 
-        if(!userDao.checkEmailExists(newUser.getEmail())){
+        if (!userDao.checkEmailExists(newUser.getEmail())) {
             newLocation.setCountry(countryDao.checkIfExistsThenReturn(newCountry));
 
             newUserData.setLocation(locDao.checkIfExistsThenReturn(newLocation));
@@ -72,7 +74,7 @@ public class UserController extends Controller {
 
             try {
                 userDao.createUser(newUser);
-            } catch (Exception e){
+            } catch (Exception e) {
                 return badRequest("Invalid JSON" + e.getMessage());
             }
             ObjectNode node = mapper.createObjectNode();
@@ -86,29 +88,28 @@ public class UserController extends Controller {
                     .put("firstName", newUserData.getFirstName())
                     .put("lastName", newUserData.getLastName());
 
-            JsonNode jsonNode =  new ObjectMapper().readTree(node.toString());
+            JsonNode jsonNode = new ObjectMapper().readTree(node.toString());
             return ok(jsonNode.toString());
-        }
-        else {
+        } else {
             return badRequest("Email already in use!");
         }
 
     }
 
     public Result loginUser()
-            throws IOException{
-        JsonNode json= request().body().asJson();
+            throws IOException {
+        JsonNode json = request().body().asJson();
 
-        if(json==null){
+        if (json == null) {
             return badRequest("Invalid JSON!");
         }
 
         ObjectMapper mapper = new ObjectMapper();
 
         User newUser = mapper.convertValue(json, User.class);
-        User temp=userDao.verifyProvidedInfo(newUser.getEmail(),newUser.getPassword());
+        User temp = userDao.verifyProvidedInfo(newUser.getEmail(), newUser.getPassword());
 
-        if(temp!=null){
+        if (temp != null) {
             ObjectNode node = mapper.createObjectNode();
 
             node
@@ -120,39 +121,38 @@ public class UserController extends Controller {
                     .put("firstName", temp.getUser_data().getFirstName())
                     .put("lastName", temp.getUser_data().getLastName());
 
-            JsonNode jsonNode =  new ObjectMapper().readTree(node.toString());
-            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type())) ;
-        }
-        else {
+            JsonNode jsonNode = new ObjectMapper().readTree(node.toString());
+            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type()));
+        } else {
             return badRequest("Entered data is not valid!");
         }
     }
 
-    public Result getListOfReservationsForUser(){
+    public Result getListOfReservationsForUser() {
 
-        try{
+        try {
             //Get token
-            Optional<String> token= request().getHeaders().get("Authorization");
+            Optional<String> token = request().getHeaders().get("Authorization");
 
             //Decode token and get user_id
             DecodedJWT jwt = JWT.decode(token.get().substring(7));
             Long idUser = jwt.getClaim("user_id").asLong();
 
             ObjectNode nodeValue = (new ObjectMapper()).createObjectNode();
-            nodeValue.putArray("activeReservations").addAll((ArrayNode)(new ObjectMapper()).valueToTree(userDao.getUserReservationsActive(idUser)));
-            nodeValue.putArray("pastReservations").addAll((ArrayNode)(new ObjectMapper()).valueToTree(userDao.getUserReservationsPassed(idUser)));
+            nodeValue.putArray("activeReservations").addAll((ArrayNode) (new ObjectMapper()).valueToTree(userDao.getUserReservationsActive(idUser)));
+            nodeValue.putArray("pastReservations").addAll((ArrayNode) (new ObjectMapper()).valueToTree(userDao.getUserReservationsPassed(idUser)));
 
             return ok((new ObjectMapper()).writeValueAsString(nodeValue));
 
-        }catch (Exception e){
-           return badRequest("Unauthorized! " + e.getMessage());
+        } catch (Exception e) {
+            return badRequest("Unauthorized! " + e.getMessage());
         }
 
     }
 
-    private static void PasswordSetting(User user ){
+    private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
-        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(),salt);
+        String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);
 
         user.setPassword(securedPassword);
         user.setSalt(salt);

@@ -13,8 +13,8 @@ public class UserDaoImpl implements UserDao {
 
     //Create methods
     @Override
-    public Boolean createUser (User newUser){
-        if(checkEmailExists(newUser.getEmail())){
+    public Boolean createUser(User newUser) {
+        if (checkEmailExists(newUser.getEmail())) {
             return false;
         }
         newUser.save();
@@ -29,12 +29,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserbyId(Long id){
+    public User getUserbyId(Long id) {
         return User.finder.byId(id);
     }
 
     @Override
-    public User getUserbyEmail(String email){
+    public User getUserbyEmail(String email) {
         return User.finder.query()
                 .where()
                 .eq("email", email)
@@ -42,42 +42,41 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Boolean checkEmailExists (String email){
+    public Boolean checkEmailExists(String email) {
         return (User.finder.query()
                 .where()
                 .eq("email", email)
-                .findCount())!=0;
+                .findCount()) != 0;
     }
 
     @Override
-    public User verifyProvidedInfo(String email, String password){
+    public User verifyProvidedInfo(String email, String password) {
         User tempUser = getUserbyEmail(email);
 
-        if(tempUser!=null){
+        if (tempUser != null) {
             String securedPassword = tempUser.getPassword();
             String salt = tempUser.getSalt();
 
-            if( PasswordUtil.verifyUserPassword(password, securedPassword, salt)){
+            if (PasswordUtil.verifyUserPassword(password, securedPassword, salt)) {
                 return tempUser;
             } else {
                 return null;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
 
 
     @Override
-    public List<Reservation> getUserReservationsActive(Long id){
+    public List<Reservation> getUserReservationsActive(Long id) {
         Timestamp today = new Timestamp(new Date().getTime());
 
         return Reservation.getFinder().query().where().eq("user.id", id).ge("reservationDateTime", today).setOrderBy("reservationDateTime").findList();
     }
 
     @Override
-    public List<Reservation> getUserReservationsPassed(Long id){
+    public List<Reservation> getUserReservationsPassed(Long id) {
         Timestamp today = new Timestamp(new Date().getTime());
 
         return Reservation.getFinder().query().where().eq("user.id", id).lt("reservationDateTime", today).setOrderBy("reservationDateTime").findList();

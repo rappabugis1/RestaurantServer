@@ -9,7 +9,7 @@ import javax.persistence.*;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="reviews")
+@Table(name = "reviews")
 public class Review extends Model {
 
     @Id
@@ -25,13 +25,13 @@ public class Review extends Model {
     @JsonIgnore
     private String insertTime;
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     @JsonIgnore
-     User user;
+    User user;
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     @JsonIgnore
-     Restaurant restaurant;
+    Restaurant restaurant;
 
     public int getMark() {
         return mark;
@@ -43,12 +43,14 @@ public class Review extends Model {
 
 
     @JsonProperty("name")
-    public String userName (){
+    public String userName() {
         return user.getUser_data().getFirstName() + " " + user.getUser_data().getLastName();
     }
 
     @JsonProperty("insertTime")
-    public String time (){return  insertTime.substring(0,11);}
+    public String time() {
+        return insertTime.substring(0, 11);
+    }
 
     public String getComment() {
         return comment;

@@ -8,29 +8,30 @@ import java.util.List;
 public class CategoryDaoImpl implements CategoryDao {
 
     @Override
-    public Category createCategory(String categoryName){
-        try{
-            Category newCategory= new Category();
+    public Category createCategory(String categoryName) {
+        try {
+            Category newCategory = new Category();
             newCategory.setName(categoryName);
             newCategory.save();
 
             return newCategory;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
     @Override
-    public Category getCategoryDetails(Long id){
+    public Category getCategoryDetails(Long id) {
         return Category.finder.byId(id);
     }
 
     @Override
-    public Long getIdFromName(String name){
+    public Long getIdFromName(String name) {
         return Category.getFinder().query().where().eq("name", name).findOne().id;
     }
 
     @Override
-    public List<Category> getAllCategories(){ return Category.finder.all();}
+    public List<Category> getAllCategories() {
+        return Category.finder.all();
+    }
 }
