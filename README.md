@@ -1,1 +1,1 @@
-Server side of the ABH internship project
+# server part of the ABH internship project
