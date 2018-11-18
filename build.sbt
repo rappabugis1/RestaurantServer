@@ -1,4 +1,4 @@
-name := """play-java-seed"""
+name := """RidvansRestaurant"""
 organization := "atlantbh"
 
 version := "1.0-SNAPSHOT"

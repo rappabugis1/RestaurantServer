@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <profile name="sbt 1" modules="server_817" />
-    <profile name="sbt 2" modules="play-java-seed">
+    <profile name="sbt 2" modules="play-java-seed,RidvansRestaurant">
       <option name="deprecationWarnings" value="true" />
       <option name="uncheckedWarnings" value="true" />
       <parameters>

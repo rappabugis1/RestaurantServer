@@ -301,7 +301,7 @@ public class DataInit {
             PasswordSetting(admin);
 
             admin.save();
-            
+
 
         }
     }
