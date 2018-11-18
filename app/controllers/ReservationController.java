@@ -94,7 +94,7 @@ public class ReservationController extends Controller {
             return badRequest("Json is null");
         try {
 
-            resDao.setReservationToFixed(json.get("idReservation").asLong());
+            resDao.setReservationToFixed(json.get("idReservation").asLong(), json.get("request").asText());
             return ok();
 
         }catch (Exception e){
