@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/RidvansRestaurant -Dhttp.port=${PORT}
+web: target/universal/stage/bin/ridvansrestaurant -Dhttp.port=${PORT}
