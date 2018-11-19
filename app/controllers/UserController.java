@@ -96,25 +96,9 @@ public class UserController extends Controller {
 
     }
 
-    public Result loginUser()
-            throws IOException {
+    public Result loginUser() {
 
-        UserData adminData = new UserData("Ridvan", "Appa Bugis", "061641709");
-        adminData.setLocation(locDao.getLocationByName("Sarajevo"));
 
-        User admin = new User("ridvan_appa@hotmail.com", "admin", "admin");
-
-        admin.setUser_data(adminData);
-
-        adminData.setUser(admin);
-
-        PasswordSetting(admin);
-
-        admin.save();
-
-        return ok(admin.getEmail());
-
-        /*
         JsonNode json = request().body().asJson();
 
         if (json == null) {
@@ -138,14 +122,16 @@ public class UserController extends Controller {
                     .put("firstName", temp.getUser_data().getFirstName())
                     .put("lastName", temp.getUser_data().getLastName());
 
-            JsonNode jsonNode = new ObjectMapper().readTree(node.toString());
+            JsonNode jsonNode = null;
+            try {
+                jsonNode = new ObjectMapper().readTree(node.toString());
+            } catch (IOException e) {
+                return badRequest(e.getMessage());
+            }
             return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type()));
-
         } else {
             return badRequest("Entered data is not valid!");
         }
-
-        */
     }
 
     public Result getListOfReservationsForUser() {
