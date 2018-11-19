@@ -99,19 +99,6 @@ public class UserController extends Controller {
     public Result loginUser()
             throws IOException {
 
-        UserData adminData = new UserData("Ridvan", "Appa Bugis", "061641709");
-        adminData.setLocation(locDao.getLocationByName("Sarajevo"));
-
-        User admin = new User("ridvan_appa@hotmail.com", "admin", "admin");
-
-        admin.setUser_data(adminData);
-
-        adminData.setUser(admin);
-
-        PasswordSetting(admin);
-
-        admin.save();
-
         JsonNode json = request().body().asJson();
 
         if (json == null) {
