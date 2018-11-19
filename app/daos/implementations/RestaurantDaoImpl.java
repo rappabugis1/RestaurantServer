@@ -66,6 +66,9 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public String getRandomRestaurants() throws IOException {
+
+
+
         final String sql =
                 "SELECT  r.id,coalesce(reviews.mark, 0) as mark, coalesce(reviews.votes,0) as votes, r.restaurant_name as restaurantName,r.description, r.price_range as priceRange, r.latitude, r.longitude, r.image_file_name as imageFileName, r.cover_file_name as coverFileName, r.location_id, string_agg(categories.name, ' | ') as foodType\n" +
                         "                        FROM restaurants r TABLESAMPLE SYSTEM_ROWS(6)\n" +
