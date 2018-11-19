@@ -99,7 +99,22 @@ public class UserController extends Controller {
     public Result loginUser() {
 
 
-        JsonNode json = request().body().asJson();
+        //admin
+
+        UserData adminData = new UserData("Ridvan", "Appa Bugis", "061641709");
+        adminData.setLocation(locDao.getLocationByName("Sarajevo"));
+
+        User admin = new User("ridvan_appa@hotmail.com", "admin", "admin");
+
+        admin.setUser_data(adminData);
+
+        adminData.setUser(admin);
+
+        PasswordSetting(admin);
+
+        admin.save();
+        return ok();
+        /*JsonNode json = request().body().asJson();
 
         if (json == null) {
             return badRequest("Invalid JSON!");
@@ -131,7 +146,7 @@ public class UserController extends Controller {
             return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type()));
         } else {
             return badRequest("Entered data is not valid!");
-        }
+        }*/
     }
 
     public Result getListOfReservationsForUser() {
