@@ -3,10 +3,14 @@ organization := "atlantbh"
 
 version := "1.0-SNAPSHOT"
 
+
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
 lazy val myProject = (project in file("."))
   .enablePlugins(PlayJava, PlayEbean)
+
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+
 
 scalaVersion := "2.12.6"
 
