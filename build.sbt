@@ -15,7 +15,9 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 scalaVersion := "2.12.6"
 
 libraryDependencies += guice
+
 libraryDependencies += javaJdbc
+
 libraryDependencies += evolutions
 
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
