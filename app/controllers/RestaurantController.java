@@ -54,11 +54,31 @@ public class RestaurantController extends Controller {
 
             return ok((new ObjectMapper()).valueToTree(newRestaurant).toString());
 
-
         } catch (IOException e) {
             return badRequest("Error reading tree!");
         }
+        catch (Exception e) {
+            return badRequest(e.getMessage());
+        }
 
+    }
+
+    public Result getRestaurantCategories(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null)
+            return badRequest("Invalid Json is null");
+
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+
+            ArrayNode returnNode = mapper.valueToTree(catDao.getRestaurantCategories(json.get("id").asLong()));
+
+            return ok(returnNode.toString());
+
+        }catch (Exception e){
+            return badRequest(e.getMessage());
+        }
     }
 
     public Result getRestaurantDetails() {
@@ -178,24 +198,25 @@ public class RestaurantController extends Controller {
         }
     }
 
-    public Result getAllCategories() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-
-            ArrayNode returnNode = mapper.valueToTree(catDao.getAllCategories());
-
-            return ok(returnNode.toString());
-        } catch (Exception e) {
-            return badRequest("Something went wrong : " + e.getMessage());
-        }
-    }
-
     public Result getRandomRestaurants() {
         try {
             return ok(restDao.getRandomRestaurants());
         } catch (Exception e) {
             return badRequest(e.getMessage());
         }
+    }
+
+    public Result getAllRestaurantTables(){
+        JsonNode json = request().body().asJson();
+
+
+        if (json == null)
+            return badRequest("Invalid Json is null");
+
+        try {
+            return ok(restDao.getAllRestaurantTables(json.get("id").asLong()));
+        }
+        catch (Exception e){return  badRequest(e.getMessage());}
     }
 
     private static String getJsonMenu(Menu menu, Long id) throws IOException {

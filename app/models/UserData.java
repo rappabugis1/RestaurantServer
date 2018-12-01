@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 public class UserData extends Model {
 
     @Id
+    @JsonIgnore
     public Long id;
 
     public UserData(String firstName, String lastName, String phone) {

@@ -15,6 +15,8 @@ public interface LocationDao {
 
     void updateLocation(Location location);
 
+    Location getLocationById(Long id);
+
     PagedList<Location> getFilteredLocations(JsonNode json);
 
     int getNumberLocations();
@@ -29,6 +31,8 @@ public interface LocationDao {
     List<Location> getLocationsOfCountry(Country country);
 
     Location checkIfExistsThenReturn(Location location);
+
+    void deleteLocation(Location location);
 
     //Update methods
 

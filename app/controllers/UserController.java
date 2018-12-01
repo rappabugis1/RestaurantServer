@@ -15,10 +15,12 @@ import daos.implementations.UserDaoImpl;
 import daos.interfaces.CountryDao;
 import daos.interfaces.LocationDao;
 import daos.interfaces.UserDao;
+import io.ebean.PagedList;
 import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.PasswordUtil;
@@ -55,6 +57,7 @@ public class UserController extends Controller {
         Location newLocation = new Location(json.get("city").asText());
         Country newCountry = new Country(json.get("country").asText());
 
+        newUser.setPassword(json.get("password").asText());
         newUser.setUser_type("regular_user");
 
         //Creating the user
@@ -156,6 +159,44 @@ public class UserController extends Controller {
 
     }
 
+    public Result getFilteredUsers(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null)
+            return badRequest("Json is null");
+
+        try {
+            PagedList result = userDao.getFilteredUsers(json);
+
+            ObjectNode returnNode = (new ObjectMapper()).createObjectNode();
+            returnNode.put("numberOfPages", result.getTotalPageCount());
+
+
+            returnNode.putArray("users").addAll((ArrayNode) (new ObjectMapper()).valueToTree(result.getList()));
+
+            return ok((new ObjectMapper()).writeValueAsString(returnNode));
+
+
+        } catch (Exception e) {
+            return badRequest(e.getMessage());
+        }
+    }
+
+    public Result getUserDetails(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            return ok((new ObjectMapper()).writeValueAsString(userDao.getUserbyId(json.get("id").asLong())));
+        } catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+
+    }
+
     private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);
@@ -163,7 +204,6 @@ public class UserController extends Controller {
         user.setPassword(securedPassword);
         user.setSalt(salt);
     }
-
 
     private String getSignedToken(Long userId, String usertype) {
         String secret = config.getString("play.http.secret.key");

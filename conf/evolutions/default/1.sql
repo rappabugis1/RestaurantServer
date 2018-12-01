@@ -88,6 +88,7 @@ create table restaurants (
   default_stay                  integer not null,
   mark                          integer not null,
   location_id                   bigint not null,
+  constraint uq_restaurants_restaurant_name unique (restaurant_name),
   constraint pk_restaurants primary key (id)
 );
 

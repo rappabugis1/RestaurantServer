@@ -1,5 +1,7 @@
 package daos.interfaces;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.PagedList;
 import models.Category;
 
 import java.util.List;
@@ -18,6 +20,12 @@ public interface CategoryDao {
     Long getIdFromName(String name);
 
     List<Category> getAllCategories();
+
+    PagedList<Category> getFilteredCategories(JsonNode json);
+
+    List<Category> getRestaurantCategories(Long id);
+
+    void updateCategory(Category category);
     //Update methods
 
     //Delete methods

@@ -9,6 +9,7 @@ import io.ebean.Ebean;
 import io.ebean.SqlRow;
 import models.Restaurant;
 import models.Review;
+import models.Table;
 
 import java.io.IOException;
 import java.util.List;
@@ -123,6 +124,13 @@ public class RestaurantDaoImpl implements RestaurantDao {
         List<Review> reviews = Review.getFinder().query().where().eq("restaurant.id", id).findList();
 
         return (new ObjectMapper()).writeValueAsString(reviews);
+    }
+
+    @Override
+    public String getAllRestaurantTables (Long id) throws JsonProcessingException {
+        List<Table> tables = Table.getFinder().query().where().eq("restaurant_id", id).findList();
+        return (new ObjectMapper()).writeValueAsString(tables);
+
     }
     //Update methods
 

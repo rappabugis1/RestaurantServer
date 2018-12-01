@@ -79,9 +79,42 @@ public class LocationController extends Controller {
             return ok(getLocJson(location));
         }
         catch (Exception e) {
-            return badRequest("Location already exists");
+            return badRequest(e.getMessage());
         }
 
+    }
+
+    public Result deleteLocation () {
+        JsonNode json = request().body().asJson();
+
+        if(json==null)
+            return badRequest("Json is null");
+
+        try{
+            Location location= locDao.getById(json.get("id").asLong());
+
+            locDao.deleteLocation(location);
+
+            return ok();
+        }catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+
+    }
+
+    public Result getLocationDetails(){
+        JsonNode json = request().body().asJson();
+
+        if(json==null)
+            return badRequest("Json is null");
+
+        try{
+
+            return ok(getLocJson(locDao.getById(json.get("id").asLong())));
+
+        }catch (Exception e){
+            return badRequest(e.getMessage());
+        }
     }
 
     private JsonNode getLocJson(Location newLocation){

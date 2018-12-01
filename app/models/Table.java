@@ -1,6 +1,8 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -22,7 +24,13 @@ public class Table extends Model {
     private int sitting_places;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JsonIgnore
     Restaurant restaurant;
+
+    @JsonProperty("restaurantId")
+    private Long restiD (){
+        return restaurant.id;
+    }
 
     public static final Finder<Long, Table> finder = new Finder<>(Table.class);
 

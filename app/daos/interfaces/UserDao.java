@@ -1,5 +1,7 @@
 package daos.interfaces;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.PagedList;
 import models.Reservation;
 import models.User;
 
@@ -23,6 +25,8 @@ public interface UserDao {
     Boolean checkEmailExists(String email);
 
     User verifyProvidedInfo(String email, String password);
+
+    PagedList<User> getFilteredUsers(JsonNode json);
 
     List<Reservation> getUserReservationsActive(Long id);
 

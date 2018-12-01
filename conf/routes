@@ -10,12 +10,8 @@ GET         /assets/*file                               controllers.Assets.versi
 
 
 POST        /app/register                               controllers.UserController.registerUser
-
 POST        /app/login                                  controllers.UserController.loginUser
 
-POST        /app/admin/addCategory                      controllers.CategoriesController.addCategory
-
-POST        /app/admin/addRestaurant                    controllers.RestaurantController.addRestaurant
 
 POST        /app/getRestaurantDetails                   controllers.RestaurantController.getRestaurantDetails
 
@@ -23,7 +19,7 @@ POST        /app/insertComment                          controllers.RestaurantCo
 
 GET         /app/getRestaurantLocations                 controllers.RestaurantController.getRestaurantLocations
 
-GET         /app/getAllCategories                       controllers.RestaurantController.getAllCategories
+GET         /app/getAllCategories                       controllers.CategoriesController.getAllCategories
 
 GET         /app/getRandomRestaurants                   controllers.RestaurantController.getRandomRestaurants
 
@@ -37,9 +33,10 @@ POST        /app/deleteReservation                      controllers.ReservationC
 
 POST        /app/setReservationToFixed                  controllers.ReservationController.setReservationToFixed
 
+GET         /app/getListOfReservationsForUser           controllers.UserController.getListOfReservationsForUser
+
 POST        /app/getAllRestaurantComments               controllers.RestaurantController.getAllRestaurantComments
 
-GET         /app/getListOfReservationsForUser           controllers.UserController.getListOfReservationsForUser
 
 #Filters
 
@@ -49,8 +46,36 @@ POST        /app/getRestaurantsByFilter                 controllers.FilterContro
 
 GET         /app/admin/getAdministrationCounters        controllers.AdminCommonController.getAdministrationCounters
 
+##LOCATIONS ADMIN
 POST        /app/admin/getFilteredLocations             controllers.LocationController.getFilteredLocations
-
 POST        /app/admin/addLocation                      controllers.LocationController.addLocation
+POST        /app/admin/editLocation                     controllers.LocationController.editLocation
+#TODO DELETE MORE
+POST        /app/admin/deleteLocation                   controllers.LocationController.deleteLocation
+POST        /app/admin/getLocationDetails               controllers.LocationController.getLocationDetails
 
-POST        /app/admin/editLocation                      controllers.LocationController.editLocation
+##CATEGORIES ADMIN
+POST        /app/admin/getFilteredCategories            controllers.CategoriesController.getFilteredCategories
+POST        /app/admin/addCategory                      controllers.CategoriesController.addCategory
+POST        /app/admin/editCategory                     controllers.CategoriesController.editCategory
+#TODO DELETE
+POST        /app/admin/getCategoryDetails               controllers.CategoriesController.getCategoryDetails
+
+##RESTAURANTS ADMIN
+POST        /app/admin/getFilteredRestaurants           controllers.FilterController.getRestaurantsByFilter
+POST        /app/admin/addRestaurant                    controllers.RestaurantController.addRestaurant
+#TODO EDIT
+#TODO DELETE
+POST        /app/admin/getRestaurantCategories          controllers.RestaurantController.getRestaurantCategories
+POST        /app/admin/getAllRestaurantComments         controllers.RestaurantController.getAllRestaurantComments
+
+##USERS ADMIN
+POST        /app/admin/getFilteredUsers                 controllers.UserController.getFilteredUsers
+POST        /app/admin/addUsers                         controllers.UserController.registerUser
+#TODO EDIT
+#TODO DELETE
+POST        /app/admin/getUserDetails                   controllers.UserController.getUserDetails
+
+
+##TABLES ADMIN
+POST /app/admin/getAllRestaurantTables                  controllers.RestaurantController.getAllRestaurantTables

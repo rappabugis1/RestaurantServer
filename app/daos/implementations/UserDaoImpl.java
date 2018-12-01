@@ -1,6 +1,9 @@
 package daos.implementations;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import daos.interfaces.UserDao;
+import io.ebean.ExpressionList;
+import io.ebean.PagedList;
 import models.Reservation;
 import models.User;
 import util.PasswordUtil;
@@ -72,6 +75,31 @@ public class UserDaoImpl implements UserDao {
             return null;
         }
     }
+
+    @Override
+    public PagedList<User> getFilteredUsers(JsonNode json){
+        int itemsPerPage = json.get("itemsPerPage").asInt();
+        int pageNumber = json.get("pageNumber").asInt();
+        JsonNode searchTextNode = json.get("searchText");
+
+        ExpressionList<User> query = User.getFinder().query().where();
+
+        if (searchTextNode != null) {
+            String searchText = searchTextNode.asText();
+            query.or()
+                .icontains("user_data.firstName", searchText)
+                .icontains("user_data.lastName", searchText)
+                .icontains("email", searchText)
+            .endOr();
+
+
+        }
+
+        query.setFirstRow(itemsPerPage * (pageNumber - 1)).setMaxRows(itemsPerPage);
+
+        return query.findPagedList();
+    }
+
 
 
     @Override

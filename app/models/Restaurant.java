@@ -26,7 +26,7 @@ public class Restaurant extends Model {
     @Id
     public Long id;
 
-    @Column(nullable = false, name = "restaurant_name")
+    @Column(nullable = false, name = "restaurant_name", unique = true)
     private String restaurantName;
 
     @Column(nullable = false, length = 2000)

@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -26,12 +27,15 @@ public class User extends Model {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String salt;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String user_type;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")

@@ -18,12 +18,14 @@ public class LocationDaoImpl implements LocationDao {
         newLocation.save();
     }
 
-    @Override
-    public void updateLocation(Location location){
-        location.update();
-    }
+
 
     //Read methods
+
+    @Override
+    public Location getLocationById(Long id){
+        return Location.getFinder().byId(id);
+    }
 
     @Override
     public PagedList<Location> getFilteredLocations(JsonNode json){
@@ -88,5 +90,15 @@ public class LocationDaoImpl implements LocationDao {
 
     //Update methods
 
+    @Override
+    public void updateLocation(Location location){
+        location.update();
+    }
+
     //Delete methods
+
+    @Override
+    public void deleteLocation(Location location){
+        location.delete();
+    }
 }
