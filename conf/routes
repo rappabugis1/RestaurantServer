@@ -3,44 +3,54 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET         /                                           controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-POST /app/register                      controllers.UserController.registerUser
+POST        /app/register                               controllers.UserController.registerUser
 
-POST /app/login                         controllers.UserController.loginUser
+POST        /app/login                                  controllers.UserController.loginUser
 
-POST /app/admin/addCategory             controllers.CategoriesAdmin.addCategory
+POST        /app/admin/addCategory                      controllers.CategoriesController.addCategory
 
-POST /app/admin/addRestaurant           controllers.RestaurantController.addRestaurant
+POST        /app/admin/addRestaurant                    controllers.RestaurantController.addRestaurant
 
-POST /app/getRestaurantDetails  controllers.RestaurantController.getRestaurantDetails
+POST        /app/getRestaurantDetails                   controllers.RestaurantController.getRestaurantDetails
 
-POST /app/insertComment   controllers.RestaurantController.insertComment
+POST        /app/insertComment                          controllers.RestaurantController.insertComment
 
-GET /app/getRestaurantLocations controllers.RestaurantController.getRestaurantLocations
+GET         /app/getRestaurantLocations                 controllers.RestaurantController.getRestaurantLocations
 
-GET /app/getAllCategories  controllers.RestaurantController.getAllCategories
+GET         /app/getAllCategories                       controllers.RestaurantController.getAllCategories
 
-GET /app/getRandomRestaurants controllers.RestaurantController.getRandomRestaurants
+GET         /app/getRandomRestaurants                   controllers.RestaurantController.getRandomRestaurants
 
-POST /app/getRestaurantMenu controllers.RestaurantController.getRestaurantMenu
+POST        /app/getRestaurantMenu                      controllers.RestaurantController.getRestaurantMenu
 
-POST /app/checkReservationAvailability controllers.ReservationController.checkReservationAvailability
+POST        /app/checkReservationAvailability           controllers.ReservationController.checkReservationAvailability
 
-POST /app/makeReservation controllers.ReservationController.makeReservation
+POST        /app/makeReservation                        controllers.ReservationController.makeReservation
 
-POST /app/deleteReservation controllers.ReservationController.deleteReservation
+POST        /app/deleteReservation                      controllers.ReservationController.deleteReservation
 
-POST /app/setReservationToFixed controllers.ReservationController.setReservationToFixed
+POST        /app/setReservationToFixed                  controllers.ReservationController.setReservationToFixed
 
-POST /app/getAllRestaurantComments controllers.RestaurantController.getAllRestaurantComments
+POST        /app/getAllRestaurantComments               controllers.RestaurantController.getAllRestaurantComments
 
-GET /app/getListOfReservationsForUser controllers.UserController.getListOfReservationsForUser
+GET         /app/getListOfReservationsForUser           controllers.UserController.getListOfReservationsForUser
 
 #Filters
 
-POST /app/getRestaurantsByFilter controllers.FilterController.getRestaurantsByFilter
+POST        /app/getRestaurantsByFilter                 controllers.FilterController.getRestaurantsByFilter
+
+#Admin
+
+GET         /app/admin/getAdministrationCounters        controllers.AdminCommonController.getAdministrationCounters
+
+POST        /app/admin/getFilteredLocations             controllers.LocationController.getFilteredLocations
+
+POST        /app/admin/addLocation                      controllers.LocationController.addLocation
+
+POST        /app/admin/editLocation                      controllers.LocationController.editLocation

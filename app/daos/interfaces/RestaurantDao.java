@@ -13,6 +13,8 @@ public interface RestaurantDao {
 
     //Read methods
 
+    int getNumberRestaurants();
+
     List<Restaurant> getRestaurants();
 
     Restaurant getRestaurantbyId(Long id);

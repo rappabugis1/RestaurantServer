@@ -12,6 +12,8 @@ public interface UserDao {
 
     //Read methods
 
+    int getNumberUsers();
+
     List<User> getUsers();
 
     User getUserbyId(Long id);

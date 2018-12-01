@@ -12,7 +12,7 @@ import play.mvc.Result;
 
 import java.io.IOException;
 
-public class CategoriesAdmin extends Controller {
+public class CategoriesController extends Controller {
 
     CategoryDao catDao = new CategoryDaoImpl();
 

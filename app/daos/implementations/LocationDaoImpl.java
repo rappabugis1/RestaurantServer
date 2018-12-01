@@ -1,6 +1,9 @@
 package daos.implementations;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import daos.interfaces.LocationDao;
+import io.ebean.ExpressionList;
+import io.ebean.PagedList;
 import models.Country;
 import models.Location;
 
@@ -11,15 +14,39 @@ public class LocationDaoImpl implements LocationDao {
     //Create methods
 
     @Override
-    public Boolean createCountry(Location newLocation) {
-        if (!checkIfExists(newLocation.getName())) {
-            newLocation.save();
-            return true;
-        }
-        return false;
+    public void createLocation(Location newLocation) {
+        newLocation.save();
+    }
+
+    @Override
+    public void updateLocation(Location location){
+        location.update();
     }
 
     //Read methods
+
+    @Override
+    public PagedList<Location> getFilteredLocations(JsonNode json){
+        int itemsPerPage = json.get("itemsPerPage").asInt();
+        int pageNumber = json.get("pageNumber").asInt();
+        JsonNode searchTextNode = json.get("searchText");
+
+        ExpressionList<Location> query = Location.getFinder().query().where();
+
+        if (searchTextNode != null) {
+            String searchText = searchTextNode.asText();
+            query.icontains("name", searchText);
+        }
+
+        query.setFirstRow(itemsPerPage * (pageNumber - 1)).setMaxRows(itemsPerPage);
+
+        return query.findPagedList();
+    }
+
+    @Override
+    public int getNumberLocations(){
+        return Location.finder.query().findCount();
+    }
 
     @Override
     public Location getById(Long id) {

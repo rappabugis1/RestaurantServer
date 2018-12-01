@@ -23,6 +23,12 @@ public class UserDaoImpl implements UserDao {
 
 
     //Read methods
+
+    @Override
+    public int getNumberUsers(){
+        return User.finder.query().findCount();
+    }
+
     @Override
     public List<User> getUsers() {
         return User.finder.all();

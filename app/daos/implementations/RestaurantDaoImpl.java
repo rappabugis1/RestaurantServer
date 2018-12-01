@@ -30,6 +30,11 @@ public class RestaurantDaoImpl implements RestaurantDao {
     //Read methods
 
     @Override
+    public int getNumberRestaurants(){
+        return Restaurant.finder.query().findCount();
+    }
+
+    @Override
     public List<Restaurant> getRestaurants() {
         return Restaurant.finder.all();
     }
