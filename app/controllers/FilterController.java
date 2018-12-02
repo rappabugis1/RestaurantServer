@@ -23,7 +23,7 @@ public class FilterController extends Controller {
 
 
             ObjectNode returnNode = (new ObjectMapper()).createObjectNode();
-            returnNode.put("numberOfRestaurantPages", result.getTotalPageCount());
+            returnNode.put("numberOfPages", result.getTotalPageCount());
 
 
             returnNode.putArray("restaurants").addAll((ArrayNode) (new ObjectMapper()).valueToTree(result.getList()));

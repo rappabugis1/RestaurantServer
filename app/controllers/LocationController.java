@@ -14,6 +14,8 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.util.List;
+
 public class LocationController extends Controller {
 
     LocationDao locDao = new LocationDaoImpl();
@@ -30,11 +32,24 @@ public class LocationController extends Controller {
         try {
             PagedList result = locDao.getFilteredLocations(json);
 
-            ObjectNode returnNode = (new ObjectMapper()).createObjectNode();
+            ObjectMapper mapper = new ObjectMapper();
+
+            ObjectNode returnNode = mapper.createObjectNode();
             returnNode.put("numberOfPages", result.getTotalPageCount());
 
+            ArrayNode locationsNode = mapper.createArrayNode();
 
-            returnNode.putArray("locations").addAll((ArrayNode) (new ObjectMapper()).valueToTree(result.getList()));
+            List<Location> locations = result.getList();
+
+            for (Location location:locations
+                 ) {
+                JsonNode node = mapper.createObjectNode();
+                ((ObjectNode) node).put("id", location.id);
+                ((ObjectNode) node).put("name", location.getName());
+                locationsNode.add(node);
+            }
+
+            returnNode.putArray("locations").addAll(locationsNode);
 
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 

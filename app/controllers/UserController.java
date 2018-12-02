@@ -111,6 +111,8 @@ public class UserController extends Controller {
         ObjectMapper mapper = new ObjectMapper();
 
         User newUser = mapper.convertValue(json, User.class);
+        newUser.setPassword(json.get("password").asText());
+
         User temp = userDao.verifyProvidedInfo(newUser.getEmail(), newUser.getPassword());
 
         if (temp != null) {
