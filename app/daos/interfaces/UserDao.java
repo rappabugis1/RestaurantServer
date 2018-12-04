@@ -32,6 +32,8 @@ public interface UserDao {
 
     List<Reservation> getUserReservationsPassed(Long id);
 
+    User editUser(User user) throws Exception;
+
     //Update methods
 
     //Delete methods

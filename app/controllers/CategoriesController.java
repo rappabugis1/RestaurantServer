@@ -28,15 +28,13 @@ public class CategoriesController extends Controller {
         if (json == null || json.get("name") == null)
             return badRequest();
 
-        Category newCategory = catDao.createCategory(json.get("name").asText());
-
-        if (newCategory == null)
-            return badRequest();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-
         try {
+
+            Category newCategory = catDao.createCategory(json.get("name").asText());
+
+
+            ObjectMapper mapper = new ObjectMapper();
+
             ObjectNode returnNode = mapper.createObjectNode();
 
             returnNode
@@ -44,8 +42,8 @@ public class CategoriesController extends Controller {
                     .put("name", newCategory.getName());
 
             return ok(mapper.readTree(returnNode.toString()).toString());
-        } catch (IOException e) {
-            return badRequest("Failed to map JSON! Ovo se ne bi trebalo desiti...");
+        } catch (Exception e) {
+            return badRequest("Category already exists!");
         }
     }
 

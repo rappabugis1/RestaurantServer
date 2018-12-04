@@ -9,6 +9,7 @@ import daos.implementations.LocationDaoImpl;
 import daos.interfaces.CountryDao;
 import daos.interfaces.LocationDao;
 import io.ebean.PagedList;
+import models.Country;
 import models.Location;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -46,6 +47,8 @@ public class LocationController extends Controller {
                 JsonNode node = mapper.createObjectNode();
                 ((ObjectNode) node).put("id", location.id);
                 ((ObjectNode) node).put("name", location.getName());
+                ((ObjectNode) node).put("country", location.getCountry().getName());
+
                 locationsNode.add(node);
             }
 
@@ -67,7 +70,12 @@ public class LocationController extends Controller {
             return badRequest("Json is null");
 
         try {
-            Location newLocation = new Location(json.get("name").asText(), coutDao.getCountryByName(json.get("country").asText()));
+
+            Location newLocation = new Location(json.get("name").asText());
+
+            Country newCountry = new Country(json.get("country").asText());
+            newLocation.setCountry(coutDao.checkIfExistsThenReturn(newCountry));
+
             locDao.createLocation(newLocation);
 
             return ok(getLocJson(newLocation));

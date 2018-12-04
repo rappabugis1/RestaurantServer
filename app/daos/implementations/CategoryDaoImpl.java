@@ -15,15 +15,11 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category createCategory(String categoryName) {
-        try {
-            Category newCategory = new Category();
-            newCategory.setName(categoryName);
-            newCategory.save();
+        Category newCategory = new Category();
+        newCategory.setName(categoryName);
+        newCategory.save();
 
-            return newCategory;
-        } catch (Exception e) {
-            return null;
-        }
+        return newCategory;
     }
 
     //Read

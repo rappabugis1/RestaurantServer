@@ -37,7 +37,10 @@ public class LocationDaoImpl implements LocationDao {
 
         if (searchTextNode != null) {
             String searchText = searchTextNode.asText();
-            query.icontains("name", searchText);
+            query.or()
+                .icontains("name", searchText)
+                .icontains("country.name", searchText)
+                .endOr();
         }
 
         query.setFirstRow(itemsPerPage * (pageNumber - 1)).setMaxRows(itemsPerPage);

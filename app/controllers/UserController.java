@@ -199,6 +199,50 @@ public class UserController extends Controller {
 
     }
 
+    public Result editUser(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            User userEdit=  userDao.getUserbyId(json.get("id").asLong());
+
+            if(userEdit==null)
+                throw new Exception("User does not exist");
+
+            if(!json.get("email").isNull())
+                userEdit.setEmail(json.get("email").asText());
+
+
+            if(!json.get("password").isNull()){
+                userEdit.setPassword(json.get("password").asText());
+                PasswordSetting(userEdit);
+            }
+
+            if(!json.get("firstName").isNull())
+                userEdit.getUser_data().setFirstName(json.get("firstName").asText());
+
+            if(!json.get("lastName").isNull())
+                userEdit.getUser_data().setLastName(json.get("lastName").asText());
+
+            if(!json.get("phone").isNull())
+                userEdit.getUser_data().setPhone(json.get("phone").asText());
+
+
+            if(!json.get("city").isNull())
+                userEdit.getUser_data().setLocation(locDao.getLocationByName(json.get("city").asText()));
+
+
+
+            return ok((new ObjectMapper()).writeValueAsString(userDao.editUser(userEdit)));
+
+        }catch(Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
     private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);

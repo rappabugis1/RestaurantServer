@@ -25,6 +25,8 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+
+
     //Read methods
 
     @Override
@@ -117,6 +119,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     //Update methods
+
+    @Override
+    public User editUser(User user) throws Exception {
+        try{
+            user.update();
+
+            return user;
+        } catch (Exception e){
+            throw new Exception("Email already exists!");
+        }
+
+    }
 
     //Delete methods
 }

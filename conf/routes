@@ -72,10 +72,10 @@ POST        /app/admin/getAllRestaurantComments         controllers.RestaurantCo
 ##USERS ADMIN
 POST        /app/admin/getFilteredUsers                 controllers.UserController.getFilteredUsers
 POST        /app/admin/addUsers                         controllers.UserController.registerUser
-#TODO EDIT
+POST        /app/admin/editUser                         controllers.UserController.editUser
 #TODO DELETE
 POST        /app/admin/getUserDetails                   controllers.UserController.getUserDetails
 
 
 ##TABLES ADMIN
-POST /app/admin/getAllRestaurantTables                  controllers.RestaurantController.getAllRestaurantTables
+POST        /app/admin/getAllRestaurantTables           controllers.RestaurantController.getAllRestaurantTables
