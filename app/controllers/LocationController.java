@@ -11,7 +11,6 @@ import daos.interfaces.LocationDao;
 import io.ebean.PagedList;
 import models.Country;
 import models.Location;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -148,22 +147,22 @@ public class LocationController extends Controller {
             ArrayNode rootNode =  mapper.createArrayNode();
 
             for (Country country: coutDao.getAll()) {
-                JsonNode countryNode =  mapper.createObjectNode();
+                JsonNode countryNode = mapper.createObjectNode();
 
                 ((ObjectNode) countryNode).put("country_name", country.getName());
 
                 ArrayNode locationsNode = mapper.createArrayNode();
 
-                for (Location location: locDao.getAllLocOfCountry(country.getName())
+                for (Location location : locDao.getAllLocOfCountry(country.getName())
                 ) {
                     locationsNode.add(location.getName());
+
+                    ((ObjectNode) countryNode).put("city_names", locationsNode);
+
+                    rootNode.add(countryNode);
                 }
-                ((ObjectNode) countryNode).put("city_names",locationsNode);
-
-                rootNode.add(countryNode);
             }
-
-            return ok(mapper.writeValueAsString(rootNode));
+                return ok(mapper.writeValueAsString(rootNode));
 
         } catch (Exception e){
             return badRequest(e.getMessage());
