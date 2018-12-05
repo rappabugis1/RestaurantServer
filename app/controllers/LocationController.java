@@ -140,6 +140,37 @@ public class LocationController extends Controller {
         }
     }
 
+    public Result getLocationsForSelect(){
+        try{
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            ArrayNode rootNode =  mapper.createArrayNode();
+
+            for (Country country: coutDao.getAll()) {
+                JsonNode countryNode =  mapper.createObjectNode();
+
+                ((ObjectNode) countryNode).put("country_name", country.getName());
+
+                ArrayNode locationsNode = mapper.createArrayNode();
+
+                for (Location location: locDao.getAllLocOfCountry(country.getName())
+                ) {
+                    locationsNode.add(location.getName());
+                }
+                ((ObjectNode) countryNode).put("city_names",locationsNode);
+
+                rootNode.add(countryNode);
+            }
+
+            return ok(mapper.writeValueAsString(rootNode));
+
+        } catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
+
     private JsonNode getLocJson(Location newLocation){
         JsonNode rootNode = (new ObjectMapper()).createObjectNode();
 
@@ -147,4 +178,5 @@ public class LocationController extends Controller {
         ((ObjectNode) rootNode).put("name", newLocation.getName());
         return rootNode;
     }
+
 }

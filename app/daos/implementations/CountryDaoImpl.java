@@ -4,6 +4,8 @@ import daos.interfaces.CountryDao;
 import io.ebean.DuplicateKeyException;
 import models.Country;
 
+import java.util.List;
+
 public class CountryDaoImpl implements CountryDao {
 
     //Create methods
@@ -20,6 +22,11 @@ public class CountryDaoImpl implements CountryDao {
     }
 
     //Read methods
+    @Override
+    public List<Country> getAll(){
+        return Country.getFinder().all();
+    }
+
     @Override
     public Country getCountryByName(String name) {
         return Country.getFinder().query()
@@ -43,6 +50,7 @@ public class CountryDaoImpl implements CountryDao {
             return temp;
         else return country;
     }
+
 
 
     //Update methods

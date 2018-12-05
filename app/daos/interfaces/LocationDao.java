@@ -15,6 +15,8 @@ public interface LocationDao {
 
     void updateLocation(Location location);
 
+    List<Location> getAllLocOfCountry(String countryName);
+
     Location getLocationById(Long id);
 
     PagedList<Location> getFilteredLocations(JsonNode json);

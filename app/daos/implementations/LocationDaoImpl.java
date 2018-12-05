@@ -23,6 +23,11 @@ public class LocationDaoImpl implements LocationDao {
     //Read methods
 
     @Override
+    public List<Location> getAllLocOfCountry(String countryName){
+        return Location.getFinder().query().where().eq("country.name", countryName).findList();
+    }
+
+    @Override
     public Location getLocationById(Long id){
         return Location.getFinder().byId(id);
     }

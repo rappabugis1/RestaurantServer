@@ -37,6 +37,8 @@ GET         /app/getListOfReservationsForUser           controllers.UserControll
 
 POST        /app/getAllRestaurantComments               controllers.RestaurantController.getAllRestaurantComments
 
+GET        /app/getLocationsForSelect                  controllers.LocationController.getLocationsForSelect
+
 
 #Filters
 
@@ -53,6 +55,7 @@ POST        /app/admin/editLocation                     controllers.LocationCont
 #TODO DELETE MORE
 POST        /app/admin/deleteLocation                   controllers.LocationController.deleteLocation
 POST        /app/admin/getLocationDetails               controllers.LocationController.getLocationDetails
+
 
 ##CATEGORIES ADMIN
 POST        /app/admin/getFilteredCategories            controllers.CategoriesController.getFilteredCategories
