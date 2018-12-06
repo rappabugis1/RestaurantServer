@@ -122,7 +122,7 @@ public class ReservationController extends Controller {
             //Set daytype to check length of stay depending on date
             String dayType= "workday";
 
-            if(json.get("dayName").asText().equals("sunday") || json.get("dayName").asText().equals("saturday"))
+            if(json.get("dayName").asText().equals("Sunday") || json.get("dayName").asText().equals("Saturday"))
                 dayType="weekend";
 
             StayByDayType stayValues = resDao.getReservationLengthsForGuestNumber(idRestaurant, persons, dayType);
@@ -240,8 +240,27 @@ public class ReservationController extends Controller {
 
         int persons = json.get("persons").asInt();
 
-        //Hardcoded value for length of stay, right now not a requirement in frontend but this is how it should work, default stay is 2 hours
-        int lengthOfStay = json.get("lengthOfStay").asInt();
+        //Set daytype to check length of stay depending on date
+        String dayType= "workday";
+
+        if(json.get("dayName").asText().equals("Sunday") || json.get("dayName").asText().equals("Saturday"))
+            dayType="weekend";
+
+        StayByDayType stayValues = resDao.getReservationLengthsForGuestNumber(idRestaurant, persons, dayType);
+
+        //sets to default for restaurant
+        int lengthOfStay = restDao.getRestaurantbyId(idRestaurant).getDefaultStay();
+
+        //if there is stayValues set length of stay to corresponding day part length
+        if(stayValues!=null){
+            if(Integer.parseInt(json.get("reservationHour").asText().substring(0,1))<12)
+                lengthOfStay = stayValues.getMorning();
+            if(Integer.parseInt(json.get("reservationHour").asText().substring(0,1))>=12)
+                lengthOfStay = stayValues.getDay();
+
+            if(Integer.parseInt(json.get("reservationHour").asText().substring(0,1))>=18)
+                lengthOfStay = stayValues.getEvening();
+        }
 
         //Get reservation end
         Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay * 60) * 1000);
