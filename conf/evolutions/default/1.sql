@@ -40,6 +40,13 @@ create table dish_types (
   constraint pk_dish_types primary key (id)
 );
 
+create table guest_stay (
+  id                            bigserial not null,
+  guest_number                  integer not null,
+  restaurant_id                 bigint not null,
+  constraint pk_guest_stay primary key (id)
+);
+
 create table locations (
   id                            bigserial not null,
   name                          varchar(30) not null,
@@ -78,6 +85,7 @@ create table restaurants (
   longitude                     float not null,
   image_file_name               varchar(255) not null,
   cover_file_name               varchar(255) not null,
+  default_stay                  integer not null,
   mark                          integer not null,
   location_id                   bigint not null,
   constraint pk_restaurants primary key (id)
@@ -91,6 +99,16 @@ create table reviews (
   user_id                       bigint not null,
   restaurant_id                 bigint not null,
   constraint pk_reviews primary key (id)
+);
+
+create table stay_by_day_type (
+  id                            bigserial not null,
+  day_type                      varchar(255) not null,
+  morning                       integer not null,
+  day                           integer not null,
+  evening                       integer not null,
+  guest_stay_id                 bigint not null,
+  constraint pk_stay_by_day_type primary key (id)
 );
 
 create table tables (
@@ -133,6 +151,9 @@ create index ix_dishes_menu_id on dishes (menu_id);
 alter table dishes add constraint fk_dishes_type_id foreign key (type_id) references dish_types (id) on delete restrict on update restrict;
 create index ix_dishes_type_id on dishes (type_id);
 
+alter table guest_stay add constraint fk_guest_stay_restaurant_id foreign key (restaurant_id) references restaurants (id) on delete restrict on update restrict;
+create index ix_guest_stay_restaurant_id on guest_stay (restaurant_id);
+
 alter table locations add constraint fk_locations_country_id foreign key (country_id) references countries (id) on delete restrict on update restrict;
 create index ix_locations_country_id on locations (country_id);
 
@@ -157,6 +178,9 @@ create index ix_reviews_user_id on reviews (user_id);
 alter table reviews add constraint fk_reviews_restaurant_id foreign key (restaurant_id) references restaurants (id) on delete restrict on update restrict;
 create index ix_reviews_restaurant_id on reviews (restaurant_id);
 
+alter table stay_by_day_type add constraint fk_stay_by_day_type_guest_stay_id foreign key (guest_stay_id) references guest_stay (id) on delete restrict on update restrict;
+create index ix_stay_by_day_type_guest_stay_id on stay_by_day_type (guest_stay_id);
+
 alter table tables add constraint fk_tables_restaurant_id foreign key (restaurant_id) references restaurants (id) on delete restrict on update restrict;
 create index ix_tables_restaurant_id on tables (restaurant_id);
 
@@ -179,6 +203,9 @@ drop index if exists ix_dishes_menu_id;
 
 alter table if exists dishes drop constraint if exists fk_dishes_type_id;
 drop index if exists ix_dishes_type_id;
+
+alter table if exists guest_stay drop constraint if exists fk_guest_stay_restaurant_id;
+drop index if exists ix_guest_stay_restaurant_id;
 
 alter table if exists locations drop constraint if exists fk_locations_country_id;
 drop index if exists ix_locations_country_id;
@@ -204,6 +231,9 @@ drop index if exists ix_reviews_user_id;
 alter table if exists reviews drop constraint if exists fk_reviews_restaurant_id;
 drop index if exists ix_reviews_restaurant_id;
 
+alter table if exists stay_by_day_type drop constraint if exists fk_stay_by_day_type_guest_stay_id;
+drop index if exists ix_stay_by_day_type_guest_stay_id;
+
 alter table if exists tables drop constraint if exists fk_tables_restaurant_id;
 drop index if exists ix_tables_restaurant_id;
 
@@ -222,6 +252,8 @@ drop table if exists dishes cascade;
 
 drop table if exists dish_types cascade;
 
+drop table if exists guest_stay cascade;
+
 drop table if exists locations cascade;
 
 drop table if exists menus cascade;
@@ -231,6 +263,8 @@ drop table if exists reservations cascade;
 drop table if exists restaurants cascade;
 
 drop table if exists reviews cascade;
+
+drop table if exists stay_by_day_type cascade;
 
 drop table if exists tables cascade;
 

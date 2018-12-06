@@ -2,6 +2,7 @@ package daos.implementations;
 
 import daos.interfaces.ReservationDao;
 import models.Reservation;
+import models.StayByDayType;
 import models.Table;
 
 import java.sql.Timestamp;
@@ -44,6 +45,16 @@ public class ReservationDaoImpl implements ReservationDao {
                 .gt("reservation_end_date_time", start)
                 .lt("reservation_date_time", end)
                 .findList();
+    }
+
+    @Override
+    public StayByDayType getReservationLengthsForGuestNumber(Long restaurant_id, int guestNumber, String dayType){
+        return StayByDayType.getFinder().query()
+                .where()
+                .eq("dayType", dayType)
+                .eq("guestStay.restaurant.id", restaurant_id)
+                .eq("guestStay.guestNumber", guestNumber)
+                .findOne();
     }
 
     //Edit

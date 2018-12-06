@@ -47,7 +47,13 @@ public class Restaurant extends Model {
     @Column(nullable = false, name = "cover_file_name")
     private String coverFileName;
 
+    @Column(nullable = false, name= "default_stay")
+    private int defaultStay;
+
     private int mark = average();
+
+    public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
+
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JsonProperty("location_id")
@@ -78,6 +84,10 @@ public class Restaurant extends Model {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     @JsonIgnore
     List<Reservation> reservationList;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
+    @JsonIgnore
+    List<GuestStay> guestStays;
 
     @JsonProperty("foodType")
     private String foodType() {
@@ -221,5 +231,20 @@ public class Restaurant extends Model {
         this.reservationList = reservationList;
     }
 
-    public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
+    public int getDefaultStay() {
+        return defaultStay;
+    }
+
+    public void setDefaultStay(int defaultStay) {
+        this.defaultStay = defaultStay;
+    }
+
+    public List<GuestStay> getGuestStays() {
+        return guestStays;
+    }
+
+    public void setGuestStays(List<GuestStay> guestStays) {
+        this.guestStays = guestStays;
+    }
+
 }

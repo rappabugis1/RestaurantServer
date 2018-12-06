@@ -61,14 +61,7 @@ public class QueryBuilder {
 
             Timestamp reservationDateTime = getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
 
-
-            int lengthOfStay = reservationInfoNode.get("lengthOfStay").asInt();
-
-            //Get reservation end time
-            Timestamp reservationEnd = new Timestamp(reservationDateTime.getTime() + (lengthOfStay * 60) * 1000);
-
-            query
-                    .exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places", reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time", "r.reservation_end_date_time", reservationDateTime).query()).query());
+            query.exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places", reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time", "r.reservation_end_date_time", reservationDateTime).query()).query());
 
         }
 

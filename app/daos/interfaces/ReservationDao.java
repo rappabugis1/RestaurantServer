@@ -1,6 +1,7 @@
 package daos.interfaces;
 
 import models.Reservation;
+import models.StayByDayType;
 import models.Table;
 
 import java.sql.Timestamp;
@@ -15,6 +16,8 @@ public interface ReservationDao {
     List<Table> getTablesOfRestaurantWithPersons(int persons, Long restaurant_id);
 
     List<Reservation> findColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end);
+
+    StayByDayType getReservationLengthsForGuestNumber(Long restaurant_id, int guestNumber, String dayType);
 
     void setReservationToFixed(Long id, String request) throws Exception;
 

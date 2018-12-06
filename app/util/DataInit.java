@@ -133,14 +133,6 @@ public class DataInit {
             restaurantNames.add("Lagero");
             restaurantNames.add("Konoba Taurus");
             restaurantNames.add("Food House");
-            restaurantNames.add("Megi");
-            restaurantNames.add("Behar");
-            restaurantNames.add("Restoran Babilon");
-            restaurantNames.add("Europa Restoran");
-            restaurantNames.add("Porto Pizzeria");
-            restaurantNames.add("Restoran Teatar");
-            restaurantNames.add("Moon Star Caffe ");
-            restaurantNames.add("Gusar");
 
             ArrayList<String> restaurantImageFiles = new ArrayList<>();
             restaurantImageFiles.add("https://images.pexels.com/photos/460537/pexels-photo-460537.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=640&w=480");
@@ -188,6 +180,8 @@ public class DataInit {
 
                 restaurant.setLocation(locations.get(rand.nextInt(locations.size())));
 
+                restaurant.setDefaultStay(120);
+
                 restaurant.save();
 
                 //Menus for each restaurant
@@ -200,6 +194,18 @@ public class DataInit {
                     Table table = new Table(i, restaurant);
                     table.save();
                 }
+
+                for(int i=1; i<5; i++){
+                    GuestStay definedStay = new GuestStay();
+                    definedStay.setRestaurant(restaurant);
+                    definedStay.setGuestNumber(i);
+                    definedStay.save();
+
+                    (new StayByDayType(15*i, 45*i, 30*i, definedStay, "workday")).save();
+                    (new StayByDayType(15*i, 30*i, 45*i, definedStay, "weekend")).save();
+
+                }
+
             }
 
             //Dishes for menus
