@@ -11,6 +11,7 @@ import daos.interfaces.LocationDao;
 import io.ebean.PagedList;
 import models.Country;
 import models.Location;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -155,12 +156,17 @@ public class LocationController extends Controller {
 
                 for (Location location : locDao.getAllLocOfCountry(country.getName())
                 ) {
-                    locationsNode.add(location.getName());
+                    ObjectNode cityNode = mapper.createObjectNode();
+                    cityNode.put("name", location.getName());
+                    cityNode.put("id", location.id);
+
+                    locationsNode.add(cityNode);
 
                     ((ObjectNode) countryNode).put("city_names", locationsNode);
 
-                    rootNode.add(countryNode);
                 }
+                rootNode.add(countryNode);
+
             }
                 return ok(mapper.writeValueAsString(rootNode));
 
