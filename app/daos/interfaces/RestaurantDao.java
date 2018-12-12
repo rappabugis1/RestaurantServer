@@ -9,7 +9,7 @@ import java.util.List;
 public interface RestaurantDao {
 
     //Create methods
-    Restaurant createRestaurant(Restaurant newRestaurant);
+    void createRestaurant(Restaurant newRestaurant);
 
     //Read methods
 

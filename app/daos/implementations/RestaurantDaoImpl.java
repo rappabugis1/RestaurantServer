@@ -18,14 +18,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     //Create methods
     @Override
-    public Restaurant createRestaurant(Restaurant newRest) {
-        try {
-            newRest.save();
-
-            return newRest;
-        } catch (Exception e) {
-            return null;
-        }
+    public void createRestaurant(Restaurant newRest) {
+        newRest.save();
     }
 
     //Read methods
