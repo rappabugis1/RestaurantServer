@@ -7,11 +7,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
-import models.Restaurant;
-import models.Review;
-import models.Table;
+import models.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantDaoImpl implements RestaurantDao {
@@ -19,7 +18,20 @@ public class RestaurantDaoImpl implements RestaurantDao {
     //Create methods
     @Override
     public void createRestaurant(Restaurant newRest) {
+
+
         newRest.save();
+
+        //Add menus
+        ArrayList<String> menuTypes = new ArrayList<>();
+        menuTypes.add("Breakfast");
+        menuTypes.add("Lunch");
+        menuTypes.add("Dinner");
+
+        for (String menuType : menuTypes) {
+            Menu menu = new Menu(menuType, newRest);
+            menu.save();
+        }
     }
 
     //Read methods
@@ -126,6 +138,22 @@ public class RestaurantDaoImpl implements RestaurantDao {
         return (new ObjectMapper()).writeValueAsString(tables);
 
     }
+
+    @Override
+    public List<DishType> getAllDishTypes(){
+        return DishType.getFinder().all();
+    }
+
+    @Override
+    public List<Menu> getRestaurantMenus(Long id){
+        return Menu.getFinder().query().where().eq("restaurant.id", id).findList();
+    }
+
+    @Override
+    public Menu getMenuByType (String name){
+        return Menu.getFinder().query().where().eq("type", name).findOne();
+    }
+
     //Update methods
 
     //Delete methods

@@ -6,17 +6,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.implementations.CategoryDaoImpl;
+import daos.implementations.DishDaoImpl;
 import daos.implementations.LocationDaoImpl;
 import daos.implementations.RestaurantDaoImpl;
 import daos.interfaces.CategoryDao;
+import daos.interfaces.DishDao;
 import daos.interfaces.LocationDao;
 import daos.interfaces.RestaurantDao;
 import models.*;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RestaurantController extends Controller {
 
@@ -25,6 +32,8 @@ public class RestaurantController extends Controller {
     CategoryDao catDao = new CategoryDaoImpl();
 
     LocationDao locDao = new LocationDaoImpl();
+
+    DishDao dishDao = new DishDaoImpl();
 
     public Result addRestaurant() {
         JsonNode json = request().body().asJson();
@@ -217,6 +226,51 @@ public class RestaurantController extends Controller {
             return ok(restDao.getAllRestaurantTables(json.get("id").asLong()));
         }
         catch (Exception e){return  badRequest(e.getMessage());}
+    }
+
+    public Result getDishTypes(){
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            return ok(mapper.writeValueAsString(restDao.getAllDishTypes()));
+        } catch (Exception e){
+            return badRequest();
+        }
+    }
+
+    public Result adminMenuItems(){
+        JsonNode json = request().body().asJson();
+
+
+        if (json == null)
+            return badRequest("Invalid Json is null");
+
+
+            //init menu map
+            Map<String, Menu> menus=new HashMap<>();
+
+            for (Menu menu: restDao.getRestaurantMenus(json.get("restaurantId").asLong())) {
+                menus.put(menu.getType(),menu);
+            }
+
+            //Init dish type map
+            Map<String, DishType> dishTypesMap=new HashMap<>();
+            for (DishType dishType:restDao.getAllDishTypes()) {
+                dishTypesMap.put(dishType.getType(), dishType);
+            }
+
+            //Do add queue
+            for (JsonNode newDish: json.get("addQueue")) {
+
+                Dish dish = new Dish(newDish.get("name").asText(),newDish.get("description").asText(),newDish.get("price").asInt(), menus.get(newDish.get("menuType").asText()), dishTypesMap.get(newDish.get("dishType").asText()));
+                dishDao.createDish(dish);
+            }
+
+            for (JsonNode deleteId: json.get("deleteQueue")) {
+                dishDao.deleteDish(dishDao.getDishById(deleteId.asLong()));
+            }
+
+            return ok();
+
     }
 
     private static String getJsonMenu(Menu menu, Long id) throws IOException {

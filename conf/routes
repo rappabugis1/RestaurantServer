@@ -37,7 +37,7 @@ GET         /app/getListOfReservationsForUser           controllers.UserControll
 
 POST        /app/getAllRestaurantComments               controllers.RestaurantController.getAllRestaurantComments
 
-GET        /app/getLocationsForSelect                  controllers.LocationController.getLocationsForSelect
+GET         /app/getLocationsForSelect                  controllers.LocationController.getLocationsForSelect
 
 
 #Filters
@@ -71,6 +71,8 @@ POST        /app/admin/addRestaurant                    controllers.RestaurantCo
 #TODO DELETE
 POST        /app/admin/getRestaurantCategories          controllers.RestaurantController.getRestaurantCategories
 POST        /app/admin/getAllRestaurantComments         controllers.RestaurantController.getAllRestaurantComments
+GET         /app/admin/getAllDishTypes                  controllers.RestaurantController.getDishTypes
+POST        /app/admin/adminMenuItems                   controllers.RestaurantController.adminMenuItems
 
 ##USERS ADMIN
 POST        /app/admin/getFilteredUsers                 controllers.UserController.getFilteredUsers
