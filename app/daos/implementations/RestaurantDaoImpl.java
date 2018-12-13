@@ -150,12 +150,15 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public Menu getMenuByType (String name){
+    public Menu getMenuByType(String name){
         return Menu.getFinder().query().where().eq("type", name).findOne();
     }
 
     //Update methods
 
     //Delete methods
-
+    @Override
+    public void deleteRestaurant(Restaurant restaurant){
+        restaurant.delete();
+    }
 }

@@ -125,4 +125,18 @@ public class CategoriesController extends Controller {
         }
     }
 
+    public Result deleteCategory(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null)
+            return badRequest("Json is null");
+
+        try {
+            catDao.deleteCategory(catDao.getCategoryDetails(json.get("id").asLong()));
+            return ok();
+        } catch (Exception e){
+            return  badRequest(e.getMessage());
+        }
+    }
+
 }

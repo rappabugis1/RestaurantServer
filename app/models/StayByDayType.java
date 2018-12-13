@@ -26,7 +26,7 @@ public class StayByDayType extends Model {
     @Column(nullable = false)
     private int evening;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST,optional = false)
     private GuestStay guestStay;
 
     public int getMorning() {

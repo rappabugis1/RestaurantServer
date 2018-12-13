@@ -7,6 +7,7 @@ import io.ebean.Finder;
 import io.ebean.Model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @javax.persistence.Table(name = "tables")
@@ -23,9 +24,13 @@ public class Table extends Model {
     @Column(nullable = false)
     private int sitting_places;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JsonIgnore
     Restaurant restaurant;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "table")
+    @JsonIgnore
+    List<Reservation> reservations;
 
     @JsonProperty("restaurantId")
     private Long restiD (){

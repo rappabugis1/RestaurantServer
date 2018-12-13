@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import daos.interfaces.LocationDao;
 import io.ebean.ExpressionList;
 import io.ebean.PagedList;
-import models.Country;
-import models.Location;
+import models.*;
 
 import java.util.List;
 
@@ -107,6 +106,21 @@ public class LocationDaoImpl implements LocationDao {
 
     @Override
     public void deleteLocation(Location location){
+
+        for (Restaurant rest:
+                Restaurant.getFinder().query().where().eq("location.name", location.getName()).findList() ) {
+
+            rest.setLocation(null);
+
+            rest.save();
+        }
+
+        for(UserData userData:
+                UserData.getFinder().query().where().eq("location.name", location.getName()).findList()){
+            userData.setLocation(null);
+            userData.save();
+        }
+
         location.delete();
     }
 }

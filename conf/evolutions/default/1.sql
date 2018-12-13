@@ -87,7 +87,7 @@ create table restaurants (
   cover_file_name               varchar(255) not null,
   default_stay                  integer not null,
   mark                          integer not null,
-  location_id                   bigint not null,
+  location_id                   bigint,
   constraint pk_restaurants primary key (id)
 );
 
@@ -134,7 +134,7 @@ create table user_data (
   last_name                     varchar(255) not null,
   phone                         varchar(255) not null,
   user_id                       bigint not null,
-  location_id                   bigint not null,
+  location_id                   bigint,
   constraint uq_user_data_user_id unique (user_id),
   constraint pk_user_data primary key (id)
 );

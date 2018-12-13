@@ -23,10 +23,10 @@ public class Menu extends Model {
     @Column(nullable = false)
     private String type;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     Restaurant restaurant;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(cascade = CascadeType.REMOVE,mappedBy = "menu")
     List<Dish> dishes;
 
     public List<Dish> getDishes() {

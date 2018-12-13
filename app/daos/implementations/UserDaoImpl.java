@@ -84,10 +84,11 @@ public class UserDaoImpl implements UserDao {
         int pageNumber = json.get("pageNumber").asInt();
         JsonNode searchTextNode = json.get("searchText");
 
-        ExpressionList<User> query = User.getFinder().query().where();
+        ExpressionList<User> query = User.getFinder().query().where().ne("user_type", "admin");
 
         if (searchTextNode != null) {
             String searchText = searchTextNode.asText();
+
             query.or()
                 .icontains("user_data.firstName", searchText)
                 .icontains("user_data.lastName", searchText)
@@ -133,4 +134,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     //Delete methods
+
+    @Override
+    public void deleteUser(User user){
+        user.delete();
+    }
 }

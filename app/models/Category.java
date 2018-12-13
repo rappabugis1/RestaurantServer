@@ -17,7 +17,7 @@ public class Category extends Model {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     List<Restaurant> restaurants;
 
     public static final Finder<Long, Category> finder = new Finder<>(Category.class);

@@ -243,6 +243,21 @@ public class UserController extends Controller {
         }
     }
 
+    public Result adminDeleteUser(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            userDao.deleteUser(userDao.getUserbyId(json.get("id").asLong()));
+            return ok();
+        } catch (Exception e){
+            return badRequest();
+        }
+    }
+
     private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);

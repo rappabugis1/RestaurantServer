@@ -26,6 +26,8 @@ public interface CategoryDao {
     List<Category> getRestaurantCategories(Long id);
 
     void updateCategory(Category category);
+
+    void deleteCategory(Category category);
     //Update methods
 
     //Delete methods

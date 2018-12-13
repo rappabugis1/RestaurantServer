@@ -21,7 +21,7 @@ public class GuestStay extends  Model{
     @Column(nullable = false, name = "guest_number")
     private int guestNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     Restaurant restaurant;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "guestStay")

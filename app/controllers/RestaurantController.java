@@ -326,6 +326,21 @@ public class RestaurantController extends Controller {
         }
     }
 
+    public Result adminDeleteRestaurant(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            restDao.deleteRestaurant(restDao.getRestaurantbyId(json.get("id").asLong()));
+            return ok();
+        } catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
 
     private static String getJsonMenu(Menu menu, Long id) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

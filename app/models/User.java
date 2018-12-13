@@ -41,9 +41,13 @@ public class User extends Model {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserData user_data;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
     @JsonIgnore
     List<Review> reviews;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
+    @JsonIgnore
+    List<Reservation> reservations;
 
     public List<Review> getReviews() {
         return reviews;

@@ -34,6 +34,8 @@ public interface UserDao {
 
     User editUser(User user) throws Exception;
 
+    void deleteUser(User user);
+
     //Update methods
 
     //Delete methods

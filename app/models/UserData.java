@@ -37,7 +37,7 @@ public class UserData extends Model {
     @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     Location location;
 
 

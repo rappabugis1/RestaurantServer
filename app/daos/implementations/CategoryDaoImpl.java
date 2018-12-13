@@ -71,4 +71,7 @@ public class CategoryDaoImpl implements CategoryDao {
     }
     //Delete
 
+    @Override
+    public void deleteCategory(Category category){category.delete();}
+
 }

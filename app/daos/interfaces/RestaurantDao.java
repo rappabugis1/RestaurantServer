@@ -36,6 +36,9 @@ public interface RestaurantDao {
     List<Menu> getRestaurantMenus(Long id);
 
     Menu getMenuByType(String name);
+
+    //Delete methods
+    void deleteRestaurant(Restaurant restaurant);
     //Update methods
 
     //Delete methods

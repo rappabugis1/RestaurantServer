@@ -55,12 +55,12 @@ public class Restaurant extends Model {
     public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
 
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne
     @JsonProperty("location_id")
     Location location;
 
 
-    @ManyToMany(mappedBy = "restaurants")
+    @ManyToMany(cascade=CascadeType.ALL,mappedBy = "restaurants")
     @JoinTable(
             name = "categories_restaurants",
             joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"),
