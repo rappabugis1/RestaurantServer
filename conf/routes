@@ -3,86 +3,87 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET           /                                                   controllers.HomeController.index
+GET         /                                                   controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                                       controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                       controllers.Assets.versioned(path="/public", file: Asset)
 
 
-POST          /app/register                                       controllers.UserController.registerUser
-POST          /app/login                                          controllers.UserController.loginUser
+POST        /app/register                                       controllers.UserController.registerUser
+POST        /app/login                                          controllers.UserController.loginUser
 
 
-POST          /app/getRestaurantDetails                           controllers.RestaurantController.getRestaurantDetails
+POST        /app/getRestaurantDetails                           controllers.RestaurantController.getRestaurantDetails
 
-POST          /app/insertComment                                  controllers.RestaurantController.insertComment
+POST        /app/insertComment                                  controllers.RestaurantController.insertComment
 
-GET           /app/getRestaurantLocations                         controllers.RestaurantController.getRestaurantLocations
+GET         /app/getRestaurantLocations                         controllers.RestaurantController.getRestaurantLocations
 
-GET           /app/getAllCategories                               controllers.CategoriesController.getAllCategories
+GET         /app/getAllCategories                               controllers.CategoriesController.getAllCategories
 
-GET           /app/getRandomRestaurants                           controllers.RestaurantController.getRandomRestaurants
+GET         /app/getRandomRestaurants                           controllers.RestaurantController.getRandomRestaurants
 
-POST          /app/getRestaurantMenu                              controllers.RestaurantController.getRestaurantMenu
+POST        /app/getRestaurantMenu                              controllers.RestaurantController.getRestaurantMenu
 
-POST          /app/checkReservationAvailability                   controllers.ReservationController.checkReservationAvailability
+POST        /app/checkReservationAvailability                   controllers.ReservationController.checkReservationAvailability
 
-POST          /app/makeReservation                                controllers.ReservationController.makeReservation
+POST        /app/makeReservation                                controllers.ReservationController.makeReservation
 
-POST          /app/deleteReservation                              controllers.ReservationController.deleteReservation
+POST        /app/deleteReservation                              controllers.ReservationController.deleteReservation
 
-POST          /app/setReservationToFixed                          controllers.ReservationController.setReservationToFixed
+POST        /app/setReservationToFixed                          controllers.ReservationController.setReservationToFixed
 
-GET           /app/getListOfReservationsForUser                   controllers.UserController.getListOfReservationsForUser
+GET         /app/getListOfReservationsForUser                   controllers.UserController.getListOfReservationsForUser
 
-POST          /app/getAllRestaurantComments                       controllers.RestaurantController.getAllRestaurantComments
+POST        /app/getAllRestaurantComments                       controllers.RestaurantController.getAllRestaurantComments
 
-GET           /app/getLocationsForSelect                          controllers.LocationController.getLocationsForSelect
+GET         /app/getLocationsForSelect                          controllers.LocationController.getLocationsForSelect
 
 
 #Filters
 
-POST          /app/getRestaurantsByFilter                         controllers.FilterController.getRestaurantsByFilter
+POST        /app/getRestaurantsByFilter                         controllers.FilterController.getRestaurantsByFilter
 
 #Admin
 
-GET           /app/admin/getAdministrationCounters                controllers.AdminCommonController.getAdministrationCounters
+GET         /app/admin/getAdministrationCounters                controllers.AdminCommonController.getAdministrationCounters
 
 ##LOCATIONS ADMIN
-POST          /app/admin/getFilteredLocations                     controllers.LocationController.getFilteredLocations
-POST          /app/admin/addLocation                              controllers.LocationController.addLocation
-POST          /app/admin/editLocation                             controllers.LocationController.editLocation
+POST        /app/admin/getFilteredLocations                     controllers.LocationController.getFilteredLocations
+POST        /app/admin/addLocation                              controllers.LocationController.addLocation
+POST        /app/admin/editLocation                             controllers.LocationController.editLocation
 #TODO DELETE MORE
-POST          /app/admin/deleteLocation                           controllers.LocationController.deleteLocation
-POST          /app/admin/getLocationDetails                       controllers.LocationController.getLocationDetails
+POST        /app/admin/deleteLocation                           controllers.LocationController.deleteLocation
+POST        /app/admin/getLocationDetails                       controllers.LocationController.getLocationDetails
 
 
 ##CATEGORIES ADMIN
-POST          /app/admin/getFilteredCategories                    controllers.CategoriesController.getFilteredCategories
-POST          /app/admin/addCategory                              controllers.CategoriesController.addCategory
-POST          /app/admin/editCategory                             controllers.CategoriesController.editCategory
-POST /app/admin/deleteCategory controllers.CategoriesController.deleteCategory
-POST          /app/admin/getCategoryDetails                       controllers.CategoriesController.getCategoryDetails
+POST        /app/admin/getFilteredCategories                    controllers.CategoriesController.getFilteredCategories
+POST        /app/admin/addCategory                              controllers.CategoriesController.addCategory
+POST        /app/admin/editCategory                             controllers.CategoriesController.editCategory
+POST        /app/admin/deleteCategory                           controllers.CategoriesController.deleteCategory
+POST        /app/admin/getCategoryDetails                       controllers.CategoriesController.getCategoryDetails
 
 ##RESTAURANTS ADMIN
-POST          /app/admin/getFilteredRestaurants                   controllers.FilterController.getRestaurantsByFilter
-POST          /app/admin/addRestaurant                            controllers.RestaurantController.addRestaurant
+POST        /app/admin/getFilteredRestaurants                   controllers.FilterController.getRestaurantsByFilter
+POST        /app/admin/addRestaurant                            controllers.RestaurantController.addRestaurant
 #TODO EDIT
-POST /app/admin/adminDeleteRestaurant controllers.RestaurantController.adminDeleteRestaurant
-POST          /app/admin/getRestaurantCategories                  controllers.RestaurantController.getRestaurantCategories
-POST          /app/admin/getAllRestaurantComments                 controllers.RestaurantController.getAllRestaurantComments
-GET           /app/admin/getAllDishTypes                          controllers.RestaurantController.getDishTypes
-POST          /app/admin/adminMenuItems                           controllers.RestaurantController.adminMenuItems
-POST          /app/admin/adminRestaurantTables                    controllers.RestaurantController.adminRestaurantTables
-POST          /app/admin/adminRestaurantReservationLengths        controllers.RestaurantController.adminRestaurantReservationLengths
+POST        /app/admin/adminDeleteRestaurant                    controllers.RestaurantController.adminDeleteRestaurant
+POST        /app/admin/getRestaurantCategories                  controllers.RestaurantController.getRestaurantCategories
+POST        /app/admin/getAllRestaurantComments                 controllers.RestaurantController.getAllRestaurantComments
+GET         /app/admin/getAllDishTypes                          controllers.RestaurantController.getDishTypes
+POST        /app/admin/adminMenuItems                           controllers.RestaurantController.adminMenuItems
+POST        /app/admin/adminRestaurantTables                    controllers.RestaurantController.adminRestaurantTables
+POST        /app/admin/adminRestaurantReservationLengths        controllers.RestaurantController.adminRestaurantReservationLengths
+POST        /app/admin/adminGetDetails                          controllers.RestaurantController.adminGetDetails
 
 ##USERS ADMIN
-POST          /app/admin/getFilteredUsers                         controllers.UserController.getFilteredUsers
-POST          /app/admin/addUsers                                 controllers.UserController.registerUser
-POST          /app/admin/editUser                                 controllers.UserController.editUser
-POST       /app/admin/adminDeleteUser                          controllers.UserController.adminDeleteUser
-POST          /app/admin/getUserDetails                           controllers.UserController.getUserDetails
+POST        /app/admin/getFilteredUsers                         controllers.UserController.getFilteredUsers
+POST        /app/admin/addUsers                                 controllers.UserController.registerUser
+POST        /app/admin/editUser                                 controllers.UserController.editUser
+POST        /app/admin/adminDeleteUser                          controllers.UserController.adminDeleteUser
+POST        /app/admin/getUserDetails                           controllers.UserController.getUserDetails
 
 
 ##TABLES ADMIN
-POST          /app/admin/getAllRestaurantTables                   controllers.RestaurantController.getAllRestaurantTables
+POST        /app/admin/getAllRestaurantTables                   controllers.RestaurantController.getAllRestaurantTables

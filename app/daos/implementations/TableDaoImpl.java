@@ -13,5 +13,14 @@ public class TableDaoImpl implements TableDao {
     }
 
 
+    //Read
 
+    @Override
+    public int GetNumTableType(Long id, int sittingPlaces) {
+        return Table.getFinder().query().where()
+                .eq("restaurant.id", id)
+                .eq("sitting_places", sittingPlaces)
+                .findList()
+                .size();
+    }
 }

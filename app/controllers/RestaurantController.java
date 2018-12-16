@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.implementations.*;
 import daos.interfaces.*;
+import javafx.util.Pair;
 import models.*;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -30,6 +32,9 @@ public class RestaurantController extends Controller {
     TableDao tableDao = new TableDaoImpl();
 
     DishDao dishDao = new DishDaoImpl();
+
+    ReservationDao resDao = new ReservationDaoImpl();
+
 
     public Result addRestaurant() {
         JsonNode json = request().body().asJson();
@@ -272,7 +277,7 @@ public class RestaurantController extends Controller {
         }
     }
 
-   public Result adminRestaurantTables (){
+    public Result adminRestaurantTables (){
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -337,6 +342,58 @@ public class RestaurantController extends Controller {
             restDao.deleteRestaurant(restDao.getRestaurantbyId(json.get("id").asLong()));
             return ok();
         } catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
+    public Result adminGetDetails(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            Long id = json.get("id").asLong();
+
+            ObjectMapper mapper = new ObjectMapper();
+
+
+            //get details
+            Restaurant restaurant = restDao.getRestaurantbyId(id);
+
+            //get categories
+            List<Category> restCategories = catDao.getRestaurantCategories(id);
+
+            //get dishes
+            List<Dish> restDishes = dishDao.getRestaurantDishes(id);
+
+            //get table counts
+
+            ArrayNode tablesArrayNode = mapper.createArrayNode();
+            for(int i=0; i<10;i++){
+                Integer ammount =tableDao.GetNumTableType(id, i + 1);
+
+                if(ammount>0)
+                    tablesArrayNode.add((mapper.createObjectNode()).put("tableType", i+1).put("amount", ammount));
+            }
+
+            //get lengths
+
+            List<GuestStay> restStays = resDao.getReservationLengthsForRestaurant(id);
+
+            ObjectNode returnNode = mapper.createObjectNode();
+
+            returnNode.put("basicDetails", mapper.valueToTree(restaurant));
+            returnNode.put("categories", mapper.valueToTree(restCategories));
+            returnNode.put("tablesNumbers", mapper.valueToTree(tablesArrayNode));
+            returnNode.put("dishes", mapper.valueToTree(restDishes));
+            returnNode.put("lengths", mapper.valueToTree(restStays));
+            returnNode.put("location", mapper.valueToTree(restaurant.getLocation().getName()));
+
+            return ok(mapper.writeValueAsString(returnNode));
+
+        }catch (Exception e){
             return badRequest(e.getMessage());
         }
     }

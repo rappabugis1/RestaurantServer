@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -18,6 +19,7 @@ public class Category extends Model {
     private String name;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
+    @JsonIgnore
     List<Restaurant> restaurants;
 
     public static final Finder<Long, Category> finder = new Finder<>(Category.class);
