@@ -52,7 +52,6 @@ GET         /app/admin/getAdministrationCounters                controllers.Admi
 POST        /app/admin/getFilteredLocations                     controllers.LocationController.getFilteredLocations
 POST        /app/admin/addLocation                              controllers.LocationController.addLocation
 POST        /app/admin/editLocation                             controllers.LocationController.editLocation
-#TODO DELETE MORE
 POST        /app/admin/deleteLocation                           controllers.LocationController.deleteLocation
 POST        /app/admin/getLocationDetails                       controllers.LocationController.getLocationDetails
 
@@ -67,7 +66,7 @@ POST        /app/admin/getCategoryDetails                       controllers.Cate
 ##RESTAURANTS ADMIN
 POST        /app/admin/getFilteredRestaurants                   controllers.FilterController.getRestaurantsByFilter
 POST        /app/admin/addRestaurant                            controllers.RestaurantController.addRestaurant
-#TODO EDIT
+POST        /app/admin/editRestaurant                           controllers.RestaurantController.adminEditRestaurant
 POST        /app/admin/adminDeleteRestaurant                    controllers.RestaurantController.adminDeleteRestaurant
 POST        /app/admin/getRestaurantCategories                  controllers.RestaurantController.getRestaurantCategories
 POST        /app/admin/getAllRestaurantComments                 controllers.RestaurantController.getAllRestaurantComments

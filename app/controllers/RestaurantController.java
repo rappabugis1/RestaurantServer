@@ -14,6 +14,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import sun.rmi.runtime.Log;
 
+import java.io.Console;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -267,6 +268,18 @@ public class RestaurantController extends Controller {
                 dishDao.createDish(dish);
             }
 
+            //Do edit que
+            for (JsonNode editDish : json.get("editQueue")) {
+
+                Dish dish = dishDao.getDishById(editDish.get("id").asLong());
+                dish.setName(editDish.get("name").asText());
+                dish.setPrice(editDish.get("price").asInt());
+                dish.setType(dishTypesMap.get(editDish.get("dishType").asText()));
+                dish.setDescription(editDish.get("description").asText());
+                dish.save();
+            }
+
+            //Do delete que
             for (JsonNode deleteId : json.get("deleteQueue")) {
                 dishDao.deleteDish(dishDao.getDishById(deleteId.asLong()));
             }
@@ -324,6 +337,27 @@ public class RestaurantController extends Controller {
                 (new StayByDayType(length.get("weekend").get("morning").asInt(), length.get("weekend").get("day").asInt(), length.get("weekend").get("evening").asInt(), definedStay, "weekend")).save();
             }
 
+            //Edit que
+            for(JsonNode editlength: json.get("editQueue")){
+                StayByDayType workday=StayByDayType.getFinder().byId(editlength.get("workday").get("id").asLong());
+                workday.setMorning(editlength.get("workday").get("morning").asInt());
+                workday.setDay(editlength.get("workday").get("day").asInt());
+                workday.setEvening(editlength.get("workday").get("evening").asInt());
+                workday.save();
+
+                StayByDayType weekend=StayByDayType.getFinder().byId(editlength.get("weekend").get("id").asLong());
+                weekend.setMorning(editlength.get("weekend").get("morning").asInt());
+                weekend.setDay(editlength.get("weekend").get("day").asInt());
+                weekend.setEvening(editlength.get("weekend").get("evening").asInt());
+                weekend.save();
+            }
+
+            for(JsonNode deleteLength : json.get("deleteQueue")){
+                //TODO lengthdao
+
+                GuestStay.getFinder().byId(deleteLength.asLong()).delete();
+
+            }
             return ok();
 
         }catch (Exception e){
@@ -392,6 +426,41 @@ public class RestaurantController extends Controller {
             returnNode.put("location", mapper.valueToTree(restaurant.getLocation().getName()));
 
             return ok(mapper.writeValueAsString(returnNode));
+
+        }catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
+    public Result adminEditRestaurant(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+
+            Restaurant restaurant = restDao.getRestaurantbyId(json.get("id").asLong());
+
+            restaurant.setRestaurantName(json.get("restaurantName").asText());
+            restaurant.setPriceRange(json.get("priceRange").asInt());
+            restaurant.setDescription(json.get("description").asText());
+            restaurant.setDefaultStay(json.get("defaultStay").asInt());
+            restaurant.setCoverFileName(json.get("coverFileName").asText());
+            restaurant.setImageFileName(json.get("imageFileName").asText());
+            restaurant.setLatitude(json.get("latitude").asLong());
+            restaurant.setLongitude(json.get("longitude").asLong());
+            restaurant.setLocation(locDao.getById(json.get("location").asLong()));
+            restaurant.getCategoryList().clear();
+            for (JsonNode cat : json.get("categories")
+            ) {
+                restaurant.getCategoryList().add(catDao.getCategoryDetails(cat.asLong()));
+            }
+
+            restaurant.save();
+
+            return ok((new ObjectMapper()).writeValueAsString(restaurant));
 
         }catch (Exception e){
             return badRequest(e.getMessage());
