@@ -14,8 +14,10 @@ import models.Location;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.JWTUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LocationController extends Controller {
 
@@ -25,6 +27,15 @@ public class LocationController extends Controller {
     //POST
 
     public Result getFilteredLocations  (){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -63,6 +74,13 @@ public class LocationController extends Controller {
     }
 
     public Result addLocation(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
 
         JsonNode json = request().body().asJson();
 
@@ -87,6 +105,13 @@ public class LocationController extends Controller {
     }
 
     public Result editLocation(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
 
         JsonNode json = request().body().asJson();
 
@@ -108,6 +133,15 @@ public class LocationController extends Controller {
     }
 
     public Result deleteLocation () {
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if(json==null)

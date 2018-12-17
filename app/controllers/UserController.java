@@ -1,14 +1,12 @@
 package controllers;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.typesafe.config.Config;
 import daos.implementations.CountryDaoImpl;
 import daos.implementations.LocationDaoImpl;
 import daos.implementations.UserDaoImpl;
@@ -20,30 +18,23 @@ import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.JWTUtil;
 import util.PasswordUtil;
 
-import javax.inject.Inject;
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 
 public class UserController extends Controller {
 
-    @Inject
-    private Config config;
 
     CountryDao countryDao = new CountryDaoImpl();
     UserDao userDao = new UserDaoImpl();
     LocationDao locDao = new LocationDaoImpl();
 
-    public Result registerUser()
-            throws IOException {
+    public Result registerUser() throws IOException {
 
         JsonNode json = request().body().asJson();
 
@@ -133,7 +124,7 @@ public class UserController extends Controller {
             } catch (IOException e) {
                 return badRequest(e.getMessage());
             }
-            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type()));
+            return ok(jsonNode.toString()).withHeader("Authorization", (new JWTUtil()).getSignedToken(temp.id, temp.getUser_type()));
         } else {
             return badRequest("Entered data is not valid!");
         }
@@ -200,6 +191,14 @@ public class UserController extends Controller {
     }
 
     public Result editUser(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null) {
@@ -244,6 +243,14 @@ public class UserController extends Controller {
     }
 
     public Result adminDeleteUser(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null) {
@@ -266,17 +273,7 @@ public class UserController extends Controller {
         user.setSalt(salt);
     }
 
-    private String getSignedToken(Long userId, String usertype) {
-        String secret = config.getString("play.http.secret.key");
 
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        return JWT.create()
-                .withIssuer("server")
-                .withClaim("user_id", userId)
-                .withClaim("user_type", usertype)
-                .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(10).toInstant()))
-                .sign(algorithm);
-    }
 
 
 }

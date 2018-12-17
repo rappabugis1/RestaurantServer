@@ -11,6 +11,9 @@ import daos.interfaces.RestaurantDao;
 import daos.interfaces.UserDao;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.JWTUtil;
+
+import java.util.Optional;
 
 public class AdminCommonController extends Controller{
 
@@ -19,6 +22,14 @@ public class AdminCommonController extends Controller{
     LocationDao locDao= new LocationDaoImpl();
 
     public Result getAdministrationCounters(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         try{
             JsonNode rootNode = (new ObjectMapper()).createObjectNode();
 

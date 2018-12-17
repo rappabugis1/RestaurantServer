@@ -11,8 +11,10 @@ import io.ebean.PagedList;
 import models.Category;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.JWTUtil;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class CategoriesController extends Controller {
 
@@ -22,6 +24,14 @@ public class CategoriesController extends Controller {
     //POST
 
     public Result addCategory() {
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
 
         JsonNode json = request().body().asJson();
 
@@ -92,6 +102,14 @@ public class CategoriesController extends Controller {
 
     public Result editCategory(){
 
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -126,6 +144,15 @@ public class CategoriesController extends Controller {
     }
 
     public Result deleteCategory(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null)

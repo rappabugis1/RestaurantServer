@@ -1,5 +1,7 @@
 package controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,14 +15,12 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import sun.rmi.runtime.Log;
+import util.JWTUtil;
 
 import java.io.Console;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RestaurantController extends Controller {
 
@@ -38,6 +38,15 @@ public class RestaurantController extends Controller {
 
 
     public Result addRestaurant() {
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -240,6 +249,15 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminMenuItems(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
 
@@ -291,6 +309,14 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminRestaurantTables (){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -317,6 +343,15 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminRestaurantReservationLengths(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null)
@@ -366,6 +401,15 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminDeleteRestaurant(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null) {
@@ -381,6 +425,15 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminGetDetails(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null) {
@@ -433,6 +486,15 @@ public class RestaurantController extends Controller {
     }
 
     public Result adminEditRestaurant(){
+
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
         JsonNode json = request().body().asJson();
 
         if (json == null) {

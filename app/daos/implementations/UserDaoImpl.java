@@ -25,8 +25,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
-
     //Read methods
 
     @Override
@@ -103,8 +101,6 @@ public class UserDaoImpl implements UserDao {
         return query.findPagedList();
     }
 
-
-
     @Override
     public List<Reservation> getUserReservationsActive(Long id) {
         Timestamp today = new Timestamp(new Date().getTime());
@@ -139,4 +135,5 @@ public class UserDaoImpl implements UserDao {
     public void deleteUser(User user){
         user.delete();
     }
+
 }
