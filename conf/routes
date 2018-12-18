@@ -86,3 +86,6 @@ POST        /app/admin/getUserDetails                           controllers.User
 
 ##TABLES ADMIN
 POST        /app/admin/getAllRestaurantTables                   controllers.RestaurantController.getAllRestaurantTables
+
+##GEOLOCATION
+POST        /app/getCloseRestNumber                             controllers.GeoLocationController.getCloseRestNumber

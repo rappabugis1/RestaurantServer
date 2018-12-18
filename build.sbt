@@ -22,4 +22,10 @@ libraryDependencies += evolutions
 
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
 
+libraryDependencies += "net.postgis" % "postgis-jdbc" % "2.2.1"
+
+libraryDependencies += "io.ebean" % "ebean-postgis" % "11.1.1"
+
+
 libraryDependencies += "com.auth0" % "java-jwt" % "3.4.1"
+
