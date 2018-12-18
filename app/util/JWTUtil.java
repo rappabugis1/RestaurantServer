@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.typesafe.config.ConfigFactory;
-import play.Logger;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,7 +16,6 @@ public class JWTUtil {
 
     public void verifyJWT (String token ){
         String secret = ConfigFactory.load().getString("play.http.secret.key");
-        Logger.info(secret);
 
         Algorithm algorithm = Algorithm.HMAC256(secret);
         JWTVerifier verifier = JWT.require(algorithm)

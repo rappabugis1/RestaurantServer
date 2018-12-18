@@ -215,7 +215,7 @@ public class UserController extends Controller {
                 userEdit.setEmail(json.get("email").asText());
 
 
-            if(!json.get("password").isNull()){
+            if(json.has("password") && !json.get("password").isNull()){
                 userEdit.setPassword(json.get("password").asText());
                 PasswordSetting(userEdit);
             }
@@ -232,7 +232,6 @@ public class UserController extends Controller {
 
             if(!json.get("city").isNull())
                 userEdit.getUser_data().setLocation(locDao.getLocationByName(json.get("city").asText()));
-
 
 
             return ok((new ObjectMapper()).writeValueAsString(userDao.editUser(userEdit)));

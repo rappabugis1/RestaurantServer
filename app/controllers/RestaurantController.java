@@ -334,7 +334,33 @@ public class RestaurantController extends Controller {
                 }
             }
 
-            return ok();
+            //Delete Que
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            ArrayNode errorTables = mapper.createArrayNode();
+
+            for(JsonNode newTable: json.get("deleteQueue")){
+                int amount = newTable.get("amount").asInt();
+                int tableType =newTable.get("tableType").asInt();
+
+                List<Table> tables=tableDao.getFreeTablesToDelete(json.get("restaurantId").asLong(), tableType);
+
+                int index=0;
+                for (Table table: tables) {
+
+                    table.delete();
+
+                    index++;
+                    if(index==amount)
+                        break;
+                }
+
+                errorTables.add(mapper.createObjectNode().put("type", tableType).put("amount",amount-index));
+
+            }
+
+            return ok(mapper.writeValueAsString(errorTables));
 
         }catch (Exception e){
             return badRequest(e.getMessage());
