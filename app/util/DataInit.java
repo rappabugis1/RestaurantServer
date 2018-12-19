@@ -258,7 +258,8 @@ public class DataInit {
                 for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempBev.size());
-                    Dish dish = new Dish(tempBev.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Beverages").findOne());
+
+                    Dish dish = new Dish(tempBev.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "Beverages").findOne());
                     tempBev.remove(randomIndex);
 
                     dish.save();
@@ -266,7 +267,7 @@ public class DataInit {
                 for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempMeal.size());
-                    Dish dish = new Dish(tempMeal.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Meals").findOne());
+                    Dish dish = new Dish(tempMeal.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "Meals").findOne());
                     tempMeal.remove(randomIndex);
 
                     dish.save();
@@ -274,7 +275,7 @@ public class DataInit {
                 for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempSoup.size());
-                    Dish dish = new Dish(tempSoup.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "Soups").findOne());
+                    Dish dish = new Dish(tempSoup.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "Soups").findOne());
                     tempSoup.remove(randomIndex);
 
                     dish.save();
@@ -282,7 +283,7 @@ public class DataInit {
                 for (int i = 0; i < 4; i++) {
 
                     int randomIndex = rand.nextInt(tempBBQ.size());
-                    Dish dish = new Dish(tempBBQ.get(randomIndex), "", rand.nextInt(20), menuTemp, DishType.getFinder().query().where().eq("type", "BBQ Foods").findOne());
+                    Dish dish = new Dish(tempBBQ.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "BBQ Foods").findOne());
                     tempBBQ.remove(randomIndex);
 
                     dish.save();

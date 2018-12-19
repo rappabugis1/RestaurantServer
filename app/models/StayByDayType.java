@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import io.ebean.Model;
 import javax.persistence.*;
@@ -26,7 +27,8 @@ public class StayByDayType extends Model {
     @Column(nullable = false)
     private int evening;
 
-    @ManyToOne(cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST,optional = false)
+    @JsonIgnore
     private GuestStay guestStay;
 
     public int getMorning() {

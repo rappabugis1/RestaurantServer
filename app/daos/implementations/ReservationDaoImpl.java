@@ -1,6 +1,7 @@
 package daos.implementations;
 
 import daos.interfaces.ReservationDao;
+import models.GuestStay;
 import models.Reservation;
 import models.StayByDayType;
 import models.Table;
@@ -55,6 +56,11 @@ public class ReservationDaoImpl implements ReservationDao {
                 .eq("guestStay.restaurant.id", restaurant_id)
                 .eq("guestStay.guestNumber", guestNumber)
                 .findOne();
+    }
+
+    @Override
+    public List<GuestStay> getReservationLengthsForRestaurant(Long id){
+        return GuestStay.getFinder().query().where().eq("restaurant.id", id).findList();
     }
 
     //Edit

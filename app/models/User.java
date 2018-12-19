@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -26,20 +27,27 @@ public class User extends Model {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String salt;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String user_type;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private UserData user_data;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
     @JsonIgnore
     List<Review> reviews;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
+    @JsonIgnore
+    List<Reservation> reservations;
 
     public List<Review> getReviews() {
         return reviews;

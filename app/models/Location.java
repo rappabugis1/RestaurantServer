@@ -7,6 +7,7 @@ import io.ebean.Model;
 import javax.persistence.*;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "locations")
@@ -29,7 +30,7 @@ public class Location extends Model {
     @Size(max = 30)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     Country country;
 
     public String getName() {

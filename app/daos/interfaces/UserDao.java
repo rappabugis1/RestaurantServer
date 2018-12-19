@@ -1,5 +1,7 @@
 package daos.interfaces;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.PagedList;
 import models.Reservation;
 import models.User;
 
@@ -12,6 +14,8 @@ public interface UserDao {
 
     //Read methods
 
+    int getNumberUsers();
+
     List<User> getUsers();
 
     User getUserbyId(Long id);
@@ -22,9 +26,15 @@ public interface UserDao {
 
     User verifyProvidedInfo(String email, String password);
 
+    PagedList<User> getFilteredUsers(JsonNode json);
+
     List<Reservation> getUserReservationsActive(Long id);
 
     List<Reservation> getUserReservationsPassed(Long id);
+
+    User editUser(User user) throws Exception;
+
+    void deleteUser(User user);
 
     //Update methods
 

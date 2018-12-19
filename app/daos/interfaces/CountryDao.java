@@ -2,6 +2,8 @@ package daos.interfaces;
 
 import models.Country;
 
+import java.util.List;
+
 public interface CountryDao {
 
     //Create methods
@@ -10,6 +12,9 @@ public interface CountryDao {
 
 
     //Read methods
+
+    //Read methods
+    List<Country> getAll();
 
     public Country getCountryByName(String name);
 

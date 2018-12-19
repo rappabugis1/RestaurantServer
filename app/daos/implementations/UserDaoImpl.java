@@ -1,6 +1,9 @@
 package daos.implementations;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import daos.interfaces.UserDao;
+import io.ebean.ExpressionList;
+import io.ebean.PagedList;
 import models.Reservation;
 import models.User;
 import util.PasswordUtil;
@@ -23,6 +26,12 @@ public class UserDaoImpl implements UserDao {
 
 
     //Read methods
+
+    @Override
+    public int getNumberUsers(){
+        return User.finder.query().findCount();
+    }
+
     @Override
     public List<User> getUsers() {
         return User.finder.all();
@@ -67,6 +76,30 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public PagedList<User> getFilteredUsers(JsonNode json){
+        int itemsPerPage = json.get("itemsPerPage").asInt();
+        int pageNumber = json.get("pageNumber").asInt();
+        JsonNode searchTextNode = json.get("searchText");
+
+        ExpressionList<User> query = User.getFinder().query().where().ne("user_type", "admin");
+
+        if (searchTextNode != null) {
+            String searchText = searchTextNode.asText();
+
+            query.or()
+                .icontains("user_data.firstName", searchText)
+                .icontains("user_data.lastName", searchText)
+                .icontains("email", searchText)
+            .endOr();
+
+
+        }
+
+        query.setFirstRow(itemsPerPage * (pageNumber - 1)).setMaxRows(itemsPerPage);
+
+        return query.findPagedList();
+    }
 
     @Override
     public List<Reservation> getUserReservationsActive(Long id) {
@@ -84,5 +117,23 @@ public class UserDaoImpl implements UserDao {
 
     //Update methods
 
+    @Override
+    public User editUser(User user) throws Exception {
+        try{
+            user.update();
+
+            return user;
+        } catch (Exception e){
+            throw new Exception("Email already exists!");
+        }
+
+    }
+
     //Delete methods
+
+    @Override
+    public void deleteUser(User user){
+        user.delete();
+    }
+
 }

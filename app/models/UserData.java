@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 public class UserData extends Model {
 
     @Id
+    @JsonIgnore
     public Long id;
 
     public UserData(String firstName, String lastName, String phone) {
@@ -36,7 +37,7 @@ public class UserData extends Model {
     @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     Location location;
 
 

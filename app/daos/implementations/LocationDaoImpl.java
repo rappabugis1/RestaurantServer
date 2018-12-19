@@ -1,8 +1,10 @@
 package daos.implementations;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import daos.interfaces.LocationDao;
-import models.Country;
-import models.Location;
+import io.ebean.ExpressionList;
+import io.ebean.PagedList;
+import models.*;
 
 import java.util.List;
 
@@ -11,15 +13,49 @@ public class LocationDaoImpl implements LocationDao {
     //Create methods
 
     @Override
-    public Boolean createCountry(Location newLocation) {
-        if (!checkIfExists(newLocation.getName())) {
-            newLocation.save();
-            return true;
-        }
-        return false;
+    public void createLocation(Location newLocation) {
+        newLocation.save();
     }
 
+
+
     //Read methods
+
+    @Override
+    public List<Location> getAllLocOfCountry(String countryName){
+        return Location.getFinder().query().where().eq("country.name", countryName).findList();
+    }
+
+    @Override
+    public Location getLocationById(Long id){
+        return Location.getFinder().byId(id);
+    }
+
+    @Override
+    public PagedList<Location> getFilteredLocations(JsonNode json){
+        int itemsPerPage = json.get("itemsPerPage").asInt();
+        int pageNumber = json.get("pageNumber").asInt();
+        JsonNode searchTextNode = json.get("searchText");
+
+        ExpressionList<Location> query = Location.getFinder().query().where();
+
+        if (searchTextNode != null) {
+            String searchText = searchTextNode.asText();
+            query.or()
+                .icontains("name", searchText)
+                .icontains("country.name", searchText)
+                .endOr();
+        }
+
+        query.setFirstRow(itemsPerPage * (pageNumber - 1)).setMaxRows(itemsPerPage);
+
+        return query.findPagedList();
+    }
+
+    @Override
+    public int getNumberLocations(){
+        return Location.finder.query().findCount();
+    }
 
     @Override
     public Location getById(Long id) {
@@ -61,5 +97,30 @@ public class LocationDaoImpl implements LocationDao {
 
     //Update methods
 
+    @Override
+    public void updateLocation(Location location){
+        location.update();
+    }
+
     //Delete methods
+
+    @Override
+    public void deleteLocation(Location location){
+
+        for (Restaurant rest:
+                Restaurant.getFinder().query().where().eq("location.name", location.getName()).findList() ) {
+
+            rest.setLocation(null);
+
+            rest.save();
+        }
+
+        for(UserData userData:
+                UserData.getFinder().query().where().eq("location.name", location.getName()).findList()){
+            userData.setLocation(null);
+            userData.save();
+        }
+
+        location.delete();
+    }
 }

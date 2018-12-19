@@ -17,15 +17,14 @@ public class GuestStay extends  Model{
 
     public static final Finder<Long, GuestStay> finder = new Finder<>(GuestStay.class);
 
-
     @Column(nullable = false, name = "guest_number")
     private int guestNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JsonIgnore
     Restaurant restaurant;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "guestStay")
-    @JsonIgnore
     List<StayByDayType> stayByDays;
 
     public int getGuestNumber() {

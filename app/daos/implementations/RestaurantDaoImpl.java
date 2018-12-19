@@ -7,27 +7,39 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
-import models.Restaurant;
-import models.Review;
+import models.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantDaoImpl implements RestaurantDao {
 
     //Create methods
     @Override
-    public Restaurant createRestaurant(Restaurant newRest) {
-        try {
-            newRest.save();
+    public void createRestaurant(Restaurant newRest) {
 
-            return newRest;
-        } catch (Exception e) {
-            return null;
+
+        newRest.save();
+
+        //Add menus
+        ArrayList<String> menuTypes = new ArrayList<>();
+        menuTypes.add("Breakfast");
+        menuTypes.add("Lunch");
+        menuTypes.add("Dinner");
+
+        for (String menuType : menuTypes) {
+            Menu menu = new Menu(menuType, newRest);
+            menu.save();
         }
     }
 
     //Read methods
+
+    @Override
+    public int getNumberRestaurants(){
+        return Restaurant.finder.query().findCount();
+    }
 
     @Override
     public List<Restaurant> getRestaurants() {
@@ -119,8 +131,34 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
         return (new ObjectMapper()).writeValueAsString(reviews);
     }
+
+    @Override
+    public String getAllRestaurantTables (Long id) throws JsonProcessingException {
+        List<Table> tables = Table.getFinder().query().where().eq("restaurant_id", id).findList();
+        return (new ObjectMapper()).writeValueAsString(tables);
+
+    }
+
+    @Override
+    public List<DishType> getAllDishTypes(){
+        return DishType.getFinder().all();
+    }
+
+    @Override
+    public List<Menu> getRestaurantMenus(Long id){
+        return Menu.getFinder().query().where().eq("restaurant.id", id).findList();
+    }
+
+    @Override
+    public Menu getMenuByType(String name){
+        return Menu.getFinder().query().where().eq("type", name).findOne();
+    }
+
     //Update methods
 
     //Delete methods
-
+    @Override
+    public void deleteRestaurant(Restaurant restaurant){
+        restaurant.delete();
+    }
 }

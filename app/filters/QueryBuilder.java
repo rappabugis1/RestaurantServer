@@ -28,14 +28,10 @@ public class QueryBuilder {
         int itemsPerPage = json.get("itemsPerPage").asInt();
         int pageNumber = json.get("pageNumber").asInt();
         JsonNode searchTextNode = json.get("searchText");
-        JsonNode reservationInfoNode = json.get("reservationInfo");
-        JsonNode priceRange = json.get("priceRange");
-        JsonNode mark = json.get("mark");
-        JsonNode categories = json.get("categories");
 
 
         //Add searchText parameter to filter if exists
-        if (searchTextNode != null) {
+        if (!searchTextNode.isNull()) {
             String searchText = searchTextNode.asText();
             query
                     .or()
@@ -44,34 +40,46 @@ public class QueryBuilder {
                     .icontains("location.name", searchText)
                     .endOr();
         }
-
-        if (!priceRange.isNull() && priceRange.asInt() != 0) {
-            int priceFilter = priceRange.asInt();
-            query.eq("price_range", priceFilter);
-        }
-
-        if (!mark.isNull() && mark.asInt() != 0) {
-
-            query.eq("round((Select avg(reviews.mark) From reviews where restaurant_id=main.id),0)", mark.asInt());
-        }
+        try{
+            JsonNode reservationInfoNode = json.get("reservationInfo");
+            JsonNode priceRange = json.get("priceRange");
+            JsonNode mark = json.get("mark");
+            JsonNode categories = json.get("categories");
 
 
-        //Add reservation parameters to filter if exists
-        if (!reservationInfoNode.isNull()) {
 
-            Timestamp reservationDateTime = getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
 
-            query.exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places", reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time", "r.reservation_end_date_time", reservationDateTime).query()).query());
-
-        }
-
-        if (categories.isArray() && categories.size() > 0) {
-            for (JsonNode catName : categories
-            ) {
-                query.exists(Ebean.createQuery(Restaurant.class).where().in("categoryList.name", catName.asText()).raw("t0.id=main.id").query());
+            if (!priceRange.isNull() && priceRange.asInt() != 0) {
+                int priceFilter = priceRange.asInt();
+                query.eq("price_range", priceFilter);
             }
 
+            if (!mark.isNull() && mark.asInt() != 0) {
+
+                query.eq("round((Select avg(reviews.mark) From reviews where restaurant_id=main.id),0)", mark.asInt());
+            }
+
+
+            //Add reservation parameters to filter if exists
+            if (!reservationInfoNode.isNull()) {
+
+                Timestamp reservationDateTime = getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
+
+                query.exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places", reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time", "r.reservation_end_date_time", reservationDateTime).query()).query());
+
+            }
+
+            if (categories.isArray() && categories.size() > 0) {
+                for (JsonNode catName : categories
+                ) {
+                    query.exists(Ebean.createQuery(Restaurant.class).where().in("categoryList.name", catName.asText()).raw("t0.id=main.id").query());
+                }
+
+            }
+        } catch (Exception e){
+
         }
+
 
         finishQuery(itemsPerPage, pageNumber);
 

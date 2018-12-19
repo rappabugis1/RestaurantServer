@@ -1,5 +1,7 @@
 package daos.interfaces;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.PagedList;
 import models.Country;
 import models.Location;
 
@@ -9,7 +11,17 @@ public interface LocationDao {
 
     //Create methods
 
-    Boolean createCountry(Location newLocation);
+    void createLocation(Location newLocation);
+
+    void updateLocation(Location location);
+
+    List<Location> getAllLocOfCountry(String countryName);
+
+    Location getLocationById(Long id);
+
+    PagedList<Location> getFilteredLocations(JsonNode json);
+
+    int getNumberLocations();
 
     //Read methods
     Location getById(Long id);
@@ -21,6 +33,8 @@ public interface LocationDao {
     List<Location> getLocationsOfCountry(Country country);
 
     Location checkIfExistsThenReturn(Location location);
+
+    void deleteLocation(Location location);
 
     //Update methods
 

@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
 
@@ -30,11 +32,23 @@ public class Dish extends Model {
     @Column(nullable = false)
     private int price;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
+    @JsonIgnore
     Menu menu;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
+    @JsonIgnore
     DishType type;
+
+    @JsonProperty
+    private String getMenuType(){
+        return menu.getType();
+    }
+
+    @JsonProperty
+    private String getDishType(){
+        return type.getType();
+    }
 
     public String getName() {
         return name;

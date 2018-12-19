@@ -1,47 +1,40 @@
 package controllers;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.typesafe.config.Config;
 import daos.implementations.CountryDaoImpl;
 import daos.implementations.LocationDaoImpl;
 import daos.implementations.UserDaoImpl;
 import daos.interfaces.CountryDao;
 import daos.interfaces.LocationDao;
 import daos.interfaces.UserDao;
+import io.ebean.PagedList;
 import models.Country;
 import models.Location;
 import models.User;
 import models.UserData;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.JWTUtil;
 import util.PasswordUtil;
 
-import javax.inject.Inject;
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 
 public class UserController extends Controller {
 
-    @Inject
-    private Config config;
 
     CountryDao countryDao = new CountryDaoImpl();
     UserDao userDao = new UserDaoImpl();
     LocationDao locDao = new LocationDaoImpl();
 
-    public Result registerUser()
-            throws IOException {
+    public Result registerUser() throws IOException {
 
         JsonNode json = request().body().asJson();
 
@@ -55,6 +48,7 @@ public class UserController extends Controller {
         Location newLocation = new Location(json.get("city").asText());
         Country newCountry = new Country(json.get("country").asText());
 
+        newUser.setPassword(json.get("password").asText());
         newUser.setUser_type("regular_user");
 
         //Creating the user
@@ -108,6 +102,8 @@ public class UserController extends Controller {
         ObjectMapper mapper = new ObjectMapper();
 
         User newUser = mapper.convertValue(json, User.class);
+        newUser.setPassword(json.get("password").asText());
+
         User temp = userDao.verifyProvidedInfo(newUser.getEmail(), newUser.getPassword());
 
         if (temp != null) {
@@ -128,7 +124,7 @@ public class UserController extends Controller {
             } catch (IOException e) {
                 return badRequest(e.getMessage());
             }
-            return ok(jsonNode.toString()).withHeader("Authorization", getSignedToken(temp.id, temp.getUser_type()));
+            return ok(jsonNode.toString()).withHeader("Authorization", (new JWTUtil()).getSignedToken(temp.id, temp.getUser_type()));
         } else {
             return badRequest("Entered data is not valid!");
         }
@@ -156,6 +152,118 @@ public class UserController extends Controller {
 
     }
 
+    public Result getFilteredUsers(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null)
+            return badRequest("Json is null");
+
+        try {
+            PagedList result = userDao.getFilteredUsers(json);
+
+            ObjectNode returnNode = (new ObjectMapper()).createObjectNode();
+            returnNode.put("numberOfPages", result.getTotalPageCount());
+
+
+            returnNode.putArray("users").addAll((ArrayNode) (new ObjectMapper()).valueToTree(result.getList()));
+
+            return ok((new ObjectMapper()).writeValueAsString(returnNode));
+
+
+        } catch (Exception e) {
+            return badRequest(e.getMessage());
+        }
+    }
+
+    public Result getUserDetails(){
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            return ok((new ObjectMapper()).writeValueAsString(userDao.getUserbyId(json.get("id").asLong())));
+        } catch (Exception e){
+            return badRequest(e.getMessage());
+        }
+
+    }
+
+    public Result editUser(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            User userEdit=  userDao.getUserbyId(json.get("id").asLong());
+
+            if(userEdit==null)
+                throw new Exception("User does not exist");
+
+            if(!json.get("email").isNull())
+                userEdit.setEmail(json.get("email").asText());
+
+
+            if(json.has("password") && !json.get("password").isNull()){
+                userEdit.setPassword(json.get("password").asText());
+                PasswordSetting(userEdit);
+            }
+
+            if(!json.get("firstName").isNull())
+                userEdit.getUser_data().setFirstName(json.get("firstName").asText());
+
+            if(!json.get("lastName").isNull())
+                userEdit.getUser_data().setLastName(json.get("lastName").asText());
+
+            if(!json.get("phone").isNull())
+                userEdit.getUser_data().setPhone(json.get("phone").asText());
+
+
+            if(!json.get("city").isNull())
+                userEdit.getUser_data().setLocation(locDao.getLocationByName(json.get("city").asText()));
+
+
+            return ok((new ObjectMapper()).writeValueAsString(userDao.editUser(userEdit)));
+
+        }catch(Exception e){
+            return badRequest(e.getMessage());
+        }
+    }
+
+    public Result adminDeleteUser(){
+        Optional<String> token = request().getHeaders().get("Authorization");
+        try{
+            (new JWTUtil()).verifyJWT(token.get().substring(7));
+
+        }catch (Exception e){
+            return unauthorized("Not Authorized!");
+        }
+
+        JsonNode json = request().body().asJson();
+
+        if (json == null) {
+            return badRequest("Invalid JSON!");
+        }
+
+        try{
+            userDao.deleteUser(userDao.getUserbyId(json.get("id").asLong()));
+            return ok();
+        } catch (Exception e){
+            return badRequest();
+        }
+    }
+
     private static void PasswordSetting(User user) {
         String salt = PasswordUtil.getSalt(30);
         String securedPassword = PasswordUtil.generateSecurePassword(user.getPassword(), salt);
@@ -165,17 +273,6 @@ public class UserController extends Controller {
     }
 
 
-    private String getSignedToken(Long userId, String usertype) {
-        String secret = config.getString("play.http.secret.key");
-
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        return JWT.create()
-                .withIssuer("server")
-                .withClaim("user_id", userId)
-                .withClaim("user_type", usertype)
-                .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(10).toInstant()))
-                .sign(algorithm);
-    }
 
 
 }
