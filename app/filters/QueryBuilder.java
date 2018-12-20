@@ -7,6 +7,7 @@ import io.ebean.PagedList;
 import models.Reservation;
 import models.Restaurant;
 import models.Table;
+import play.Logger;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -57,6 +58,10 @@ public class QueryBuilder {
             if (!mark.isNull() && mark.asInt() != 0) {
 
                 query.eq("round((Select avg(reviews.mark) From reviews where restaurant_id=main.id),0)", mark.asInt());
+            }
+
+            if(json.has("geometry") && !json.get("geometry").isNull()){
+                query.raw("ST_DWithin(main.point,ST_MakePoint(?, ?)::geography, ?)",json.get("geometry").get("longitude").asDouble(),json.get("geometry").get("latitude").asDouble(), json.get("geometry").get("radius").asDouble());
             }
 
 

@@ -8,6 +8,8 @@ import daos.interfaces.RestaurantDao;
 import io.ebean.Ebean;
 import io.ebean.SqlRow;
 import models.*;
+import org.postgis.Point;
+import play.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -137,6 +139,12 @@ public class RestaurantDaoImpl implements RestaurantDao {
         List<Table> tables = Table.getFinder().query().where().eq("restaurant_id", id).findList();
         return (new ObjectMapper()).writeValueAsString(tables);
 
+    }
+
+    @Override
+    public List<Restaurant> getLocatedInProximity(double longitude, double latitude, double radius){
+
+        return Restaurant.getFinder().query().where().raw("ST_DWithin(t0.point,ST_MakePoint(?, ?)::geography,  ?)",longitude,latitude, radius).findList();
     }
 
     @Override

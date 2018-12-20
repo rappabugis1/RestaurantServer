@@ -1,7 +1,5 @@
 package controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,15 +7,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.implementations.*;
 import daos.interfaces.*;
-import javafx.util.Pair;
 import models.*;
-import play.Logger;
+import org.postgis.Point;
 import play.mvc.Controller;
 import play.mvc.Result;
-import sun.rmi.runtime.Log;
 import util.JWTUtil;
 
-import java.io.Console;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
@@ -35,6 +30,7 @@ public class RestaurantController extends Controller {
     DishDao dishDao = new DishDaoImpl();
 
     ReservationDao resDao = new ReservationDaoImpl();
+
 
 
     public Result addRestaurant() {
@@ -63,6 +59,8 @@ public class RestaurantController extends Controller {
             Restaurant newRestaurant = mapper.convertValue(json, Restaurant.class);
 
             newRestaurant.setLocation(locDao.getById(location_id));
+
+            newRestaurant.setPoint(new Point(newRestaurant.getLongitude(),newRestaurant.getLatitude()));
 
             newRestaurant.getCategoryList().clear();
             for (JsonNode cat : categories
@@ -539,6 +537,9 @@ public class RestaurantController extends Controller {
             restaurant.setImageFileName(json.get("imageFileName").asText());
             restaurant.setLatitude(json.get("latitude").asLong());
             restaurant.setLongitude(json.get("longitude").asLong());
+            Point point =new Point(json.get("longitude").asDouble(),json.get("latitude").asDouble());
+            point.setSrid(4326);
+            restaurant.setPoint(point);
             restaurant.setLocation(locDao.getById(json.get("location").asLong()));
             restaurant.getCategoryList().clear();
             for (JsonNode cat : json.get("categories")

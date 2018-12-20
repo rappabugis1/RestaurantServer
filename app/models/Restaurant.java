@@ -4,16 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ebean.Finder;
 import io.ebean.Model;
+import org.postgis.Point;
 
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.util.List;
 
+
 @Entity
 @Table(name = "restaurants")
 public class Restaurant extends Model {
 
-    public Restaurant(String restaurantName, String description, float latitude, float longitude, String imageFileName, String coverFileName, int priceRange) {
+    public Restaurant(String restaurantName, String description, double latitude, double longitude, String imageFileName, String coverFileName, int priceRange) {
         this.restaurantName = restaurantName;
         this.description = description;
         this.latitude = latitude;
@@ -21,6 +23,8 @@ public class Restaurant extends Model {
         this.imageFileName = imageFileName;
         this.coverFileName = coverFileName;
         this.priceRange = priceRange;
+        this.point=new Point(longitude, latitude);
+        this.point.setSrid(4326);
     }
 
     @Id
@@ -36,10 +40,14 @@ public class Restaurant extends Model {
     private int priceRange;
 
     @Column(nullable = false)
-    private float latitude;
+    private double latitude;
 
     @Column(nullable = false)
-    private float longitude;
+    private double longitude;
+
+    @Column(columnDefinition = "GEOMETRY")
+    @JsonIgnore
+    private Point point;
 
     @Column(nullable = false, name = "image_file_name")
     private String imageFileName;
@@ -54,11 +62,9 @@ public class Restaurant extends Model {
 
     public static final Finder<Long, Restaurant> finder = new Finder<>(Restaurant.class);
 
-
     @ManyToOne
     @JsonProperty("location_id")
     Location location;
-
 
     @ManyToMany(cascade=CascadeType.ALL,mappedBy = "restaurants")
     @JoinTable(
@@ -155,19 +161,19 @@ public class Restaurant extends Model {
         this.priceRange = priceRange;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -245,6 +251,14 @@ public class Restaurant extends Model {
 
     public void setGuestStays(List<GuestStay> guestStays) {
         this.guestStays = guestStays;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
     }
 
 }

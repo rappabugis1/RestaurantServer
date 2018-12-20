@@ -83,6 +83,7 @@ create table restaurants (
   price_range                   integer not null,
   latitude                      float not null,
   longitude                     float not null,
+  point                         GEOMETRY,
   image_file_name               varchar(255) not null,
   cover_file_name               varchar(255) not null,
   default_stay                  integer not null,

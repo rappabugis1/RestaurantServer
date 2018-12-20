@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import models.DishType;
 import models.Menu;
 import models.Restaurant;
+import org.postgis.Point;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,8 @@ public interface RestaurantDao {
     String getAllRestaurantComments(Long id) throws JsonProcessingException;
 
     String getAllRestaurantTables(Long id) throws JsonProcessingException;
+
+    List<Restaurant> getLocatedInProximity(double longitude, double latitude, double radius);
 
     List<DishType> getAllDishTypes();
 

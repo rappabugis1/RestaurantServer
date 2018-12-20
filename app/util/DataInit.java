@@ -12,6 +12,7 @@ import java.util.Random;
 public class DataInit {
     public DataInit() {
 
+
         LocationDao locDao = new LocationDaoImpl();
 
         if (!(Country.getFinder().all().size() > 0)) {
@@ -19,6 +20,12 @@ public class DataInit {
             //Create extension for randoms
             String sql = "CREATE EXTENSION if not exists tsm_system_rows;";
             Ebean.createSqlUpdate(sql).execute();
+
+            //Create extension postgis
+            String sqlPostgis = "CREATE EXTENSION if not exists postgis;";
+            Ebean.createSqlUpdate(sqlPostgis).execute();
+
+
 
             //One country
             Country country = new Country("Bosnia and Herzegovina");
@@ -150,8 +157,8 @@ public class DataInit {
                     "\n" +
                     "Restaurants range from inexpensive and informal lunching or dining places catering to people working nearby, with modest food served in simple settings at low prices, to expensive establishments serving refined food and fine wines in a formal setting. In the former case, customers usually wear casual clothing. In the latter case, depending on culture and local traditions, customers might wear semi-casual, semi-formal or formal wear. Typically, at mid- to high-priced restaurants, customers sit at tables, their orders are taken by a waiter, who brings the food when it is ready. After eating, the customers then pay the bill. In some restaurants, such as workplace cafeterias, there are no waiters; the customers use trays, on which they place cold items that they select from a refrigerated container and hot items which they request from cooks, and then they pay a cashier before they sit down. Another restaurant approach which uses few waiters is the buffet restaurant. Customers serve food onto their own plates and then pay at the end of the meal. Buffet restaurants typically still have waiters to serve drinks and alcoholic beverages. Fast food restaurants are also considered a restaurant.";
 
-            float lat = 18.4130763f;
-            float longit = 43.8562586f;
+            double longit = 18.4130763d;
+            double lat = 43.8562586d;
 
             Random rand = new Random();
 
@@ -289,6 +296,10 @@ public class DataInit {
                     dish.save();
                 }
             }
+
+            //Create index for geolocation
+            String sqlIndexForGis = "CREATE INDEX restaurants_gix ON restaurants USING GIST (point);";
+            Ebean.createSqlUpdate(sqlIndexForGis).execute();
 
 
             //User seeding
