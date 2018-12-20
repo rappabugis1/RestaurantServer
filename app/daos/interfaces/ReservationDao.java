@@ -18,6 +18,8 @@ public interface ReservationDao {
 
     List<Reservation> findColisions(Long resaurant_id, Long table_id, Timestamp start, Timestamp end);
 
+    List<Table> findFreeTablesForLessPeople(Long idRestaurant, int guestNumber, Timestamp start, Timestamp end);
+
     StayByDayType getReservationLengthsForGuestNumber(Long restaurant_id, int guestNumber, String dayType);
 
     List<GuestStay> getReservationLengthsForRestaurant(Long id);

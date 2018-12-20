@@ -19,6 +19,7 @@ import models.Table;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -67,6 +68,37 @@ public class ReservationController extends Controller {
 
                 return ok((new ObjectMapper()).writeValueAsString(returnValue));
             }
+
+            //If there are no single tables try combinations
+
+            //#1 try double tables ex for 5 people try 1+4 2+3 , for 10 1+9 2+8 3+7 4+5
+
+            //Get all available tables that have less than < number of guests
+            Map<Integer, ArrayList<Table>> freeLessTablesMap= getFreeTablesmap(tempReservation.getRestaurant().id, tempReservation.getPersons(), tempReservation.getReservationDateTime(), tempReservation.getReservationEndDateTime());
+
+            //Try Combinations
+            for(int i=1, j=tempReservation.getPersons()-1; i<j; i++, j--){
+                if(freeLessTablesMap.containsKey(i) && freeLessTablesMap.containsKey(j) && freeLessTablesMap.get(i).size()>0 && freeLessTablesMap.get(j).size()>0){
+
+                    Reservation part2 = getReservationFromRequest(json);
+
+                    tempReservation.setTable(freeLessTablesMap.get(i).get(0));
+                    part2.setTable(freeLessTablesMap.get(j).get(0));
+
+                    resDao.CreateReservation(tempReservation);
+                    resDao.CreateReservation(part2);
+
+                    ObjectNode returnValue = (new ObjectMapper()).createObjectNode();
+                    returnValue.put("id", tempReservation.id);
+                    returnValue.put("idTable", tempReservation.getTable().id);
+                    returnValue.put("idUser", tempReservation.getUser().id);
+                    returnValue.put("persons", tempReservation.getPersons());
+                    returnValue.put("reservationDateTime", tempReservation.getReservationDateTime().toString());
+
+                    return ok((new ObjectMapper()).writeValueAsString(returnValue));
+                }
+            }
+
             return badRequest("No available tables for that time!");
 
         } catch (Exception e) {
@@ -205,7 +237,24 @@ public class ReservationController extends Controller {
             }
         }
 
-        //TODO reduce number of available times, right now its 2 per table with no indentical values
+        //If there are no single tables try combinations
+
+        if(!setTimes.contains(reservationDateTime)){
+            //#1 try double tables ex for 5 people try 1+4 2+3 , for 10 1+9 2+8 3+7 4+6 5+5
+
+            //Get all available tables that have less than < number of guests
+            Map<Integer, ArrayList<Table>> freeLessTablesMap= getFreeTablesmap(idRestaurant, persons, reservationDateTime, reservationEnd);
+
+            //Try Combinations
+            for(int i=1, j=persons-1; i<j; i++, j--){
+                if(freeLessTablesMap.containsKey(i) && freeLessTablesMap.containsKey(j) && freeLessTablesMap.get(i).size()>0 && freeLessTablesMap.get(j).size()>0){
+                    setTimes.add(reservationDateTime);
+                    break;
+                }
+            }
+        }
+
+
 
         ArrayList<String> convertedTime = new ArrayList<>();
 
@@ -271,6 +320,18 @@ public class ReservationController extends Controller {
         returnReservation.setUser(userDao.getUserbyId(idUser));
 
         return returnReservation;
+    }
+
+
+    private Map<Integer, ArrayList<Table>> getFreeTablesmap (Long idRest, int capacity, Timestamp begin, Timestamp end){
+        List<Table> freeLessTables = resDao.findFreeTablesForLessPeople(idRest, capacity,begin, end);
+
+        //Map tables to lists with key by sitting capacity
+        Map<Integer, ArrayList<Table>> freeLessTablesMap = new HashMap<>();
+        for (Table lessTable: freeLessTables) {
+            freeLessTablesMap.computeIfAbsent(lessTable.getSitting_places(), k->new ArrayList<>()).add(lessTable);
+        }
+        return  freeLessTablesMap;
     }
 
     private String getTimeStringFromStamp(Timestamp stamp) {
