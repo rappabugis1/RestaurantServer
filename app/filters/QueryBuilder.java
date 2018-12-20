@@ -31,7 +31,6 @@ public class QueryBuilder {
         int pageNumber = json.get("pageNumber").asInt();
         JsonNode searchTextNode = json.get("searchText");
 
-
         //Add searchText parameter to filter if exists
         if (!searchTextNode.isNull()) {
             String searchText = searchTextNode.asText();
@@ -80,8 +79,9 @@ public class QueryBuilder {
             }
 
             if(json.has("geometry") && !json.get("geometry").isNull()){
-                query.raw("ST_DWithin(main.point,ST_MakePoint(?, ?)::geography, ?)",json.get("geometry").get("longitude").asDouble(),json.get("geometry").get("latitude").asDouble(), json.get("geometry").get("radius").asDouble()).setOrderBy("ST_Distance(main.point, ST_MakePoint("+ json.get("geometry").get("longitude").asDouble()+","+json.get("geometry").get("latitude").asDouble()+")::geography) as distance").orderBy("distance asc");
+                query.raw("ST_DWithin(main.point,ST_MakePoint(?, ?)::geography, ?)",json.get("geometry").get("longitude").asDouble(),json.get("geometry").get("latitude").asDouble(), json.get("geometry").get("radius").asDouble()).order("ST_Distance(main.point, ST_MakePoint("+ json.get("geometry").get("longitude").asDouble()+","+json.get("geometry").get("latitude").asDouble()+")::geography) asc");
             }
+
 
 
         } catch (Exception e){
@@ -96,6 +96,7 @@ public class QueryBuilder {
     }
 
     public PagedList<Restaurant> executeQuery(JsonNode json) throws ParseException {
+
         return getQuery(json).findPagedList();
     }
 

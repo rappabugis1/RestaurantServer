@@ -35,6 +35,7 @@ public class RestaurantController extends Controller {
 
     public Result addRestaurant() {
 
+
         Optional<String> token = request().getHeaders().get("Authorization");
         try{
             (new JWTUtil()).verifyJWT(token.get().substring(7));
