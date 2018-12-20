@@ -107,25 +107,7 @@ public class DataInit {
             restaurantNames.add("Pod Lipom");
             restaurantNames.add("Cevabdzinica Zeljo");
             restaurantNames.add("Pizzeria Mozzart");
-            restaurantNames.add("Sushi San");
-            restaurantNames.add("Steak House");
-            restaurantNames.add("Mr Gurman");
-            restaurantNames.add("Dulagin Dvor");
-            restaurantNames.add("Aeroplan");
-            restaurantNames.add("Maestro");
-            restaurantNames.add("Tutto Bene");
             restaurantNames.add("Restoran Zelena Dolina");
-            restaurantNames.add("Kod Bibana Restoran");
-            restaurantNames.add("Zacin");
-            restaurantNames.add("Soho Caffe Restoran");
-            restaurantNames.add("Restoran Sendi");
-            restaurantNames.add("Pivnica");
-            restaurantNames.add("Mala Basta");
-            restaurantNames.add("Milki ");
-            restaurantNames.add("Esmeralda");
-            restaurantNames.add("Cevabdzinica Kastel");
-            restaurantNames.add("Hacienda");
-            restaurantNames.add("Delikatesna Radnja");
             restaurantNames.add("Merak Food");
             restaurantNames.add("Moscanica");
             restaurantNames.add("Zeljo");
@@ -262,7 +244,7 @@ public class DataInit {
                 List<String> tempSoup = new ArrayList<>(soupNames);
                 List<String> tempBBQ = new ArrayList<>(bbqNames);
 
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
 
                     int randomIndex = rand.nextInt(tempBev.size());
 
@@ -271,7 +253,7 @@ public class DataInit {
 
                     dish.save();
                 }
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
 
                     int randomIndex = rand.nextInt(tempMeal.size());
                     Dish dish = new Dish(tempMeal.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "Meals").findOne());
@@ -279,7 +261,7 @@ public class DataInit {
 
                     dish.save();
                 }
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 2; i++) {
 
                     int randomIndex = rand.nextInt(tempSoup.size());
                     Dish dish = new Dish(tempSoup.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "Soups").findOne());
@@ -287,7 +269,7 @@ public class DataInit {
 
                     dish.save();
                 }
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 1; i++) {
 
                     int randomIndex = rand.nextInt(tempBBQ.size());
                     Dish dish = new Dish(tempBBQ.get(randomIndex), "", rand.nextInt(20)+1, menuTemp, DishType.getFinder().query().where().eq("type", "BBQ Foods").findOne());
