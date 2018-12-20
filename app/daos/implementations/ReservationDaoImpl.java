@@ -5,7 +5,6 @@ import models.GuestStay;
 import models.Reservation;
 import models.StayByDayType;
 import models.Table;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class ReservationDaoImpl implements ReservationDao {
                 .eq("restaurant_id", restaurant_id)
                 .and()
                 .ge("sitting_places", persons)
+                .le("sitting_places", persons+2)
                 .findList();
     }
 
@@ -47,6 +47,23 @@ public class ReservationDaoImpl implements ReservationDao {
                 .lt("reservation_date_time", end)
                 .findList();
     }
+
+
+    @Override
+    public List<Table> findFreeTablesForLessPeople(Long idRestaurant, int guestNumber, Timestamp start, Timestamp end){
+        return Table.getFinder().query().where()
+                .eq("restaurant_id", idRestaurant)
+                .lt("sitting_places", guestNumber)
+                .notIn("id", Table.getFinder().query().fetch("reservations").where()
+                        .or()
+                        .betweenProperties("reservations.reservationDateTime", "reservations.reservationEndDateTime", start)
+                        .betweenProperties("reservations.reservationDateTime", "reservations.reservationEndDateTime", end)
+                        .between("reservations.reservationDateTime", start, end)
+                        .endOr()
+                        .findIds()
+                ).findList();
+    }
+
 
     @Override
     public StayByDayType getReservationLengthsForGuestNumber(Long restaurant_id, int guestNumber, String dayType){

@@ -63,6 +63,15 @@ public class Reservation extends Model {
         this.timeCreated = timeCreated;
     }
 
+    public Reservation(Reservation copyRes) {
+        this.persons = copyRes.getPersons();
+        this.reservationDateTime = copyRes.getReservationDateTime();
+        this.request = copyRes.getRequest();
+        this.temp = copyRes.getTemp();
+        this.reservationEndDateTime = copyRes.getReservationEndDateTime();
+        this.timeCreated = copyRes.getTimeCreated();
+    }
+
     public static Finder<Long, Reservation> getFinder() {
         return finder;
     }
