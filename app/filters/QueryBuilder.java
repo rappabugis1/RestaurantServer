@@ -3,6 +3,7 @@ package filters;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.ExpressionList;
+import io.ebean.OrderBy;
 import io.ebean.PagedList;
 import models.Reservation;
 import models.Restaurant;
@@ -60,10 +61,6 @@ public class QueryBuilder {
                 query.eq("round((Select avg(reviews.mark) From reviews where restaurant_id=main.id),0)", mark.asInt());
             }
 
-            if(json.has("geometry") && !json.get("geometry").isNull()){
-                query.raw("ST_DWithin(main.point,ST_MakePoint(?, ?)::geography, ?)",json.get("geometry").get("longitude").asDouble(),json.get("geometry").get("latitude").asDouble(), json.get("geometry").get("radius").asDouble());
-            }
-
 
             //Add reservation parameters to filter if exists
             if (!reservationInfoNode.isNull()) {
@@ -81,6 +78,12 @@ public class QueryBuilder {
                 }
 
             }
+
+            if(json.has("geometry") && !json.get("geometry").isNull()){
+                query.raw("ST_DWithin(main.point,ST_MakePoint(?, ?)::geography, ?)",json.get("geometry").get("longitude").asDouble(),json.get("geometry").get("latitude").asDouble(), json.get("geometry").get("radius").asDouble()).setOrderBy("ST_Distance(main.point, ST_MakePoint("+ json.get("geometry").get("longitude").asDouble()+","+json.get("geometry").get("latitude").asDouble()+")::geography) as distance").orderBy("distance asc");
+            }
+
+
         } catch (Exception e){
 
         }
