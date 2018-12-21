@@ -63,18 +63,27 @@ public class CategoriesController extends Controller {
         if (json == null || json.get("id") == null)
             return badRequest();
 
-        Category newCategory = catDao.getCategoryDetails(json.get("id").asLong());
-
-        if (newCategory == null)
-            return badRequest("Catergory exists!");
-
-        ObjectMapper mapper = new ObjectMapper();
-
         try {
-            return ok(mapper.writeValueAsString(newCategory));
-        } catch (JsonProcessingException e) {
-            return badRequest("Failed to map JSON! Ovo se ne bi trebalo desiti...");
+            Category newCategory = catDao.getCategoryDetails(json.get("id").asLong());
+
+            if (newCategory == null)
+                return badRequest("Catergory exists!");
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                return ok(mapper.writeValueAsString(newCategory));
+            } catch (JsonProcessingException e) {
+                return badRequest("Failed to map JSON!");
+            }
         }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
+        }
+
     }
 
     public Result getFilteredCategories  (){
@@ -95,7 +104,11 @@ public class CategoriesController extends Controller {
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 
 
-        } catch (Exception e) {
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
             return badRequest(e.getMessage());
         }
     }
@@ -125,6 +138,10 @@ public class CategoriesController extends Controller {
 
             return ok(mapper.writeValueAsString(category));
         }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
         catch (Exception e) {
             return badRequest(e.getMessage());
         }
@@ -138,8 +155,12 @@ public class CategoriesController extends Controller {
             ArrayNode returnNode = mapper.valueToTree(catDao.getAllCategories());
 
             return ok(returnNode.toString());
-        } catch (Exception e) {
-            return badRequest("Something went wrong : " + e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest("Something went wrong : " + e.toString());
         }
     }
 
@@ -161,7 +182,11 @@ public class CategoriesController extends Controller {
         try {
             catDao.deleteCategory(catDao.getCategoryDetails(json.get("id").asLong()));
             return ok();
-        } catch (Exception e){
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
             return  badRequest(e.getMessage());
         }
     }

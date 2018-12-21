@@ -39,8 +39,11 @@ public class AdminCommonController extends Controller{
 
             return ok(rootNode);
         }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
         catch (Exception e){
-            return badRequest(e.getMessage());
+            return badRequest(e.toString());
         }
     }
 

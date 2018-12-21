@@ -1,10 +1,7 @@
 package filters;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.ebean.Ebean;
-import io.ebean.ExpressionList;
-import io.ebean.OrderBy;
-import io.ebean.PagedList;
+import io.ebean.*;
 import models.Reservation;
 import models.Restaurant;
 import models.Table;
@@ -66,8 +63,15 @@ public class QueryBuilder {
 
                 Timestamp reservationDateTime = getStampFromDate(reservationInfoNode.get("reservationDate").asText(), reservationInfoNode.get("reservationHour").asText());
 
-                query.exists(Ebean.createQuery(Table.class).alias("t").where().raw("t.restaurant_id=main.id").ge("t.sitting_places", reservationInfoNode.get("persons").asInt()).notExists(Ebean.createQuery(Reservation.class).alias("r").where().raw("r.table_id=t.id").betweenProperties("r.reservation_date_time", "r.reservation_end_date_time", reservationDateTime).query()).query());
-
+                query.exists(Ebean.createQuery(Table.class).alias("t").where()
+                        .raw("t.restaurant_id=main.id")
+                        .between("t.sitting_places", reservationInfoNode.get("persons").asInt(), reservationInfoNode.get("persons").asInt()+2)
+                        .notIn("id",
+                                Table.getFinder().query().fetch("reservations").where()
+                                .betweenProperties("reservations.reservationDateTime", "reservations.reservationEndDateTime", reservationDateTime)
+                                .findIds()
+                        )
+                        .query()).query();
             }
 
             if (categories.isArray() && categories.size() > 0) {

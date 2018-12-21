@@ -76,8 +76,11 @@ public class RestaurantController extends Controller {
         } catch (IOException e) {
             return badRequest("Error reading tree!");
         }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
         catch (Exception e) {
-            return badRequest(e.getMessage());
+            return badRequest(e.toString());
         }
 
     }
@@ -95,8 +98,12 @@ public class RestaurantController extends Controller {
 
             return ok(returnNode.toString());
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -104,44 +111,69 @@ public class RestaurantController extends Controller {
 
         JsonNode json = request().body().asJson();
 
-        Long id = Long.valueOf(json.get("Id").toString());
+        if (json == null)
+            return badRequest("Invalid Json is null");
 
-        Restaurant restaurant = restDao.getRestaurantbyId(id);
 
-        if (restaurant == null) {
-            return badRequest("Restaurant doesn't exist!");
+        try{
+            Long id = Long.valueOf(json.get("Id").toString());
+
+            Restaurant restaurant = restDao.getRestaurantbyId(id);
+
+            if (restaurant == null) {
+                return badRequest("Restaurant doesn't exist!");
+            }
+
+            return ok((new ObjectMapper()).valueToTree(restaurant).toString());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
-        return ok((new ObjectMapper()).valueToTree(restaurant).toString());
     }
 
     public Result getRestaurantMenu() {
 
         JsonNode json = request().body().asJson();
-        Long id = json.get("idRestaurant").asLong();
-        String menu_type = json.get("type").asText();
 
-        Restaurant restaurant = restDao.getRestaurantbyId(id);
+        if (json == null)
+            return badRequest("Invalid Json is null");
 
-        if (restaurant == null) {
-            return badRequest("Restaurant doesn't exist!");
-        }
+        try{
+            Long id = json.get("idRestaurant").asLong();
+            String menu_type = json.get("type").asText();
 
-        Menu returnMenu = null;
+            Restaurant restaurant = restDao.getRestaurantbyId(id);
 
-        for (Menu menu : restaurant.getMenus()) {
-            if (menu.getType().equals(menu_type)) {
-                returnMenu = menu;
+            if (restaurant == null) {
+                return badRequest("Restaurant doesn't exist!");
             }
-        }
 
-        if (returnMenu == null)
-            return badRequest("Menu does not exist!");
+            Menu returnMenu = null;
 
-        try {
+            for (Menu menu : restaurant.getMenus()) {
+                if (menu.getType().equals(menu_type)) {
+                    returnMenu = menu;
+                }
+            }
+
+            if (returnMenu == null)
+                return badRequest("Menu does not exist!");
+
             return ok(getJsonMenu(returnMenu, id));
+
         } catch (IOException e) {
             return badRequest("Error parsing restaurant to JSON :(");
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
     }
@@ -151,6 +183,13 @@ public class RestaurantController extends Controller {
             return ok(restDao.locationsRestaurant());
         } catch (IOException e) {
             return badRequest("Error parsing restaurant to JSON :(");
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
     }
@@ -193,8 +232,12 @@ public class RestaurantController extends Controller {
 
             return ok();
 
-        } catch (Exception e) {
-            return badRequest("Error in adding the review : " + e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
 
@@ -212,16 +255,24 @@ public class RestaurantController extends Controller {
             Long id = json.get("idRestaurant").asLong();
 
             return ok(restDao.getAllRestaurantComments(id));
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
     public Result getRandomRestaurants() {
         try {
             return ok(restDao.getRandomRestaurants());
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -235,15 +286,21 @@ public class RestaurantController extends Controller {
         try {
             return ok(restDao.getAllRestaurantTables(json.get("id").asLong()));
         }
-        catch (Exception e){return  badRequest(e.getMessage());}
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
+        }
     }
 
     public Result getDishTypes(){
         try{
             ObjectMapper mapper = new ObjectMapper();
             return ok(mapper.writeValueAsString(restDao.getAllDishTypes()));
-        } catch (Exception e){
-            return badRequest();
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -302,8 +359,12 @@ public class RestaurantController extends Controller {
             }
 
             return ok();
-        } catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -361,8 +422,12 @@ public class RestaurantController extends Controller {
 
             return ok(mapper.writeValueAsString(errorTables));
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
     }
@@ -420,8 +485,12 @@ public class RestaurantController extends Controller {
             }
             return ok();
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -444,8 +513,13 @@ public class RestaurantController extends Controller {
         try{
             restDao.deleteRestaurant(restDao.getRestaurantbyId(json.get("id").asLong()));
             return ok();
-        } catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -505,8 +579,13 @@ public class RestaurantController extends Controller {
 
             return ok(mapper.writeValueAsString(returnNode));
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -552,8 +631,13 @@ public class RestaurantController extends Controller {
 
             return ok((new ObjectMapper()).writeValueAsString(restaurant));
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 

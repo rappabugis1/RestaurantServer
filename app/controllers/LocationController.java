@@ -68,8 +68,12 @@ public class LocationController extends Controller {
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 
@@ -126,8 +130,11 @@ public class LocationController extends Controller {
 
             return ok(getLocJson(location));
         }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
         catch (Exception e) {
-            return badRequest(e.getMessage());
+            return badRequest(e.toString());
         }
 
     }
@@ -153,8 +160,12 @@ public class LocationController extends Controller {
             locDao.deleteLocation(location);
 
             return ok();
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
     }
@@ -169,8 +180,12 @@ public class LocationController extends Controller {
 
             return ok(getLocJson(locDao.getById(json.get("id").asLong())));
 
-        }catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -204,8 +219,12 @@ public class LocationController extends Controller {
             }
                 return ok(mapper.writeValueAsString(rootNode));
 
-        } catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 

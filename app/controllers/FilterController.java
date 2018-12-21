@@ -30,8 +30,12 @@ public class FilterController extends Controller {
 
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 }

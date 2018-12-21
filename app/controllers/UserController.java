@@ -34,59 +34,73 @@ public class UserController extends Controller {
     UserDao userDao = new UserDaoImpl();
     LocationDao locDao = new LocationDaoImpl();
 
-    public Result registerUser() throws IOException {
+    public Result registerUser() {
 
         JsonNode json = request().body().asJson();
 
-
-        ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        //Mapping to temp
-        UserData newUserData = mapper.convertValue(json, UserData.class);
-        User newUser = mapper.convertValue(json, User.class);
-        Location newLocation = new Location(json.get("city").asText());
-        Country newCountry = new Country(json.get("country").asText());
-
-        newUser.setPassword(json.get("password").asText());
-        newUser.setUser_type("regular_user");
-
-        //Creating the user
-
-        if (!userDao.checkEmailExists(newUser.getEmail())) {
-            newLocation.setCountry(countryDao.checkIfExistsThenReturn(newCountry));
-
-            newUserData.setLocation(locDao.checkIfExistsThenReturn(newLocation));
-
-            newUser.setUser_data(newUserData);
-
-            newUserData.setUser(newUser);
-
-            //Password encrytpion
-            PasswordSetting(newUser);
-
-
-            try {
-                userDao.createUser(newUser);
-            } catch (Exception e) {
-                return badRequest("Invalid JSON" + e.getMessage());
-            }
-            ObjectNode node = mapper.createObjectNode();
-
-            node
-                    .put("id", newUser.id)
-                    .put("email", newUser.getEmail())
-                    .put("phone", newUserData.getPhone())
-                    .put("country", newCountry.getName())
-                    .put("city", newLocation.getName())
-                    .put("firstName", newUserData.getFirstName())
-                    .put("lastName", newUserData.getLastName());
-
-            JsonNode jsonNode = new ObjectMapper().readTree(node.toString());
-            return ok(jsonNode.toString());
-        } else {
-            return badRequest("Email already in use!");
+        if (json == null) {
+            return badRequest("Invalid JSON!");
         }
+
+
+        try{
+            ObjectMapper mapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            //Mapping to temp
+            UserData newUserData = mapper.convertValue(json, UserData.class);
+            User newUser = mapper.convertValue(json, User.class);
+            Location newLocation = new Location(json.get("city").asText());
+            Country newCountry = new Country(json.get("country").asText());
+
+            newUser.setPassword(json.get("password").asText());
+            newUser.setUser_type("regular_user");
+
+            //Creating the user
+
+            if (!userDao.checkEmailExists(newUser.getEmail())) {
+                newLocation.setCountry(countryDao.checkIfExistsThenReturn(newCountry));
+
+                newUserData.setLocation(locDao.checkIfExistsThenReturn(newLocation));
+
+                newUser.setUser_data(newUserData);
+
+                newUserData.setUser(newUser);
+
+                //Password encrytpion
+                PasswordSetting(newUser);
+
+
+                try {
+                    userDao.createUser(newUser);
+                } catch (Exception e) {
+                    return badRequest("Invalid JSON" + e.getMessage());
+                }
+                ObjectNode node = mapper.createObjectNode();
+
+                node
+                        .put("id", newUser.id)
+                        .put("email", newUser.getEmail())
+                        .put("phone", newUserData.getPhone())
+                        .put("country", newCountry.getName())
+                        .put("city", newLocation.getName())
+                        .put("firstName", newUserData.getFirstName())
+                        .put("lastName", newUserData.getLastName());
+
+                JsonNode jsonNode = new ObjectMapper().readTree(node.toString());
+                return ok(jsonNode.toString());
+            } else {
+                return badRequest("Email already in use!");
+            }
+        }
+
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
+        }
+
 
     }
 
@@ -99,35 +113,44 @@ public class UserController extends Controller {
             return badRequest("Invalid JSON!");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        try{
+            ObjectMapper mapper = new ObjectMapper();
 
-        User newUser = mapper.convertValue(json, User.class);
-        newUser.setPassword(json.get("password").asText());
+            User newUser = mapper.convertValue(json, User.class);
+            newUser.setPassword(json.get("password").asText());
 
-        User temp = userDao.verifyProvidedInfo(newUser.getEmail(), newUser.getPassword());
+            User temp = userDao.verifyProvidedInfo(newUser.getEmail(), newUser.getPassword());
 
-        if (temp != null) {
-            ObjectNode node = mapper.createObjectNode();
+            if (temp != null) {
+                ObjectNode node = mapper.createObjectNode();
 
-            node
-                    .put("id", temp.id)
-                    .put("email", temp.getEmail())
-                    .put("phone", temp.getUser_data().getPhone())
-                    .put("country", temp.getUser_data().getLocation().getCountry().getName())
-                    .put("city", temp.getUser_data().getLocation().getName())
-                    .put("firstName", temp.getUser_data().getFirstName())
-                    .put("lastName", temp.getUser_data().getLastName());
+                node
+                        .put("id", temp.id)
+                        .put("email", temp.getEmail())
+                        .put("phone", temp.getUser_data().getPhone())
+                        .put("country", temp.getUser_data().getLocation().getCountry().getName())
+                        .put("city", temp.getUser_data().getLocation().getName())
+                        .put("firstName", temp.getUser_data().getFirstName())
+                        .put("lastName", temp.getUser_data().getLastName());
 
-            JsonNode jsonNode = null;
-            try {
-                jsonNode = new ObjectMapper().readTree(node.toString());
-            } catch (IOException e) {
-                return badRequest(e.getMessage());
+                JsonNode jsonNode = null;
+                try {
+                    jsonNode = new ObjectMapper().readTree(node.toString());
+                } catch (IOException e) {
+                    return badRequest(e.getMessage());
+                }
+                return ok(jsonNode.toString()).withHeader("Authorization", (new JWTUtil()).getSignedToken(temp.id, temp.getUser_type()));
+            } else {
+                return badRequest("Entered data is not valid!");
             }
-            return ok(jsonNode.toString()).withHeader("Authorization", (new JWTUtil()).getSignedToken(temp.id, temp.getUser_type()));
-        } else {
-            return badRequest("Entered data is not valid!");
         }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
+        }
+
     }
 
     public Result getListOfReservationsForUser() {
@@ -147,7 +170,7 @@ public class UserController extends Controller {
             return ok((new ObjectMapper()).writeValueAsString(nodeValue));
 
         } catch (Exception e) {
-            return badRequest("Unauthorized! " + e.getMessage());
+            return badRequest("Unauthorized! " + e.toString());
         }
 
     }
@@ -170,8 +193,12 @@ public class UserController extends Controller {
             return ok((new ObjectMapper()).writeValueAsString(returnNode));
 
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -184,8 +211,12 @@ public class UserController extends Controller {
 
         try{
             return ok((new ObjectMapper()).writeValueAsString(userDao.getUserbyId(json.get("id").asLong())));
-        } catch (Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
 
     }
@@ -236,8 +267,12 @@ public class UserController extends Controller {
 
             return ok((new ObjectMapper()).writeValueAsString(userDao.editUser(userEdit)));
 
-        }catch(Exception e){
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 
@@ -259,8 +294,12 @@ public class UserController extends Controller {
         try{
             userDao.deleteUser(userDao.getUserbyId(json.get("id").asLong()));
             return ok();
-        } catch (Exception e){
-            return badRequest();
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e){
+            return badRequest(e.toString());
         }
     }
 

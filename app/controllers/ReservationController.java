@@ -19,7 +19,6 @@ import models.Table;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,8 +100,12 @@ public class ReservationController extends Controller {
 
             return badRequest("No available tables for that time!");
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 
@@ -116,8 +119,12 @@ public class ReservationController extends Controller {
             resDao.deleteReservation(json.get("idReservation").asLong());
             return ok();
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 
@@ -131,8 +138,12 @@ public class ReservationController extends Controller {
             resDao.setReservationToFixed(json.get("idReservation").asLong(), json.get("request").asText());
             return ok();
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 
@@ -183,8 +194,12 @@ public class ReservationController extends Controller {
 
             return ok((new ObjectMapper()).writeValueAsString(returnValue));
 
-        } catch (Exception e) {
-            return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+            return badRequest(e.toString());
         }
     }
 

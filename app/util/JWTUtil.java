@@ -6,9 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.typesafe.config.ConfigFactory;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class JWTUtil {
 
@@ -34,7 +31,6 @@ public class JWTUtil {
                 .withIssuer("server")
                 .withClaim("user_id", userId)
                 .withClaim("user_type", usertype)
-                .withExpiresAt(Date.from(ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(1000).toInstant()))
                 .sign(algorithm);
     }
 

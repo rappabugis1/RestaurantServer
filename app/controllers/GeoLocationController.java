@@ -23,8 +23,12 @@ public class GeoLocationController extends Controller {
 
 
             return ok(mapper.writeValueAsString(restDao.getLocatedInProximity(json.get("longitude").asDouble(),json.get("latitude").asDouble(), json.get("radius").asDouble()).size()));
-        } catch (Exception e) {
-           return badRequest(e.getMessage());
+        }
+        catch (NullPointerException e){
+            return badRequest("Missing json fields...");
+        }
+        catch (Exception e) {
+           return badRequest(e.toString());
         }
 
     }
