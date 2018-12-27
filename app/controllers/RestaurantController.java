@@ -9,6 +9,7 @@ import daos.implementations.*;
 import daos.interfaces.*;
 import models.*;
 import org.postgis.Point;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.JWTUtil;
@@ -615,8 +616,8 @@ public class RestaurantController extends Controller {
             restaurant.setDefaultStay(json.get("defaultStay").asInt());
             restaurant.setCoverFileName(json.get("coverFileName").asText());
             restaurant.setImageFileName(json.get("imageFileName").asText());
-            restaurant.setLatitude(json.get("latitude").asLong());
-            restaurant.setLongitude(json.get("longitude").asLong());
+            restaurant.setLatitude(json.get("latitude").asDouble());
+            restaurant.setLongitude(json.get("longitude").asDouble());
             Point point =new Point(json.get("longitude").asDouble(),json.get("latitude").asDouble());
             point.setSrid(4326);
             restaurant.setPoint(point);
